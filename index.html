@@ -56,7 +56,7 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
 <nav id="nav"></nav>
 <main>
 <section class="pg on" id="p-bill">
-<div class="card" id="invBar"><div class="row" style="align-items:flex-end;margin-bottom:0"><div style="flex:1 1 50%"><label>Invoice (new bill)</label><div id="invNo" style="font:600 22px/1.2 var(--serif)">CMW-00001</div></div><div style="flex:1 1 50%;display:flex;gap:8px;align-items:flex-end"><input id="fInv" inputmode="numeric" placeholder="Find invoice no." style="flex:1;min-width:0"><button class="btn g" id="fGo">Open</button><button class="btn g" id="fNew">New bill</button></div></div></div>
+<div class="card" id="invBar"><div class="row" style="align-items:flex-end;margin-bottom:0"><div style="flex:1 1 50%"><label id="invLabel">Invoice (new bill)</label><div id="invNo" style="font:600 22px/1.2 var(--serif)">CMW-00001</div></div><div style="flex:1 1 50%;display:flex;gap:8px;align-items:flex-end"><input id="fInv" inputmode="numeric" placeholder="Find invoice no." style="flex:1;min-width:0"><button class="btn g" id="fGo">Open</button><button class="btn g" id="fNew">New bill</button></div></div></div>
 <div id="invView" style="display:none"></div>
 <div class="grid two" id="billGrid">
  <div>
@@ -71,11 +71,11 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
  <div class="card"><h3>Current bill</h3><div id="cart"></div>
   <div class="row" style="margin-top:10px">
    <div><label>Bill discount</label><input id="bd" type="number" min="0" value="0"></div>
-   <div><label>Type</label><select id="bdT"><option value="%">%</option><option value="₹">₹ flat</option></select></div><div><label>Redeem points</label><input id="pRedeem" type="number" min="0" placeholder="0"><div class="mu" id="pAvail" style="margin-top:4px"></div></div>
+   <div><label>Type</label><select id="bdT"><option value="%">%</option><option value="₹">₹ flat</option></select></div><div><label>Redeem points</label><input id="pRedeem" type="number" min="0" placeholder="0"><div class="mu" id="pAvail" style="margin-top:4px"></div></div><div><label>Exchange amount ₹</label><input id="exAmt" type="number" min="0" placeholder="0"></div>
    </div><div class="row"><div style="flex-basis:100%"><label>Payment</label><select id="pay" style="display:none"><option>Cash</option><option>UPI</option><option>Card</option><option>Credit</option></select><div class="seg" id="paySeg"><button class="on" data-v="Cash">Cash</button><button data-v="UPI">UPI</button><button data-v="Card">Card</button><button data-v="Credit">Credit</button></div></div></div>
   <div class="row" id="paidRow" style="display:none"><div><label>Amount paid now (rest goes to ledger)</label><input id="paid" type="number" min="0" value="0"></div></div>
   <div id="tots"></div>
-  <button class="btn big" id="go" style="margin-top:10px">Complete sale</button>
+  <div class="row" style="margin-top:10px"><button class="btn g" id="gs" style="flex:1">Save</button><button class="btn" id="go" style="flex:1">Save &amp; print</button></div>
   <button class="btn g big" id="clr" style="margin-top:8px">Clear bill</button></div>
 </div></section>
 
@@ -93,7 +93,11 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
 
 <section class="pg" id="p-cust"><div class="card"><input id="cq" placeholder="Search customers by name or mobile…"><div class="wrap"><table><thead><tr><th>Customer</th><th>Visits</th><th>Spent</th><th>Points</th><th>Due</th></tr></thead><tbody id="cb"></tbody></table></div></div></section>
 
-<section class="pg" id="p-sales"><div class="stat" id="stat"></div><div class="card"><h3>Recent bills</h3><div class="wrap"><table><thead><tr><th>Invoice</th><th>When</th><th>Customer</th><th>Mode</th><th>Total</th></tr></thead><tbody id="sb"></tbody></table></div></div></section>
+<section class="pg" id="p-sales">
+<div class="card"><div class="row" style="align-items:flex-end;margin-bottom:0"><div style="flex:0 1 200px"><label>Period</label><select id="perSel"><option value="today">Today</option><option value="week">This week</option><option value="month">This month</option><option value="year">This year</option><option value="all">All bills</option></select></div><div style="flex:1 1 260px"><label>Search</label><input id="sq" autocomplete="off" placeholder="Customer name, mobile number or invoice no."></div></div></div>
+<div class="stat" id="stat"></div>
+<div class="card"><h3 id="salesTitle">Today's bills</h3><div class="wrap"><table><thead><tr><th>Invoice</th><th>When</th><th>Customer</th><th>Mode</th><th>Points</th><th>Total</th></tr></thead><tbody id="sb"></tbody></table></div></div>
+</section>
 
 <section class="pg" id="p-lab"><div class="card"><h3>Barcode label printing</h3>
  <div class="row"><div><label>Label size</label><select id="lSize"><option value="50x25">50 × 25 mm roll</option><option value="38x25">38 × 25 mm roll</option><option value="40x30">40 × 30 mm roll</option><option value="58x40">58 × 40 mm roll</option><option value="a4">A4 sheet (48 × 28 mm labels)</option></select></div>
@@ -128,7 +132,7 @@ const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 /* tabs */
 const TABS=[['bill','Billing'],['inv','Products'],['cust','Customers'],['sales','Sales'],['lab','Labels'],['set','Settings']];
 $('nav').innerHTML=TABS.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join('');
-function tab(t){document.querySelectorAll('.pg').forEach(p=>p.classList.toggle('on',p.id==='p-'+t));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));if(t==='set')fillSet();if(t==='bill')setTimeout(()=>$('q').focus(),50)}
+function tab(t){document.querySelectorAll('.pg').forEach(p=>p.classList.toggle('on',p.id==='p-'+t));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));if(t==='set')fillSet();if(t==='sales')refreshSales();if(t==='bill')setTimeout(()=>$('q').focus(),50)}
 $('nav').onclick=e=>{const t=e.target.dataset.t;if(t)tab(t)};tab('bill');
 setInterval(()=>$('clock').textContent=new Date().toLocaleString('en-IN',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),1000);
 
@@ -186,21 +190,21 @@ async function readProducts(){
 async function readCustomers(){
  const rows=await getV('Customers!A2:G');
  return rows.map((r,i)=>({row:i+2,phone:digitsOf(r[0]),name:String(r[1]||''),visits:numV(r[2]),spent:numV(r[3]),balance:numV(r[4]),last:numV(r[5]),points:numV(r[6])})).filter(c=>c.phone)}
-function billFromRow(r){let items=[];try{items=JSON.parse(r[15]||'[]')}catch(e){}const inv=String(r[0]||'');return{id:inv,inv,no:numV(r[1]),ts:numV(r[3]),cashier:String(r[4]||''),cust:String(r[5]||''),phone:digitsOf(r[6]),mode:String(r[7]||''),sub:numV(r[8]),disc:numV(r[9]),tax:numV(r[10]),ro:numV(r[11]),total:numV(r[12]),paid:numV(r[13]),due:numV(r[14]),items,redeem:numV(r[16]),earned:numV(r[17])}}
+function billFromRow(r){let items=[];try{items=JSON.parse(r[15]||'[]')}catch(e){}const inv=String(r[0]||'');return{id:inv,inv,no:numV(r[1]),ts:numV(r[3]),cashier:String(r[4]||''),cust:String(r[5]||''),phone:digitsOf(r[6]),mode:String(r[7]||''),sub:numV(r[8]),disc:numV(r[9]),tax:numV(r[10]),ro:numV(r[11]),total:numV(r[12]),paid:numV(r[13]),due:numV(r[14]),items,redeem:numV(r[16]),earned:numV(r[17]),exchange:numV(r[18])}}
 async function billWindow(){
  const len=(await getV('Bills!A:A')).length;
  if(len<2)return{rows:[]};
  const start=Math.max(2,len-BILLS_WINDOW+1);
- return{rows:await getV(`Bills!A${start}:R${len}`)}}
+ return{rows:await getV(`Bills!A${start}:S${len}`)}}
 function nextNoOf(rows){let max=0;rows.forEach(r=>{const n=numV(r[1]);if(n>max)max=n});return max+1}
 async function findBillN(n){
  const inv='CMW-'+String(n).padStart(5,'0');
  const colA=await getV('Bills!A:A');
  const idx=(n<colA.length&&String((colA[n]||[])[0]||'')===inv)?n:colA.findIndex(r=>String((r||[])[0]||'')===inv);
  if(idx<0)return null;
- const row=(await getV(`Bills!A${idx+1}:R${idx+1}`))[0]||[];
+ const row=(await getV(`Bills!A${idx+1}:S${idx+1}`))[0]||[];
  return billFromRow(row)}
-async function ensurePointsHeader(){const h=await getV('Customers!G1:G1');if(!(h[0]&&String(h[0][0]||'').trim()))await putV('Customers!G1',[['Points']]);const b=await getV('Bills!Q1:R1');if(!(b[0]&&String(b[0][0]||'').trim()))await putV('Bills!Q1',[['Points Redeemed','Points Earned']])}
+async function ensurePointsHeader(){const h=await getV('Customers!G1:G1');if(!(h[0]&&String(h[0][0]||'').trim()))await putV('Customers!G1',[['Points']]);const b=await getV('Bills!Q1:R1');if(!(b[0]&&String(b[0][0]||'').trim()))await putV('Bills!Q1',[['Points Redeemed','Points Earned']]);const e=await getV('Bills!S1:S1');if(!(e[0]&&String(e[0][0]||'').trim()))await putV('Bills!S1',[['Exchange Amount']])}
 async function getData(){
  const cfgRaw={};(await getV('Settings!A2:B')).forEach(r=>{if(r[0])cfgRaw[String(r[0]).trim()]=r[1]});
  await ensurePointsHeader();
@@ -212,40 +216,114 @@ async function getData(){
   nextNo:nextNoOf(w.rows),
   cfg:{name:String(cfgRaw.name||'Choppers Mens Wear'),addr:String(cfgRaw.addr||''),phone:String(cfgRaw.phone||'').replace(/^'/,''),gst:String(cfgRaw.gst||'').replace(/^'/,''),paper:numV(cfgRaw.paper)||80,note:String(cfgRaw.note||'')}}}
 async function findBill(no){const n=Math.round(+no);if(!n||n<1)return null;return findBillN(n)}
-function saveBill(b){return serial(async()=>{
+const r2=x=>Math.round(x*100)/100;
+const fmtDate=ts=>new Date(ts).toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const paidOf=(mode,paidIn,grand)=>mode==='Credit'?Math.min(Math.max(+paidIn||0,0),grand):grand;
+function checkRedeem(want,avail,room){if(want>avail)throw new Error('Only '+Math.max(0,avail)+' points available');if(want>room+0.005)throw new Error('Points redeemed are more than the bill total')}
+function checkExchange(ex,room){if(ex>room+0.005)throw new Error('Exchange amount is more than the bill total')}
+async function priceBill(b){
  if(!b||!b.items||!b.items.length)throw new Error('Bill is empty');
  const byId={};(await readProducts()).forEach(p=>{byId[p.sku]=p});
  let sub=0;
  const lines=b.items.map(it=>{const p=byId[String(it.sku)];if(!p)throw new Error('Item not found in the sheet: '+it.sku);const qty=Math.max(1,Math.round(+it.qty||0));const disc=Math.min(100,Math.max(0,+it.disc||0));const net=p.price*qty*(1-disc/100);sub+=net;return{p,qty,disc,net}});
  let d0=b.discType==='%'?sub*(+b.discVal||0)/100:(+b.discVal||0);
  d0=Math.min(Math.max(d0,0),sub);
+ return{lines,sub,d0}}
+function totalsOf(priced,rd,ex){
+ const d=priced.d0+rd+ex;const f=priced.sub?(priced.sub-d)/priced.sub:0;let tax=0;
+ priced.lines.forEach(l=>{l.fin=l.net*f;l.tax=l.fin-l.fin/(1+(l.p.tax||0)/100);tax+=l.tax});
+ const total=priced.sub-d,grand=Math.round(total);
+ return{tax,total,grand,ro:grand-total}}
+const itemsOf=priced=>priced.lines.map(l=>({sku:l.p.sku,name:l.p.name,size:l.p.size,qty:l.qty,price:l.p.price,disc:l.disc,amt:r2(l.fin),gst:l.p.tax||0}));
+function billRow(o){return[o.inv,o.no,o.date,o.ts,o.cashier,o.name,o.phone?"'"+o.phone:'',o.mode,r2(o.priced.sub),r2(o.priced.d0),r2(o.t.tax),r2(o.t.ro),o.t.grand,r2(o.paid),r2(o.due),JSON.stringify(o.items),o.want,o.earned,r2(o.exch||0)]}
+function billObj(o){return{id:o.inv,inv:o.inv,no:o.no,ts:o.ts,cashier:o.cashier,cust:o.name,phone:o.phone,mode:o.mode,paid:o.paid,due:o.due,sub:r2(o.priced.sub),disc:r2(o.priced.d0),redeem:o.want,exchange:r2(o.exch||0),tax:r2(o.t.tax),ro:r2(o.t.ro),total:o.t.grand,items:o.items,earned:o.earned}}
+const writeCust=(row,c)=>putV(`Customers!A${row}:G${row}`,[["'"+c.phone,c.name,c.visits,c.spent,c.balance,c.last,c.points]]);
+async function findBillRow(inv){
+ const n=parseInt(String(inv).replace(/\D/g,''),10);
+ if(!n)return null;
+ const colA=await getV('Bills!A:A');
+ const idx=(n<colA.length&&String((colA[n]||[])[0]||'')===inv)?n:colA.findIndex(r=>String((r||[])[0]||'')===inv);
+ if(idx<0)return null;
+ const row=idx+1;
+ return{row,values:(await getV(`Bills!A${row}:S${row}`))[0]||[]}}
+function addCustomer(phone,name){return serial(async()=>{
+ const p=digitsOf(phone);const n=String(name||'').trim();
+ if(p.length!==10)throw new Error('Mobile number must be 10 digits');
+ if(!n)throw new Error('Name is required');
+ const f=(await readCustomers()).find(x=>x.phone===p);
+ if(f)return{id:f.phone,phone:f.phone,name:f.name,visits:f.visits,spent:f.spent,balance:f.balance,last:f.last,points:f.points,existed:true};
+ const ts=Date.now();await addV('Customers!A1',[["'"+p,n,0,0,0,ts,0]]);
+ return{id:p,phone:p,name:n,visits:0,spent:0,balance:0,last:ts,points:0,existed:false};
+})}
+function saveBill(b){return serial(async()=>{
+ const priced=await priceBill(b);
  const mode=String(b.mode||'Cash');const phone=digitsOf(b.phone);
  if(mode==='Credit'&&!phone)throw new Error('Mobile number needed for credit bills');
  const cust=phone?((await readCustomers()).find(x=>x.phone===phone)||null):null;
  const want=Math.max(0,Math.floor(+b.redeem||0));
- if(want>0){
-  if(!cust)throw new Error('Select a customer to redeem points');
-  if(want>cust.points)throw new Error('Only '+cust.points+' points available');
-  if(want>sub-d0)throw new Error('Points redeemed are more than the bill total');
- }
- const rd=want;const d=d0+rd;
- const f=sub?(sub-d)/sub:0;let tax=0;
- lines.forEach(l=>{l.fin=l.net*f;l.tax=l.fin-l.fin/(1+(l.p.tax||0)/100);tax+=l.tax});
- const total=sub-d,grand=Math.round(total),ro=grand-total;
- const r2=x=>Math.round(x*100)/100;
- const paid=mode==='Credit'?Math.min(Math.max(+b.paidIn||0,0),grand):grand;
- const due=grand-paid;const name=String(b.cust||'').trim();const cashier=String(b.cashier||'');const ts=Date.now();
- const earned=phone?Math.floor(grand/10):0;
+ if(want>0&&!cust)throw new Error('Select a customer to redeem points');
+ checkRedeem(want,cust?cust.points:0,priced.sub-priced.d0);
+ const ex=Math.max(0,+b.exchange||0);checkExchange(ex,priced.sub-priced.d0-want);
+ const t=totalsOf(priced,want,ex);
+ const paid=paidOf(mode,b.paidIn,t.grand);const due=t.grand-paid;
+ const name=String(b.cust||'').trim();const cashier=String(b.cashier||'');const ts=Date.now();
+ const earned=phone?Math.floor(t.grand/10):0;
  const w=await billWindow();const no=nextNoOf(w.rows);const inv='CMW-'+String(no).padStart(5,'0');
- const items=lines.map(l=>({sku:l.p.sku,name:l.p.name,size:l.p.size,qty:l.qty,price:l.p.price,disc:l.disc,amt:r2(l.fin),gst:l.p.tax||0}));
- await addV('Bills!A1',[[inv,no,new Date(ts).toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),ts,cashier,name,phone?"'"+phone:'',mode,r2(sub),r2(d0),r2(tax),r2(ro),grand,r2(paid),r2(due),JSON.stringify(items),rd,earned]]);
+ const items=itemsOf(priced);
+ await addV('Bills!A1',[billRow({inv,no,date:fmtDate(ts),ts,cashier,name,phone,mode,priced,t,paid,due,items,want,earned,exch:ex})]);
  let customer=null;
  if(phone){
-  if(cust){customer={id:phone,phone,name:name||cust.name,visits:cust.visits+1,spent:cust.spent+grand,balance:cust.balance+due,last:ts,points:cust.points-rd+earned};
-   await putV(`Customers!A${cust.row}:G${cust.row}`,[["'"+phone,customer.name,customer.visits,customer.spent,customer.balance,ts,customer.points]])}
-  else{customer={id:phone,phone,name,visits:1,spent:grand,balance:due,last:ts,points:earned};await addV('Customers!A1',[["'"+phone,name,1,grand,due,ts,earned]])}}
- return{pointsEarned:earned,bill:{id:inv,inv,no,ts,cashier,cust:name,phone,mode,paid,due,sub:r2(sub),disc:r2(d0),redeem:rd,tax:r2(tax),ro:r2(ro),total:grand,items,earned},customer};
+  if(cust){customer={id:phone,phone,name:name||cust.name,visits:cust.visits+1,spent:cust.spent+t.grand,balance:cust.balance+due,last:ts,points:cust.points-want+earned};await writeCust(cust.row,customer)}
+  else{customer={id:phone,phone,name,visits:1,spent:t.grand,balance:due,last:ts,points:earned};await addV('Customers!A1',[["'"+phone,name,1,t.grand,due,ts,earned]])}
+ }
+ return{pointsEarned:earned,bill:billObj({inv,no,ts,cashier,name,phone,mode,paid,due,priced,t,items,want,earned,exch:ex}),customer,customers:customer?[customer]:[]};
 })}
+function updateBill(inv,b){return serial(async()=>{
+ const found=await findBillRow(String(inv));
+ if(!found)throw new Error('Invoice '+inv+' not found');
+ const old=billFromRow(found.values);
+ const priced=await priceBill(b);
+ const mode=String(b.mode||'Cash');const phone=digitsOf(b.phone);
+ if(mode==='Credit'&&!phone)throw new Error('Mobile number needed for credit bills');
+ const custs=await readCustomers();
+ const same=!!phone&&phone===old.phone;
+ const oldCust=old.phone?(custs.find(x=>x.phone===old.phone)||null):null;
+ const newCust=phone?(custs.find(x=>x.phone===phone)||null):null;
+ const oldAfter=oldCust?oldCust.points+old.redeem-old.earned:0;
+ if(oldCust&&oldAfter<0)throw new Error('This bill cannot be changed: the customer has already used points earned on it');
+ const want=Math.max(0,Math.floor(+b.redeem||0));
+ if(want>0&&!phone)throw new Error('Select a customer to redeem points');
+ checkRedeem(want,same?oldAfter:(newCust?newCust.points:0),priced.sub-priced.d0);
+ const ex=Math.max(0,+b.exchange||0);checkExchange(ex,priced.sub-priced.d0-want);
+ const t=totalsOf(priced,want,ex);
+ const paid=paidOf(mode,b.paidIn,t.grand);const due=t.grand-paid;
+ const name=String(b.cust||'').trim();const earned=phone?Math.floor(t.grand/10):0;const items=itemsOf(priced);
+ await putV(`Bills!A${found.row}:S${found.row}`,[billRow({inv:old.inv,no:old.no,date:found.values[2],ts:old.ts,cashier:old.cashier,name,phone,mode,priced,t,paid,due,items,want,earned,exch:ex})]);
+ const customers=[];
+ if(oldCust&&!same){const oc={id:oldCust.phone,phone:oldCust.phone,name:oldCust.name,visits:Math.max(0,oldCust.visits-1),spent:oldCust.spent-old.total,balance:oldCust.balance-old.due,last:oldCust.last,points:oldAfter};await writeCust(oldCust.row,oc);customers.push(oc)}
+ let customer=null;
+ if(phone&&newCust){
+  customer=same
+   ?{id:phone,phone,name:name||newCust.name,visits:newCust.visits,spent:newCust.spent-old.total+t.grand,balance:newCust.balance-old.due+due,last:old.ts,points:oldAfter-want+earned}
+   :{id:phone,phone,name:name||newCust.name,visits:newCust.visits+1,spent:newCust.spent+t.grand,balance:newCust.balance+due,last:old.ts,points:newCust.points-want+earned};
+  await writeCust(newCust.row,customer);customers.push(customer)}
+ else if(phone){customer={id:phone,phone,name,visits:1,spent:t.grand,balance:due,last:old.ts,points:earned};await addV('Customers!A1',[["'"+phone,name,1,t.grand,due,old.ts,earned]]);customers.push(customer)}
+ return{pointsEarned:earned,bill:billObj({inv:old.inv,no:old.no,ts:old.ts,cashier:old.cashier,name,phone,mode,paid,due,priced,t,items,want,earned,exch:ex}),customer,customers};
+})}
+async function searchBills(opts){
+ const q=String((opts&&opts.q)||'').trim();const from=+((opts&&opts.from)||0)||0;
+ const numeric=/^\d+$/.test(q);const invLike=/^cmw-?\d*$/i.test(q);
+ const qNo=parseInt(q.replace(/\D/g,''),10)||0;const qd=digitsOf(q);
+ const nameQ=q.replace(/\d/g,'').trim().toLowerCase();
+ const out={count:0,total:0,redeemed:0,earned:0,byMode:{},bills:[]};
+ const rows=await getV('Bills!A2:S');
+ rows.map(r=>billFromRow(r)).forEach(b=>{
+  if(!b.inv||b.ts<from)return;
+  if(q){const hit=(qNo&&(numeric||invLike)&&b.no===qNo)||(invLike&&q.length>3&&b.inv.toLowerCase().indexOf(q.toLowerCase())>=0)||(!invLike&&nameQ.length>=2&&b.cust.toLowerCase().indexOf(nameQ)>=0)||(numeric&&qd.length>=3&&b.phone.indexOf(qd)>=0);if(!hit)return}
+  out.count++;out.total+=b.total;out.redeemed+=b.redeem||0;out.earned+=b.earned||0;out.byMode[b.mode]=(out.byMode[b.mode]||0)+b.total;out.bills.push(b)});
+ out.total=r2(out.total);Object.keys(out.byMode).forEach(k=>{out.byMode[k]=r2(out.byMode[k])});
+ out.bills.sort((a,b)=>b.ts-a.ts);out.bills=out.bills.slice(0,200);
+ return out}
 function saveProduct(p,origSku){return serial(async()=>{
  const sku=String(p.sku||'').trim(),name=String(p.name||'').trim();
  if(!sku||!name)throw new Error('SKU and name are required');
@@ -271,7 +349,7 @@ function saveSettings(d){return serial(async()=>{
   if(idx>=0)await putV(`Settings!B${idx+2}`,[[v]]);else await addV('Settings!A1',[[k,v]]);
  }
  return true})}
-const SERVER={getData,findBill,saveBill,saveProduct,deleteProduct,receivePayment,saveSettings};
+const SERVER={getData,findBill,saveBill,updateBill,addCustomer,searchBills,saveProduct,deleteProduct,receivePayment,saveSettings};
 
 const rpc=(fn,...a)=>(TOK&&TOK.exp>Date.now())?SERVER[fn](...a):getToken(true).then(()=>SERVER[fn](...a));
 async function load(){
@@ -305,27 +383,33 @@ function search(){
  const q=$('q').value.trim().toLowerCase();if(!q){$('res').innerHTML='';return[]}
  const r=S.products.filter(p=>[p.sku,p.name,p.size,p.cat].join(' ').toLowerCase().includes(q)).slice(0,8);
  $('res').innerHTML=r.map(p=>`<div class="res" data-id="${p.id}"><div><b>${esc(p.name)}</b> ${p.size?'· '+esc(p.size):''}<div class="mu">${esc(p.sku)} · ${esc(p.cat||'')}</div></div><div style="text-align:right"><b>${fm(p.price)}</b></div></div>`).join('')||'<div class="mu" style="padding:8px">No matching item</div>';return r}
-$('q').oninput=search;
-$('q').onkeydown=e=>{if(e.key!=='Enter')return;const q=e.target.value.trim().toLowerCase();const ex=S.products.find(p=>String(p.sku).toLowerCase()===q);const r=ex?[ex]:search();if(r.length===1){addItem(r[0]);e.target.value='';$('res').innerHTML=''}else if(!r.length)toast('Item not found')};
+let scanT=null;
+// Exact match: a barcode (SKU) first, then a name that only one product has.
+function exactHit(q){const t=q.trim().toLowerCase();if(!t)return null;const bySku=S.products.find(p=>String(p.sku).toLowerCase()===t);if(bySku)return bySku;const byName=S.products.filter(p=>String(p.name).trim().toLowerCase()===t);return byName.length===1?byName[0]:null}
+// A pause adds the item only if no other product starts with the same text, so SHIRT1 does not add while SHIRT10 is being typed.
+function unambiguous(q,hit){const t=q.trim().toLowerCase();return !S.products.some(p=>p!==hit&&(String(p.sku).toLowerCase().startsWith(t)||String(p.name).trim().toLowerCase().startsWith(t)))}
+function addScanned(hit){addItem(hit);$('q').value='';$('res').innerHTML='';toast('Added '+hit.name+(hit.size?' · '+hit.size:''));$('q').focus()}
+$('q').oninput=()=>{search();clearTimeout(scanT);const q=$('q').value.trim();if(!q)return;scanT=setTimeout(()=>{if($('q').value.trim()!==q)return;const hit=exactHit(q);if(hit&&unambiguous(q,hit))addScanned(hit)},180)};
+$('q').onkeydown=e=>{if(e.key!=='Enter')return;e.preventDefault();clearTimeout(scanT);const q=$('q').value.trim();if(!q)return;const hit=exactHit(q);if(hit){addScanned(hit);return}const r=search();if(!r.length)toast('Item not found: '+q)};
 $('res').onclick=e=>{const d=e.target.closest('.res');if(d){const p=prod(d.dataset.id);if(p){addItem(p);$('q').value='';$('res').innerHTML='';$('q').focus()}}};
 function calc(){
  const ls=S.cart.map(i=>{const p=prod(i.id)||{};const net=p.price*i.qty*(1-(i.disc||0)/100);return{...i,p,net}}).filter(l=>l.p.sku!==undefined);
  const sub=ls.reduce((a,l)=>a+l.net,0);
  let v=+$('bd').value||0;let bd=$('bdT').value==='%'?sub*v/100:v;bd=Math.min(Math.max(bd,0),sub);
- // points: 1 point = ₹1, only for a selected customer, never more than they have or the bill allows
- const pc=$('cPhone').value,cu=pc?S.customers.find(x=>x.id===pc):null;
+ const pc=$('cPhone').value;
  const want=Math.max(0,Math.floor(+$('pRedeem').value||0));
- const rd=cu?Math.min(want,cu.points||0,Math.max(0,sub-bd)):0;
- const d=bd+rd;
+ const rd=pc?Math.min(want,availPts(pc),Math.max(0,sub-bd)):0;
+ const ex=Math.min(Math.max(0,+$('exAmt').value||0),Math.max(0,sub-bd-rd));
+ const d=bd+rd+ex;
  const f=sub?(sub-d)/sub:0;let tax=0;
  ls.forEach(l=>{l.fin=l.net*f;l.tax=l.fin-l.fin/(1+(l.p.tax||0)/100);tax+=l.tax});
  const total=sub-d,grand=Math.round(total);
- return{ls,sub,d:bd,rd,tax,total,grand,ro:grand-total}}
+ return{ls,sub,d:bd,rd,ex,tax,total,grand,ro:grand-total}}
 function rCart(){
  const c=calc();
  $('cart').innerHTML=c.ls.map(l=>`<div class="ci"><div><b>${esc(l.p.name)}</b> ${l.p.size?'· '+esc(l.p.size):''}<div class="mu">${fm(l.p.price)} · GST ${l.p.tax||0}%</div></div><div style="text-align:right"><b>${fm(l.net)}</b></div>
  <div class="qty"><button data-a="m" data-id="${l.id}">−</button><b>${l.qty}</b><button data-a="p" data-id="${l.id}">+</button><span class="mu">Disc %</span><input type="number" min="0" max="100" value="${l.disc||0}" data-a="d" data-id="${l.id}"></div><div style="text-align:right"><button class="btn g s" data-a="x" data-id="${l.id}">Remove</button></div></div>`).join('')||'<div class="mu">Your bill is empty. Scan a barcode or search for an item above.</div>';
- $('tots').innerHTML=`<div class="tot"><span>Subtotal</span><span>${fm(c.sub)}</span></div>`+(c.d?`<div class="tot"><span>Discount</span><span>−${fm(c.d)}</span></div>`:'')+`<div class="tot mu"><span>GST included</span><span>${fm(c.tax)}</span></div>`+(c.ro?`<div class="tot mu"><span>Round off</span><span>${c.ro>0?'+':''}${c.ro.toFixed(2)}</span></div>`:'')+(c.rd?`<div class="tot"><span>Points redeemed</span><span>−${fm(c.rd)}</span></div>`:'')+`<div class="tot gt"><span>Total</span><span>${fm(c.grand)}</span></div>`+pointsLine(c.grand);redeemHint(c)}
+ $('tots').innerHTML=`<div class="tot"><span>Subtotal</span><span>${fm(c.sub)}</span></div>`+(c.d?`<div class="tot"><span>Discount</span><span>−${fm(c.d)}</span></div>`:'')+`<div class="tot mu"><span>GST included</span><span>${fm(c.tax)}</span></div>`+(c.ro?`<div class="tot mu"><span>Round off</span><span>${c.ro>0?'+':''}${c.ro.toFixed(2)}</span></div>`:'')+(c.ex?`<div class="tot"><span>Exchange</span><span>−${fm(c.ex)}</span></div>`:'')+(c.rd?`<div class="tot"><span>Points redeemed</span><span>−${fm(c.rd)}</span></div>`:'')+`<div class="tot gt"><span>Total</span><span>${fm(c.grand)}</span></div>`+pointsLine(c.grand);redeemHint(c)}
 $('cart').onclick=e=>{const a=e.target.dataset.a,i=S.cart.find(x=>x.id===e.target.dataset.id);if(!i)return;
  if(a==='p')i.qty++;
  if(a==='m'){i.qty--;if(i.qty<1)S.cart=S.cart.filter(x=>x!==i)}
@@ -334,17 +418,26 @@ $('cart').onchange=e=>{if(e.target.dataset.a==='d'){const i=S.cart.find(x=>x.id=
 ['bd','bdT'].forEach(i=>$(i).oninput=rCart);
 $('pay').onchange=()=>$('paidRow').style.display=$('pay').value==='Credit'?'flex':'none';
 $('paySeg').onclick=e=>{const v=e.target.dataset.v;if(!v)return;$('pay').value=v;$('pay').onchange();[...$('paySeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v))};
-$('clr').onclick=()=>{S.cart=[];$('bd').value=0;$('pRedeem').value=0;rCart()};
+$('clr').onclick=()=>{S.cart=[];$('bd').value=0;$('pRedeem').value=0;$('exAmt').value=0;rCart()};
 /* one search box for customers: type a name or a mobile number */
 function pointsLine(grand){const p=$('cPhone').value;if(!p)return'';const cu=S.customers.find(x=>x.id===p);const earn=Math.floor(grand/10);return earn?`<div class="tot mu"><span>${cu?'Points now '+(cu.points||0):'New customer'}</span><span>+${earn} points</span></div>`:''}
+// Points the customer can use now. When editing a bill, that bill's own points are put back first.
+function availPts(pc){
+ const cu=pc?S.customers.find(x=>x.id===pc):null;
+ if(!cu)return 0;
+ const e=S.editBill;
+ const back=e&&e.phone===pc?(e.redeem||0)-(e.earned||0):0;
+ return Math.max(0,(cu.points||0)+back)}
 function redeemHint(c){
  const pc=$('cPhone').value,cu=pc?S.customers.find(x=>x.id===pc):null;
  const req=Math.floor(+$('pRedeem').value||0);
+ const av=availPts(pc);
  $('pAvail').innerHTML=!cu?(req?'<span style="color:var(--bad)">Select a saved customer to redeem points</span>':''):
-  `Available: ${cu.points||0} points (₹${cu.points||0})`+(req>c.rd?` · <span style="color:var(--bad)">only ${c.rd} can be used</span>`:'');
+  `Available: ${av} points (₹${av})`+(req>c.rd?` · <span style="color:var(--bad)">only ${c.rd} can be used</span>`:'');
 }
 function setCust(phone,name){$('cPhone').value=phone||'';$('cName').value=name||'';renderCust();rCart()}
 $('pRedeem').oninput=()=>rCart();
+$('exAmt').oninput=()=>rCart();
 function renderCust(){
  const phone=$('cPhone').value,name=$('cName').value;
  const chosen=!!(phone||name);
@@ -366,65 +459,106 @@ function custHits(){
   +(exact?'':`<div class="res" data-new="1"><div><b>+ Add new customer</b><div class="mu">${esc(cap(words))}${digits?' · '+esc(digits):''}</div></div></div>`);
  $('cRes')._hits=hits;return hits}
 function pickHit(c){setCust(c.id,c.name||'');$('cSearch').value='';$('cRes').innerHTML=''}
-function pickNew(){const raw=$('cSearch').value.trim();setCust(raw.replace(/\D/g,''),raw.replace(/\d/g,'').trim().replace(/\b\w/g,ch=>ch.toUpperCase()));$('cSearch').value='';$('cRes').innerHTML=''}
+function pickNew(){const raw=$('cSearch').value.trim();const digits=raw.replace(/\D/g,'');const words=raw.replace(/\d/g,'').trim().replace(/\b\w/g,ch=>ch.toUpperCase());$('cSearch').value='';$('cRes').innerHTML='';openNewCustomer(digits,words)}
 $('cSearch').oninput=custHits;
 $('cSearch').onkeydown=e=>{if(e.key!=='Enter')return;e.preventDefault();const hits=custHits();if(hits.length===1)pickHit(hits[0]);else if(!hits.length&&$('cSearch').value.trim())pickNew()};
 $('cRes').onclick=e=>{const r=e.target.closest&&e.target.closest('.res');if(!r)return;if(r.dataset.new)pickNew();else pickHit($('cRes')._hits[+r.dataset.i])};
 renderCust();
 
-let lastSale=null;
-function applySale(res){
- S.bills=[res.bill].concat(S.bills).slice(0,300);
- S.nextNo=res.bill.no+1;
- if(res.customer){const k=S.customers.findIndex(x=>x.id===res.customer.id);if(k>=0)S.customers[k]=res.customer;else S.customers.push(res.customer)}
- R()}
-$('go').onclick=async()=>{
- const c=calc();if(!c.ls.length)return toast('Bill is empty');
- const req=Math.floor(+$('pRedeem').value||0);if(req>c.rd)return toast(c.rd?'Only '+c.rd+' points can be used on this bill':'Select a saved customer to redeem points');
- const mode=$('pay').value,phone=$('cPhone').value.replace(/\D/g,''),name=$('cName').value.trim();
- if(mode==='Credit'&&!phone)return toast('Mobile number needed for credit bills');
- const cashier=S.cashier||'',paidIn=+$('paid').value||0,discVal=+$('bd').value||0,discType=$('bdT').value;
- const paid=mode==='Credit'?Math.min(Math.max(paidIn,0),c.grand):c.grand;
- // The receipt opens at once. The real invoice number arrives when the sheet confirms the sale.
- const prov={inv:'Saving…',no:0,ts:Date.now(),cashier,cust:name,phone,mode,paid,due:c.grand-paid,sub:c.sub,disc:c.d,redeem:c.rd,tax:c.tax,ro:c.ro,total:c.grand,
-  items:c.ls.map(l=>({sku:l.p.sku,name:l.p.name,size:l.p.size||'',qty:l.qty,price:l.p.price,disc:l.disc||0,amt:l.fin,gst:l.p.tax||0}))};
- const snap={cart:S.cart.map(x=>({...x})),bd:$('bd').value,bdT:discType,cPhone:$('cPhone').value,cName:$('cName').value,paid:$('paid').value,pr:$('pRedeem').value};
- const token={};lastSale=token;
- S.cart=[];$('bd').value=0;setCust('','');$('paid').value=0;$('pRedeem').value=0;rCart();
- showReceipt(prov,false);$('mp').disabled=true;$('mh').disabled=true;
- busy=true;
- try{
-  const res=await rpc('saveBill',{cashier,cust:name,phone,mode,discVal,discType,paidIn,redeem:c.rd,items:c.ls.map(l=>({sku:l.p.sku,qty:l.qty,disc:l.disc||0}))});
-  applySale(res);
-  if(lastSale===token&&$('modal').classList.contains('on'))showReceipt(res.bill,true);
- }catch(e){
-  if(lastSale===token)$('modal').classList.remove('on');
-  if(!S.cart.length){S.cart=snap.cart;$('bd').value=snap.bd;$('bdT').value=snap.bdT;setCust(snap.cPhone,snap.cName);$('paid').value=snap.paid;$('pRedeem').value=snap.pr;rCart();toast('Sale not saved, bill restored: '+e.message)}
-  else toast('Sale not saved: '+e.message+'. Re-enter that bill.')
- }
- busy=false};
-
-/* invoice lookup and new bill */
+/* invoice lookup, edit and save */
 $('fGo').onclick=findInvoice;
 $('fInv').onkeydown=e=>{if(e.key==='Enter')findInvoice()};
 $('fNew').onclick=newBill;
-function refreshInvNo(){$('invNo').textContent='CMW-'+String(S.nextNo||1).padStart(5,'0')}
-function newBill(){$('invView').style.display='none';$('invView').innerHTML='';$('billGrid').style.display='';$('fInv').value='';refreshInvNo();setTimeout(()=>$('q').focus(),50)}
+function refreshInvNo(){
+ const e=S.editBill;
+ $('invNo').textContent=e?e.inv:'CMW-'+String(S.nextNo||1).padStart(5,'0');
+ $('invLabel').textContent=e?'Editing invoice':'Invoice (new bill)';
+ $('gs').textContent=e?'Update':'Save';
+ $('go').textContent=e?'Update & print':'Save & print';
+}
+function setPay(v){$('pay').value=v;$('pay').onchange();[...$('paySeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
+function setBusy(on){busy=on;$('go').disabled=on;$('gs').disabled=on}
+function clearForm(){S.editBill=null;S.cart=[];$('bd').value=0;$('bdT').value='%';$('pRedeem').value=0;$('exAmt').value=0;setPay('Cash');$('paid').value=0;$('fInv').value='';setCust('','');refreshInvNo();rCart()}
+function newBill(){
+ const wasEdit=!!S.editBill;
+ $('fInv').value='';
+ if(wasEdit)clearForm();else refreshInvNo();
+ $('billGrid').style.display='';$('invView').style.display='none';
+ setTimeout(()=>$('q').focus(),50)}
+function applyResult(res,wasEdit){
+ const b=res.bill;
+ const k=S.bills.findIndex(x=>x.inv===b.inv);
+ S.bills=k>=0?S.bills.map((x,i)=>i===k?b:x):[b].concat(S.bills).slice(0,300);
+ (res.customers||[]).forEach(cu=>{const i=S.customers.findIndex(x=>x.id===cu.id);if(i>=0)S.customers[i]=cu;else S.customers.push(cu)});
+ if(!wasEdit)S.nextNo=b.no+1;
+ R()}
+async function submit(printIt){
+ const c=calc();if(!c.ls.length)return toast('Bill is empty');
+ const mode=$('pay').value,phone=$('cPhone').value.replace(/\D/g,''),name=$('cName').value.trim();
+ if(mode==='Credit'&&!phone)return toast('Mobile number needed for credit bills');
+ const req=Math.floor(+$('pRedeem').value||0);
+ if(req>c.rd)return toast(c.rd?'Only '+c.rd+' points can be used on this bill':'Select a saved customer to redeem points');
+ const exReq=Math.max(0,+$('exAmt').value||0);
+ if(exReq>c.ex)return toast('Exchange amount is more than the bill total');
+ const edit=S.editBill;
+ const payload={cashier:S.cashier||'',cust:name,phone,mode,discVal:+$('bd').value||0,discType:$('bdT').value,paidIn:+$('paid').value||0,redeem:c.rd,exchange:c.ex,items:c.ls.map(l=>({sku:l.p.sku,qty:l.qty,disc:l.disc||0}))};
+ setBusy(true);
+ try{
+  const res=edit?await rpc('updateBill',edit.inv,payload):await rpc('saveBill',payload);
+  applyResult(res,!!edit);
+  clearForm();
+  if(printIt)showReceipt(res.bill,true);
+  else toast((edit?'Updated ':'Saved ')+res.bill.inv);
+ }catch(e){toast((edit?'Not updated: ':'Not saved: ')+e.message)}
+ setBusy(false)}
+$('go').onclick=()=>submit(true);
+$('gs').onclick=()=>submit(false);
 async function findInvoice(){
  const m=$('fInv').value.match(/\d+/);
  if(!m)return toast('Type an invoice number, for example 12');
  const no='CMW-'+String(+m[0]).padStart(5,'0');
- try{const b=await rpc('findBill',+m[0]);if(!b)return toast('No invoice '+no);showInvoice(b)}catch(e){toast('Failed: '+e.message)}
+ try{const b=await rpc('findBill',+m[0]);if(!b)return toast('No invoice '+no);loadBill(b)}catch(e){toast('Failed: '+e.message)}
+}
+function loadBill(b){
+ const found=b.items.map(it=>({it,p:S.products.find(x=>x.sku===String(it.sku))}));
+ const missing=found.filter(x=>!x.p).map(x=>x.it.name);
+ S.editBill=b;
+ S.cart=found.filter(x=>x.p).map(x=>({id:x.p.id,qty:x.it.qty||1,disc:x.it.disc||0}));
+ $('billGrid').style.display='';$('invView').style.display='none';
+ setCust(b.phone||'',b.cust||'');
+ $('bdT').value='₹';$('bd').value=b.disc||0;
+ $('pRedeem').value=b.redeem||0;$('exAmt').value=b.exchange||0;
+ setPay(b.mode||'Cash');
+ $('paid').value=b.paid||0;
+ refreshInvNo();rCart();
+ window.scrollTo({top:0});
+ toast(missing.length?'Editing '+b.inv+'. Not in products now: '+missing.join(', '):'Editing '+b.inv);
 }
 function invoiceText(b){const r=receipt(b);return r.H.concat(r.L).join('\n')}
 function printInvoice(b){$('printArea').innerHTML=`<style>@page{margin:2mm;size:${S.cfg.paper}mm auto}</style><pre>${esc(invoiceText(b))}</pre>`;tryPrint()}
 function downloadInvoice(b){saveFile(b.inv+'.html','<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+b.inv+'</title><style>pre{font:12px/1.25 monospace;margin:0;white-space:pre}</style></head><body><pre>'+esc(invoiceText(b))+'</pre><script>onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>')}
-function showInvoice(b){
- $('invView').innerHTML=`<div class="card"><h3>Invoice ${esc(b.inv)}</h3><pre class="rc">${esc(invoiceText(b))}</pre><div class="row"><button class="btn" id="ivP">Print</button><button class="btn g" id="ivD">Download</button><button class="btn g" id="ivN">New bill</button></div></div>`;
- $('ivP').onclick=()=>printInvoice(b);$('ivD').onclick=()=>downloadInvoice(b);$('ivN').onclick=newBill;
- $('billGrid').style.display='none';$('invView').style.display='block';window.scrollTo({top:0});
-}
-
+/* new customer: ask for the mobile number and name */
+function openNewCustomer(phone0,name0){
+ $('mbox').innerHTML=`<h3>New customer</h3><div class="row"><div><label>Mobile number</label><input id="ncPhone" inputmode="numeric" placeholder="10-digit mobile number"></div></div><div class="row"><div><label>Name</label><input id="ncName" placeholder="Customer name"></div></div><div class="row"><button class="btn" id="ncSave">Save customer</button><button class="btn g" id="ncCancel">Cancel</button></div>`;
+ $('modal').classList.add('on');
+ $('ncPhone').value=phone0||'';$('ncName').value=name0||'';
+ $('ncCancel').onclick=()=>$('modal').classList.remove('on');
+ $('ncSave').onclick=saveNewCustomer;
+ setTimeout(()=>$('ncPhone').focus(),50)}
+async function saveNewCustomer(){
+ let phone=$('ncPhone').value.replace(/\D/g,'');if(phone.length===12&&phone.startsWith('91'))phone=phone.slice(2);
+ const name=$('ncName').value.trim().replace(/\s+/g,' ').replace(/\b\w/g,ch=>ch.toUpperCase());
+ if(phone.length!==10)return toast('Enter a 10-digit mobile number');
+ if(!name)return toast('Enter the customer name');
+ $('ncSave').disabled=true;
+ try{
+  const c=await rpc('addCustomer',phone,name);
+  const i=S.customers.findIndex(x=>x.id===c.id);if(i>=0)S.customers[i]=c;else S.customers.push(c);
+  $('modal').classList.remove('on');
+  setCust(c.id,c.name);
+  toast(c.existed?'This number is already saved as '+c.name:'Customer added');
+ }catch(e){toast('Not saved: '+e.message)}
+ $('ncSave').disabled=false}
 /* receipt */
 const WA_URL='https://chat.whatsapp.com/LShFrUz3iUHHZlZu4ASykm',WA_QR='data:image/png;base64,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';
 const WA_MSG=['** JOIN OUR WHATSAPP COMMUNITY **','Be the first to know about new collections, festive offers and exclusive deals.','Scan the QR code to join:'];
@@ -437,7 +571,7 @@ function receipt(b){
  L.push(hr,lr('Invoice',b.inv),lr('Date',new Date(b.ts).toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})));
  if(b.cashier)L.push(lr('Cashier',b.cashier));if(b.cust)L.push(lr('Customer',b.cust));if(b.phone)L.push(lr('Mobile',b.phone));
  L.push(hr);b.items.forEach(i=>{wr(i.name+(i.size?' ('+i.size+')':'')).forEach(x=>L.push(x));L.push(lr(`  ${i.qty} x ${(+i.price).toFixed(2)}`+(i.disc?` -${i.disc}%`:''),(+i.amt).toFixed(2)))});
- L.push(hr,lr('Subtotal',b.sub.toFixed(2)));if(b.disc)L.push(lr('Discount','-'+b.disc.toFixed(2)));if(b.redeem)L.push(lr('Points redeemed','-'+b.redeem.toFixed(2)));
+ L.push(hr,lr('Subtotal',b.sub.toFixed(2)));if(b.disc)L.push(lr('Discount','-'+b.disc.toFixed(2)));if(b.redeem)L.push(lr('Points redeemed','-'+b.redeem.toFixed(2)));if(b.exchange)L.push(lr('Exchange','-'+b.exchange.toFixed(2)));
  L.push(lr('GST incl.',b.tax.toFixed(2)));if(b.ro)L.push(lr('Round off',b.ro.toFixed(2)));
  L.push(hr,lr('TOTAL',b.total.toFixed(2)),hr,lr('Paid by '+b.mode,b.paid.toFixed(2)));if(b.due>0)L.push(lr('BALANCE DUE',b.due.toFixed(2)));
  L.push(hr);wr(S.cfg.note||'').forEach(x=>L.push(ce(x)));L.push(hr);WA_MSG.forEach(t=>wr(t).forEach(x=>L.push(ce(x))));return{H,L}}
@@ -493,11 +627,31 @@ $('cb').onclick=e=>{const tr=e.target.closest('tr[data-c]');if(!tr)return;const 
  if($('rb'))$('rb').onclick=async()=>{const a=Math.min(+$('rp').value||0,c.balance);if(a<=0)return;busy=true;try{await rpc('receivePayment',c.id,a);await load();toast('Received '+fm(a));$('modal').classList.remove('on')}catch(x){toast('Failed: '+x.message)}busy=false}};
 
 /* sales */
-function rSales(){
- const s0=new Date().setHours(0,0,0,0),td=S.bills.filter(b=>b.ts>=s0),sum=a=>a.reduce((x,b)=>x+b.total,0),by=m=>sum(td.filter(b=>b.mode===m));
- $('stat').innerHTML=`<div>Today’s sales<b>${fm(sum(td))}</b></div><div>Bills today<b>${td.length}</b></div><div>Cash<b>${fm(by('Cash'))}</b></div><div>UPI<b>${fm(by('UPI'))}</b></div><div>Card<b>${fm(by('Card'))}</b></div><div>Credit<b>${fm(by('Credit'))}</b></div>`;
- $('sb').innerHTML=S.bills.slice(0,100).map(b=>`<tr data-b="${b.id}" style="cursor:pointer"><td><b>${b.inv}</b></td><td>${dt(b.ts)}</td><td>${esc(b.cust||'Walk-in')}</td><td>${b.mode}</td><td>${fm(b.total)}</td></tr>`).join('')||'<tr><td colspan="5" class="mu">No bills yet.</td></tr>'}
-$('sb').onclick=e=>{const tr=e.target.closest('tr[data-b]');if(tr)showReceipt(S.bills.find(b=>b.id===tr.dataset.b))};
+/* sales tab: period dropdown and one search box, over every bill */
+const PERIOD_NAME={today:"Today's bills",week:'This week',month:'This month',year:'This year',all:'All bills'};
+const SALES={period:'today',q:'',rows:[],timer:null,seq:0};
+function periodStart(p){
+ const d=new Date();
+ if(p==='today')return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
+ if(p==='week'){const back=(d.getDay()+6)%7;return new Date(d.getFullYear(),d.getMonth(),d.getDate()-back).getTime()}
+ if(p==='month')return new Date(d.getFullYear(),d.getMonth(),1).getTime();
+ if(p==='year')return new Date(d.getFullYear(),0,1).getTime();
+ return 0}
+async function refreshSales(){
+ const seq=++SALES.seq;
+ try{
+  const res=await rpc('searchBills',{q:SALES.q,from:periodStart(SALES.period)});
+  if(seq!==SALES.seq)return;
+  SALES.rows=res.bills;
+  const m=res.byMode||{};
+  $('stat').innerHTML=`<div>Sales<b>${fm(res.total)}</b></div><div>Bills<b>${res.count}</b></div><div>Cash<b>${fm(m.Cash||0)}</b></div><div>UPI<b>${fm(m.UPI||0)}</b></div><div>Card<b>${fm(m.Card||0)}</b></div><div>Credit<b>${fm(m.Credit||0)}</b></div><div>Points used<b>${res.redeemed||0}</b></div><div>Points earned<b>${res.earned||0}</b></div>`;
+  $('sb').innerHTML=res.bills.map(b=>{const pts=[b.redeem?'−'+b.redeem+' used':'',b.earned?'+'+b.earned+' earned':''].filter(Boolean).join(' · ')||'—';return `<tr data-b="${esc(b.id)}" style="cursor:pointer"><td><b>${esc(b.inv)}</b></td><td>${dt(b.ts)}</td><td>${esc(b.cust||'Walk-in')}${b.phone?`<div class="mu">${esc(b.phone)}</div>`:''}</td><td>${esc(b.mode)}</td><td class="mu">${pts}</td><td>${fm(b.total)}</td></tr>`}).join('')||'<tr><td colspan="6" class="mu">No bills found.</td></tr>';
+  $('salesTitle').textContent=(SALES.q?'Search · ':'')+PERIOD_NAME[SALES.period]+(res.count>res.bills.length?` · newest ${res.bills.length} of ${res.count}`:'');
+ }catch(e){toast('Sales not loaded: '+e.message)}}
+function salesIfOpen(){if($('p-sales').classList.contains('on'))refreshSales()}
+$('perSel').onchange=()=>{SALES.period=$('perSel').value;refreshSales()};
+$('sq').oninput=()=>{SALES.q=$('sq').value.trim();clearTimeout(SALES.timer);SALES.timer=setTimeout(refreshSales,300)};
+$('sb').onclick=e=>{const tr=e.target.closest&&e.target.closest('tr[data-b]');if(!tr)return;const b=SALES.rows.find(x=>x.id===tr.dataset.b);if(b)showReceipt(b)};
 
 /* settings */
 const sm={sName:'name',sPhone:'phone',sAddr:'addr',sGst:'gst',sPaper:'paper',sNote:'note'};
@@ -538,6 +692,6 @@ const doLabels=dl=>{
  if(dl)return dlDoc();
  $('printArea').innerHTML=body;tryPrint()};
 $('lPrint').onclick=()=>doLabels(false);$('lDl').onclick=()=>doLabels(true);
-function R(){rInv();rCust();rSales();rCart();search();rLab();refreshInvNo()}
+function R(){rInv();rCust();salesIfOpen();rCart();search();rLab();refreshInvNo()}
 R();
 </script></body></html>
