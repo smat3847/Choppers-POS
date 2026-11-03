@@ -4,6 +4,7 @@
 <title>Choppers Mens Wear · POS (Google Sheets)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#fff;--card:#fff;--tx:#000;--mu:#666;--bd:#d8d8d8;--ac:#000;--on:#fff;--gold:#555;--ok:#000;--bad:#000;--warn:#000;--serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#000;--card:#000;--tx:#fff;--mu:#a3a3a3;--bd:#333;--ac:#fff;--on:#000;--gold:#bbb;--ok:#fff;--bad:#fff;--warn:#fff}}
@@ -50,7 +51,86 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
 .lbl{background:#fff;color:#000;border:1px dashed #999;display:flex;flex-direction:column;justify-content:space-between;padding:1.2mm 1.5mm;overflow:hidden;font-family:Arial,Helvetica,sans-serif;line-height:1.1;break-inside:avoid}
 .lbl .h{display:flex;justify-content:space-between;align-items:center;gap:1mm;border-bottom:.2mm solid #000;padding-bottom:.5mm;font-size:5pt;font-weight:700;letter-spacing:.22em}.lbl .h span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.lbl .z{border:.25mm solid #000;padding:0 1mm;font-size:7pt;letter-spacing:0;line-height:1.2}.lbl .n{font-size:8.5pt;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.5mm}.lbl svg{flex:1 1 auto;height:0;min-height:0;width:100%;display:block;margin:.6mm 0}
 .lbl .f{display:flex;justify-content:space-between;align-items:baseline;gap:2mm}.lbl .c{font:7pt ui-monospace,Menlo,monospace;letter-spacing:.08em}.lbl .p{font-size:13pt;font-weight:800;line-height:1}.lg{display:flex;flex-wrap:wrap;gap:2mm}
-@media print{body>*:not(#printArea){display:none!important}#printArea{display:block}#printArea .lbl{border:0}#printArea .lg{gap:0}#printArea.roll .lbl{break-after:page}#printArea pre{font:12px/1.25 ui-monospace,Menlo,Consolas,monospace;color:#000;margin:0;white-space:pre}}
+@media print{body>*:not(#printArea){display:none!important}#printArea{display:block}#printArea .lbl{border:0}#printArea .lg{gap:0}#printArea .lrow{display:flex;gap:3mm;break-after:page}#printArea pre{font:12px/1.25 ui-monospace,Menlo,Consolas,monospace;color:#000;margin:0;white-space:pre}}
+
+/* responsive layout: the page fills any screen; only the working area scrolls, and wide tables drop their least important columns on small screens */
+@media screen{
+ :root{padding:0!important}
+ html,body{height:100%;margin:0;overflow:hidden;max-width:100%}
+ body{display:flex;flex-direction:column;height:100vh;height:100dvh;min-height:0}
+ header{order:0;flex:none;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px))}
+ nav{order:1;flex:none;position:static;top:auto;z-index:auto;justify-content:center;gap:28px;padding:0 12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+ nav::-webkit-scrollbar{display:none}
+ main{order:2;flex:1 1 auto;min-height:0;min-width:0;width:100%;max-width:1100px;margin:0 auto;padding:16px;padding-bottom:16px;box-sizing:border-box;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+ .grid>*,.row>div,.stat>div{min-width:0}
+ .card{max-width:100%;box-sizing:border-box}
+ .wrap{max-width:100%}
+ img,svg,input,select,button{max-width:100%}
+ .mu,.res b,.card h3,.ci b{overflow-wrap:anywhere}
+ #p-bill .two>.card{position:sticky;top:0;align-self:start}
+ @media (min-width:1400px){main{max-width:1280px}}
+ @media (max-width:900px){#p-bill .two>.card{position:static}}
+ @media (max-width:700px){
+  nav{order:3;justify-content:space-around;gap:0;padding:0 0 env(safe-area-inset-bottom,0px);border-top:1px solid var(--bd);border-bottom:0}
+  nav button{flex:1 1 0;min-width:0;padding:12px 2px 10px;font-size:9px;letter-spacing:0;border-bottom:0;border-top:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  nav button.on{border-top-color:var(--tx)}
+  header{padding:8px 12px 6px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
+  header .top{font-size:10px}
+  .brand h1{font-size:24px}
+  .brand .sub{font-size:9px;letter-spacing:.45em}
+  .stt{margin-top:4px;font-size:11px}
+  main{padding:12px}
+  .card{padding:14px}
+  .btn.big{padding:14px}
+  #toast{bottom:calc(66px + env(safe-area-inset-bottom,0px))}
+  #p-sales table th:nth-child(2),#p-sales table td:nth-child(2),#p-sales table th:nth-child(4),#p-sales table td:nth-child(4){display:none}
+  #lPrev{zoom:.75}
+  #p-cust table th:nth-child(2),#p-cust table td:nth-child(2),#p-cust table th:nth-child(3),#p-cust table td:nth-child(3){display:none}
+  #p-inv table th:nth-child(1),#p-inv table td:nth-child(1){display:none}
+  #p-inv td:last-child{white-space:nowrap}
+ }
+ @media (max-width:420px){
+  #p-sales table th:nth-child(5),#p-sales table td:nth-child(5){display:none}
+  #lPrev{zoom:.62}
+  .stat{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .stat b{font-size:20px}
+  th,td{padding:9px 4px}
+ }
+ @media (max-width:400px){nav button{font-size:8px}}
+ @media (min-width:900px){
+  #p-bill{display:grid;grid-template-columns:1.15fr 1fr;grid-template-rows:auto 1fr;gap:16px;align-items:start}
+  #p-bill>#invBar{grid-column:1;grid-row:1;margin-bottom:0}
+  #p-bill>#invView{grid-column:1 / span 2;grid-row:1 / span 2}
+  #billGrid{display:contents}
+  #billGrid>div:first-child{grid-column:1;grid-row:2;min-width:0;align-self:start}
+  #billGrid>.card{grid-column:2;grid-row:1 / span 2;position:static;max-height:calc(100dvh - 170px);margin-bottom:0}
+  #billGrid>.card .row>div{flex:1 1 110px}
+ }
+ #res,#cRes{max-height:min(220px,26dvh);overflow-y:auto}
+ @media (min-width:900px) and (max-height:860px){
+  #billGrid>.card h3{margin-bottom:8px}
+  #invBar{padding:12px 14px}
+  header{padding-top:8px;padding-bottom:6px}
+  .brand h1{font-size:26px}
+  main{padding-top:12px;padding-bottom:12px}
+  #billGrid>.card .row{margin-bottom:6px}
+  #billGrid>.card #clr{margin-top:6px}
+  #tots .tot{padding:2px 0}
+  #tots .tot.gt{font-size:24px;padding-top:6px;margin-top:4px}
+ }
+ @media (min-width:900px){
+  #billGrid>.card{display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+  #billGrid>.card>*{flex:none}
+  #billGrid>.card>#cart{flex:1 1 auto;min-height:100px;overflow-y:auto}
+ }
+ @media (max-height:520px) and (orientation:landscape){
+  header{padding-top:4px;padding-bottom:4px}
+  .brand .sub{display:none}
+  .brand h1{font-size:20px}
+  .stt:empty{display:none}
+  main{padding-top:10px;padding-bottom:10px}
+ }
+}
 </style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body>
 <header><div class="top"><span id="clock"></span><button class="lnk" id="rf">Sync</button></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st"></div></header>
 <nav id="nav"></nav>
@@ -96,11 +176,11 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
 <section class="pg" id="p-sales">
 <div class="card"><div class="row" style="align-items:flex-end;margin-bottom:0"><div style="flex:0 1 200px"><label>Period</label><select id="perSel"><option value="today">Today</option><option value="week">This week</option><option value="month">This month</option><option value="year">This year</option><option value="all">All bills</option></select></div><div style="flex:1 1 260px"><label>Search</label><input id="sq" autocomplete="off" placeholder="Customer name, mobile number or invoice no."></div></div></div>
 <div class="stat" id="stat"></div>
-<div class="card"><h3 id="salesTitle">Today's bills</h3><div class="wrap"><table><thead><tr><th>Invoice</th><th>When</th><th>Customer</th><th>Mode</th><th>Points</th><th>Total</th></tr></thead><tbody id="sb"></tbody></table></div></div>
+<div class="card"><h3 id="salesTitle">Today's bills</h3><div class="wrap"><table><thead><tr><th>Invoice</th><th>When</th><th>Customer</th><th>Mode</th><th>Points</th><th>Total</th><th></th></tr></thead><tbody id="sb"></tbody></table></div></div>
 </section>
 
 <section class="pg" id="p-lab"><div class="card"><h3>Barcode label printing</h3>
- <div class="row"><div><label>Label size</label><select id="lSize"><option value="50x25">50 × 25 mm roll</option><option value="38x25">38 × 25 mm roll</option><option value="40x30">40 × 30 mm roll</option><option value="58x40">58 × 40 mm roll</option><option value="a4">A4 sheet (48 × 28 mm labels)</option></select></div>
+ <div class="row"><div><label>Label size</label><select id="lSize"><option value="50x25">50 × 25 mm roll</option><option value="38x25">38 × 25 mm roll</option><option value="40x30">40 × 30 mm roll</option><option value="58x40">58 × 40 mm roll</option><option value="a4">A4 sheet (48 × 28 mm labels)</option></select></div><div><label>Labels per row</label><select id="lPerRow"><option value="1">1 across</option><option value="2" selected>2 across</option></select></div>
  <div><label>Show size on label</label><select id="lSz"><option value="1">Yes</option><option value="0">No</option></select></div></div>
  <div class="mu">Preview (first item with a quantity)</div><div id="lPrev" style="margin:8px 0"></div>
  <button class="btn" id="lDl">Download printable file</button> <button class="btn g" id="lPrint">Print here</button> <button class="btn g" id="lClr">Clear</button>
@@ -190,21 +270,20 @@ async function readProducts(){
 async function readCustomers(){
  const rows=await getV('Customers!A2:G');
  return rows.map((r,i)=>({row:i+2,phone:digitsOf(r[0]),name:String(r[1]||''),visits:numV(r[2]),spent:numV(r[3]),balance:numV(r[4]),last:numV(r[5]),points:numV(r[6])})).filter(c=>c.phone)}
-function billFromRow(r){let items=[];try{items=JSON.parse(r[15]||'[]')}catch(e){}const inv=String(r[0]||'');return{id:inv,inv,no:numV(r[1]),ts:numV(r[3]),cashier:String(r[4]||''),cust:String(r[5]||''),phone:digitsOf(r[6]),mode:String(r[7]||''),sub:numV(r[8]),disc:numV(r[9]),tax:numV(r[10]),ro:numV(r[11]),total:numV(r[12]),paid:numV(r[13]),due:numV(r[14]),items,redeem:numV(r[16]),earned:numV(r[17]),exchange:numV(r[18])}}
+function billFromRow(r){let items=[];try{items=JSON.parse(r[15]||'[]')}catch(e){}const inv=String(r[0]||'');return{id:inv,inv,no:numV(r[1]),ts:numV(r[3]),cashier:String(r[4]||''),cust:String(r[5]||''),phone:digitsOf(r[6]),mode:String(r[7]||''),sub:numV(r[8]),disc:numV(r[9]),tax:numV(r[10]),ro:numV(r[11]),total:numV(r[12]),paid:numV(r[13]),due:numV(r[14]),items,redeem:numV(r[16]),earned:numV(r[17]),exchange:numV(r[18]),deleted:String(r[19]||'').trim()!==''}}
 async function billWindow(){
  const len=(await getV('Bills!A:A')).length;
  if(len<2)return{rows:[]};
  const start=Math.max(2,len-BILLS_WINDOW+1);
- return{rows:await getV(`Bills!A${start}:S${len}`)}}
-function nextNoOf(rows){let max=0;rows.forEach(r=>{const n=numV(r[1]);if(n>max)max=n});return max+1}
-async function findBillN(n){
- const inv='CMW-'+String(n).padStart(5,'0');
+ return{rows:await getV(`Bills!A${start}:T${len}`)}}
+function nextNoOf(rows){let max=0;rows.forEach(r=>{const n=numV(r[1]);if(n>max)max=n});return Math.max(INV_START,max+1)}
+async function findBillN(n,inv){
  const colA=await getV('Bills!A:A');
  const idx=(n<colA.length&&String((colA[n]||[])[0]||'')===inv)?n:colA.findIndex(r=>String((r||[])[0]||'')===inv);
  if(idx<0)return null;
- const row=(await getV(`Bills!A${idx+1}:S${idx+1}`))[0]||[];
+ const row=(await getV(`Bills!A${idx+1}:T${idx+1}`))[0]||[];
  return billFromRow(row)}
-async function ensurePointsHeader(){const h=await getV('Customers!G1:G1');if(!(h[0]&&String(h[0][0]||'').trim()))await putV('Customers!G1',[['Points']]);const b=await getV('Bills!Q1:R1');if(!(b[0]&&String(b[0][0]||'').trim()))await putV('Bills!Q1',[['Points Redeemed','Points Earned']]);const e=await getV('Bills!S1:S1');if(!(e[0]&&String(e[0][0]||'').trim()))await putV('Bills!S1',[['Exchange Amount']])}
+async function ensurePointsHeader(){const h=await getV('Customers!G1:G1');if(!(h[0]&&String(h[0][0]||'').trim()))await putV('Customers!G1',[['Points']]);const b=await getV('Bills!Q1:R1');if(!(b[0]&&String(b[0][0]||'').trim()))await putV('Bills!Q1',[['Points Redeemed','Points Earned']]);const e=await getV('Bills!S1:S1');if(!(e[0]&&String(e[0][0]||'').trim()))await putV('Bills!S1',[['Exchange Amount']]);const t=await getV('Bills!T1:T1');if(!(t[0]&&String(t[0][0]||'').trim()))await putV('Bills!T1',[['Deleted On']])}
 async function getData(){
  const cfgRaw={};(await getV('Settings!A2:B')).forEach(r=>{if(r[0])cfgRaw[String(r[0]).trim()]=r[1]});
  await ensurePointsHeader();
@@ -212,10 +291,11 @@ async function getData(){
  return{
   products:products.map(p=>({...p,id:skuId(p.sku)})),
   customers:customers.map(c=>({...c,id:c.phone})),
-  bills:w.rows.map(r=>billFromRow(r)).filter(b=>b.inv).sort((a,b)=>b.ts-a.ts),
+  bills:w.rows.map(r=>billFromRow(r)).filter(b=>b.inv&&!b.deleted).sort((a,b)=>b.ts-a.ts),
   nextNo:nextNoOf(w.rows),
   cfg:{name:String(cfgRaw.name||'Choppers Mens Wear'),addr:String(cfgRaw.addr||''),phone:String(cfgRaw.phone||'').replace(/^'/,''),gst:String(cfgRaw.gst||'').replace(/^'/,''),paper:numV(cfgRaw.paper)||80,note:String(cfgRaw.note||'')}}}
-async function findBill(no){const n=Math.round(+no);if(!n||n<1)return null;return findBillN(n)}
+async function findBill(no){const n=Math.round(+no);if(!n||n<1)return null;return (await findBillN(n,INV_PREFIX+n))||findBillN(n,'CMW-'+String(n).padStart(5,'0'))}
+const INV_START=83527,INV_PREFIX='S';
 const r2=x=>Math.round(x*100)/100;
 const fmtDate=ts=>new Date(ts).toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
 const paidOf=(mode,paidIn,grand)=>mode==='Credit'?Math.min(Math.max(+paidIn||0,0),grand):grand;
@@ -245,7 +325,7 @@ async function findBillRow(inv){
  const idx=(n<colA.length&&String((colA[n]||[])[0]||'')===inv)?n:colA.findIndex(r=>String((r||[])[0]||'')===inv);
  if(idx<0)return null;
  const row=idx+1;
- return{row,values:(await getV(`Bills!A${row}:S${row}`))[0]||[]}}
+ return{row,values:(await getV(`Bills!A${row}:T${row}`))[0]||[]}}
 function addCustomer(phone,name){return serial(async()=>{
  const p=digitsOf(phone);const n=String(name||'').trim();
  if(p.length!==10)throw new Error('Mobile number must be 10 digits');
@@ -268,7 +348,7 @@ function saveBill(b){return serial(async()=>{
  const paid=paidOf(mode,b.paidIn,t.grand);const due=t.grand-paid;
  const name=String(b.cust||'').trim();const cashier=String(b.cashier||'');const ts=Date.now();
  const earned=phone?Math.floor(t.grand/10):0;
- const w=await billWindow();const no=nextNoOf(w.rows);const inv='CMW-'+String(no).padStart(5,'0');
+ const w=await billWindow();const no=nextNoOf(w.rows);const inv=INV_PREFIX+no;
  const items=itemsOf(priced);
  await addV('Bills!A1',[billRow({inv,no,date:fmtDate(ts),ts,cashier,name,phone,mode,priced,t,paid,due,items,want,earned,exch:ex})]);
  let customer=null;
@@ -298,7 +378,7 @@ function updateBill(inv,b){return serial(async()=>{
  const t=totalsOf(priced,want,ex);
  const paid=paidOf(mode,b.paidIn,t.grand);const due=t.grand-paid;
  const name=String(b.cust||'').trim();const earned=phone?Math.floor(t.grand/10):0;const items=itemsOf(priced);
- await putV(`Bills!A${found.row}:S${found.row}`,[billRow({inv:old.inv,no:old.no,date:found.values[2],ts:old.ts,cashier:old.cashier,name,phone,mode,priced,t,paid,due,items,want,earned,exch:ex})]);
+ await putV(`Bills!A${found.row}:T${found.row}`,[billRow({inv:old.inv,no:old.no,date:found.values[2],ts:old.ts,cashier:old.cashier,name,phone,mode,priced,t,paid,due,items,want,earned,exch:ex})]);
  const customers=[];
  if(oldCust&&!same){const oc={id:oldCust.phone,phone:oldCust.phone,name:oldCust.name,visits:Math.max(0,oldCust.visits-1),spent:oldCust.spent-old.total,balance:oldCust.balance-old.due,last:oldCust.last,points:oldAfter};await writeCust(oldCust.row,oc);customers.push(oc)}
  let customer=null;
@@ -312,18 +392,32 @@ function updateBill(inv,b){return serial(async()=>{
 })}
 async function searchBills(opts){
  const q=String((opts&&opts.q)||'').trim();const from=+((opts&&opts.from)||0)||0;
- const numeric=/^\d+$/.test(q);const invLike=/^cmw-?\d*$/i.test(q);
+ const numeric=/^\d+$/.test(q);const invLike=/^(cmw-?|s)\d*$/i.test(q);
  const qNo=parseInt(q.replace(/\D/g,''),10)||0;const qd=digitsOf(q);
  const nameQ=q.replace(/\d/g,'').trim().toLowerCase();
  const out={count:0,total:0,redeemed:0,earned:0,byMode:{},bills:[]};
- const rows=await getV('Bills!A2:S');
+ const rows=await getV('Bills!A2:T');
  rows.map(r=>billFromRow(r)).forEach(b=>{
-  if(!b.inv||b.ts<from)return;
+  if(!b.inv||b.deleted||b.ts<from)return;
   if(q){const hit=(qNo&&(numeric||invLike)&&b.no===qNo)||(invLike&&q.length>3&&b.inv.toLowerCase().indexOf(q.toLowerCase())>=0)||(!invLike&&nameQ.length>=2&&b.cust.toLowerCase().indexOf(nameQ)>=0)||(numeric&&qd.length>=3&&b.phone.indexOf(qd)>=0);if(!hit)return}
   out.count++;out.total+=b.total;out.redeemed+=b.redeem||0;out.earned+=b.earned||0;out.byMode[b.mode]=(out.byMode[b.mode]||0)+b.total;out.bills.push(b)});
  out.total=r2(out.total);Object.keys(out.byMode).forEach(k=>{out.byMode[k]=r2(out.byMode[k])});
  out.bills.sort((a,b)=>b.ts-a.ts);out.bills=out.bills.slice(0,200);
  return out}
+function deleteBill(inv){return serial(async()=>{
+ const found=await findBillRow(String(inv));
+ if(!found)throw new Error('Invoice '+inv+' not found');
+ const old=billFromRow(found.values);
+ if(old.deleted)throw new Error('This invoice is already deleted');
+ let customer=null,customers=[];
+ if(old.phone){const c=(await readCustomers()).find(x=>x.phone===old.phone)||null;
+  if(c){const back=c.points+old.redeem-old.earned;
+   if(back<0)throw new Error('This invoice cannot be deleted: the customer has already used points earned on it');
+   customer={id:c.phone,phone:c.phone,name:c.name,visits:Math.max(0,c.visits-1),spent:c.spent-old.total,balance:c.balance-old.due,last:c.last,points:back};
+   await writeCust(c.row,customer);customers.push(customer)}}
+ await putV(`Bills!T${found.row}`,[[fmtDate(Date.now())]]);
+ return{inv:old.inv,customer,customers};
+})}
 function saveProduct(p,origSku){return serial(async()=>{
  const sku=String(p.sku||'').trim(),name=String(p.name||'').trim();
  if(!sku||!name)throw new Error('SKU and name are required');
@@ -349,7 +443,7 @@ function saveSettings(d){return serial(async()=>{
   if(idx>=0)await putV(`Settings!B${idx+2}`,[[v]]);else await addV('Settings!A1',[[k,v]]);
  }
  return true})}
-const SERVER={getData,findBill,saveBill,updateBill,addCustomer,searchBills,saveProduct,deleteProduct,receivePayment,saveSettings};
+const SERVER={getData,findBill,saveBill,updateBill,addCustomer,searchBills,deleteBill,saveProduct,deleteProduct,receivePayment,saveSettings};
 
 const rpc=(fn,...a)=>(TOK&&TOK.exp>Date.now())?SERVER[fn](...a):getToken(true).then(()=>SERVER[fn](...a));
 async function load(){
@@ -471,7 +565,7 @@ $('fInv').onkeydown=e=>{if(e.key==='Enter')findInvoice()};
 $('fNew').onclick=newBill;
 function refreshInvNo(){
  const e=S.editBill;
- $('invNo').textContent=e?e.inv:'CMW-'+String(S.nextNo||1).padStart(5,'0');
+ $('invNo').textContent=e?e.inv:'S'+(S.nextNo||83527);
  $('invLabel').textContent=e?'Editing invoice':'Invoice (new bill)';
  $('gs').textContent=e?'Update':'Save';
  $('go').textContent=e?'Update & print':'Save & print';
@@ -516,8 +610,8 @@ $('gs').onclick=()=>submit(false);
 async function findInvoice(){
  const m=$('fInv').value.match(/\d+/);
  if(!m)return toast('Type an invoice number, for example 12');
- const no='CMW-'+String(+m[0]).padStart(5,'0');
- try{const b=await rpc('findBill',+m[0]);if(!b)return toast('No invoice '+no);loadBill(b)}catch(e){toast('Failed: '+e.message)}
+ const no='S'+(+m[0]);
+ try{const b=await rpc('findBill',+m[0]);if(!b)return toast('No invoice '+no);if(b.deleted)return toast(b.inv+' was deleted');loadBill(b)}catch(e){toast('Failed: '+e.message)}
 }
 function loadBill(b){
  const found=b.items.map(it=>({it,p:S.products.find(x=>x.sku===String(it.sku))}));
@@ -535,8 +629,8 @@ function loadBill(b){
  toast(missing.length?'Editing '+b.inv+'. Not in products now: '+missing.join(', '):'Editing '+b.inv);
 }
 function invoiceText(b){const r=receipt(b);return r.H.concat(r.L).join('\n')}
-function printInvoice(b){$('printArea').innerHTML=`<style>@page{margin:2mm;size:${S.cfg.paper}mm auto}</style><pre>${esc(invoiceText(b))}</pre>`;tryPrint()}
-function downloadInvoice(b){saveFile(b.inv+'.html','<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+b.inv+'</title><style>pre{font:12px/1.25 monospace;margin:0;white-space:pre}</style></head><body><pre>'+esc(invoiceText(b))+'</pre><script>onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>')}
+function printInvoice(b){$('printArea').innerHTML=thermalBody(b);tryPrint()}
+function downloadInvoice(b){saveFile(b.inv+'.html','<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+b.inv+'</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"></head><body style="margin:0">'+thermalBody(b)+'<script>onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>')}
 /* new customer: ask for the mobile number and name */
 function openNewCustomer(phone0,name0){
  $('mbox').innerHTML=`<h3>New customer</h3><div class="row"><div><label>Mobile number</label><input id="ncPhone" inputmode="numeric" placeholder="10-digit mobile number"></div></div><div class="row"><div><label>Name</label><input id="ncName" placeholder="Customer name"></div></div><div class="row"><button class="btn" id="ncSave">Save customer</button><button class="btn g" id="ncCancel">Cancel</button></div>`;
@@ -561,12 +655,18 @@ async function saveNewCustomer(){
  $('ncSave').disabled=false}
 /* receipt */
 const WA_URL='https://chat.whatsapp.com/LShFrUz3iUHHZlZu4ASykm',WA_QR='data:image/png;base64,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';
-const WA_MSG=['** JOIN OUR WHATSAPP COMMUNITY **','Be the first to know about new collections, festive offers and exclusive deals.','Scan the QR code to join:'];
+const WA_MSG=['* JOIN OUR WHATSAPP COMMUNITY *','Be the first to know about new collections, festive offers and exclusive deals.','Scan the QR code to join:'];
 function receipt(b){
  const w=S.cfg.paper==58?32:48,L=[],H=[],hr='-'.repeat(w);
- const wr=t=>String(t).match(new RegExp('.{1,'+w+'}','g'))||[],ce=t=>' '.repeat(Math.max(0,(w-t.length)>>1))+t;
+ // Word wrap: break at spaces, and split a word only when it is longer than one line.
+ const wr=t=>{const out=[];let line='';
+  String(t).trim().split(/\s+/).filter(Boolean).forEach(word=>{
+   while(word.length>w){if(line){out.push(line);line=''}out.push(word.slice(0,w));word=word.slice(w)}
+   if(!line)line=word;else if((line+' '+word).length<=w)line+=' '+word;else{out.push(line);line=word}});
+  if(line)out.push(line);return out};
+ const ce=t=>' '.repeat(Math.max(0,(w-t.length)>>1))+t;
  const lr=(a,r)=>{a=String(a);r=String(r);return a.slice(0,Math.max(0,w-r.length-1)).padEnd(w-r.length)+r};
- H.push(...wr(S.cfg.name.toUpperCase()).map(ce));
+ H.push(...wr(S.cfg.name.toUpperCase()).map(ce));const nameN=H.length;
  [S.cfg.addr,S.cfg.phone&&'Ph: '+S.cfg.phone,S.cfg.gst&&'GSTIN: '+S.cfg.gst].filter(Boolean).forEach(t=>wr(t).forEach(x=>H.push(ce(x))));
  L.push(hr,lr('Invoice',b.inv),lr('Date',new Date(b.ts).toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})));
  if(b.cashier)L.push(lr('Cashier',b.cashier));if(b.cust)L.push(lr('Customer',b.cust));if(b.phone)L.push(lr('Mobile',b.phone));
@@ -574,18 +674,30 @@ function receipt(b){
  L.push(hr,lr('Subtotal',b.sub.toFixed(2)));if(b.disc)L.push(lr('Discount','-'+b.disc.toFixed(2)));if(b.redeem)L.push(lr('Points redeemed','-'+b.redeem.toFixed(2)));if(b.exchange)L.push(lr('Exchange','-'+b.exchange.toFixed(2)));
  L.push(lr('GST incl.',b.tax.toFixed(2)));if(b.ro)L.push(lr('Round off',b.ro.toFixed(2)));
  L.push(hr,lr('TOTAL',b.total.toFixed(2)),hr,lr('Paid by '+b.mode,b.paid.toFixed(2)));if(b.due>0)L.push(lr('BALANCE DUE',b.due.toFixed(2)));
- L.push(hr);wr(S.cfg.note||'').forEach(x=>L.push(ce(x)));L.push(hr);WA_MSG.forEach(t=>wr(t).forEach(x=>L.push(ce(x))));return{H,L}}
+ L.push(hr);
+ const cu=b.phone?S.customers.find(x=>x.id===b.phone):null;if(cu){L.push(lr('Points earned',String(b.earned||0)),lr('Total points',String(cu.points||0)))}
+ wr(S.cfg.note||'').forEach(x=>L.push(ce(x)));
+ if(S.cfg.note)L.push('');
+ WA_MSG.forEach(t=>wr(t).forEach(x=>L.push(ce(x))));
+ return{H,L,nameCount:nameN}}
 function escpos(b){
  const r=receipt(b),e=new TextEncoder(),bytes=[];const add=a=>bytes.push(...a);
- add([0x1b,0x40,0x1b,0x45,1]);add(e.encode(r.H.join('\n')+'\n'));add([0x1b,0x45,0]);add(e.encode(r.L.join('\n')+'\n'));
+ add([0x1b,0x40,0x1b,0x45,1]);const hw=S.cfg.paper==58?16:24,nl=[];S.cfg.name.toUpperCase().split(/\s+/).filter(Boolean).forEach(x=>{if(nl.length&&(nl[nl.length-1]+' '+x).length<=hw)nl[nl.length-1]+=' '+x;else nl.push(x)});add([0x1b,0x61,1,0x1d,0x21,0x11]);nl.forEach(x=>add(e.encode(x+'\n')));add([0x1d,0x21,0,0x1b,0x61,0]);add(e.encode(r.H.slice(r.nameCount).join('\n')+'\n'));add([0x1b,0x45,0]);add(e.encode(r.L.join('\n')+'\n'));
  const u=e.encode(WA_URL),k=u.length+3;add([0x1b,0x61,1,0x1d,0x28,0x6b,4,0,49,65,50,0,0x1d,0x28,0x6b,3,0,49,67,S.cfg.paper==58?5:6,0x1d,0x28,0x6b,3,0,49,69,49,0x1d,0x28,0x6b,k&255,k>>8,49,80,48]);add(u);add([0x1d,0x28,0x6b,3,0,49,81,48,0x0a,0x1b,0x61,0]);
  add([0x1b,0x64,4,0x1d,0x56,0x42,0]);return new Uint8Array(bytes)}
+/* printed thermal bill: a monospaced receipt font, the shop name large and bold, each line sized to fit the paper, and the QR centred */
+function thermalBody(b){
+ const paper=S.cfg.paper==58?58:80,qr=paper==58?30:38;
+ const size=paper==58?'2.8mm':'2.6mm',nameSize=paper==58?'4.8mm':'6.2mm';
+ const r=receipt(b);
+ const font="font-family:'IBM Plex Mono',Menlo,Consolas,'Courier New',monospace";
+ return `<style>@page{margin:0;size:${paper}mm auto}</style><div style="width:${paper}mm;box-sizing:border-box;padding:2mm;background:#fff;color:#000"><div style="${font};font-weight:700;font-size:${nameSize};line-height:1.1;text-align:center;margin-bottom:1mm;white-space:pre-wrap">${esc(S.cfg.name.toUpperCase())}</div><pre style="margin:0;${font};font-weight:500;font-size:${size};line-height:1.25;white-space:pre;overflow:hidden;color:#000">${esc(r.H.slice(r.nameCount).concat(r.L).join('\n'))}</pre><div style="text-align:center;margin-top:2mm"><img src="${WA_QR}" style="display:block;margin:0 auto;width:${qr}mm;height:${qr}mm;image-rendering:pixelated" alt="WhatsApp community QR"></div></div>`}
 function showReceipt(b,fresh){
- const r=receipt(b);$('mbox').innerHTML=(fresh?'<h3 style="color:var(--ok)">✓ Sale complete</h3>':'<h3>Receipt</h3>')+`<pre class="rc" style="margin:0;border-bottom:0">${esc(r.H.concat(r.L).join('\n'))}</pre><div style="text-align:center;background:#fff;border:1px dashed #999;border-top:0;padding-bottom:10px;margin-bottom:12px"><img src="${WA_QR}" width="130" height="130" style="image-rendering:pixelated" alt="WhatsApp community QR"></div>
+ const r=receipt(b);$('mbox').innerHTML=(fresh?'<h3 style="color:var(--ok)">✓ Sale complete</h3>':'<h3>Receipt</h3>')+`<pre class="rc" style="margin:0;border-bottom:0">${esc(r.H.concat(r.L).join('\n'))}</pre><div style="text-align:center;background:#fff;border:1px dashed #999;border-top:0;padding-bottom:10px;margin-bottom:12px"><img src="${WA_QR}" width="130" height="130" style="display:block;margin:0 auto;image-rendering:pixelated" alt="WhatsApp community QR"></div>
  <div class="row"><button class="btn" id="mh">Download printable file</button><button class="btn g" id="mp">Print here</button><button class="btn g" id="md">ESC/POS file</button><button class="btn g" id="mc">Close</button></div><div class="mu">Print uses your thermal printer’s driver. The ESC/POS file holds raw printer commands for RawBT or similar tools.</div>`;
  $('modal').classList.add('on');
  $('mc').onclick=()=>$('modal').classList.remove('on');
- const setLast=()=>{LAST={body:`<style>@page{margin:2mm;size:${S.cfg.paper}mm auto}</style><pre>${esc(r.H.concat(r.L).join('\n'))}</pre><div style="text-align:center;margin-top:1mm"><img src="${WA_QR}" style="width:${S.cfg.paper==58?30:38}mm;image-rendering:pixelated"></div>`,css:'pre{font:12px/1.25 monospace;margin:0;white-space:pre}',roll:false,name:b.inv+'.html'}};
+ const setLast=()=>{LAST={body:thermalBody(b),css:'',roll:false,name:b.inv+'.html'}};
  $('mp').onclick=()=>{setLast();$('printArea').innerHTML=LAST.body;tryPrint()};$('mh').onclick=()=>{setLast();dlDoc()};
  $('md').onclick=async()=>{try{saveFile(b.inv+'.bin',escpos(b));}catch(e){toast('Download not saved: '+(e.message||e.code||''))}}}
 $('modal').onclick=e=>{if(e.target.id==='modal')$('modal').classList.remove('on')};
@@ -645,13 +757,22 @@ async function refreshSales(){
   SALES.rows=res.bills;
   const m=res.byMode||{};
   $('stat').innerHTML=`<div>Sales<b>${fm(res.total)}</b></div><div>Bills<b>${res.count}</b></div><div>Cash<b>${fm(m.Cash||0)}</b></div><div>UPI<b>${fm(m.UPI||0)}</b></div><div>Card<b>${fm(m.Card||0)}</b></div><div>Credit<b>${fm(m.Credit||0)}</b></div><div>Points used<b>${res.redeemed||0}</b></div><div>Points earned<b>${res.earned||0}</b></div>`;
-  $('sb').innerHTML=res.bills.map(b=>{const pts=[b.redeem?'−'+b.redeem+' used':'',b.earned?'+'+b.earned+' earned':''].filter(Boolean).join(' · ')||'—';return `<tr data-b="${esc(b.id)}" style="cursor:pointer"><td><b>${esc(b.inv)}</b></td><td>${dt(b.ts)}</td><td>${esc(b.cust||'Walk-in')}${b.phone?`<div class="mu">${esc(b.phone)}</div>`:''}</td><td>${esc(b.mode)}</td><td class="mu">${pts}</td><td>${fm(b.total)}</td></tr>`}).join('')||'<tr><td colspan="6" class="mu">No bills found.</td></tr>';
+  $('sb').innerHTML=res.bills.map(b=>{const pts=[b.redeem?'−'+b.redeem+' used':'',b.earned?'+'+b.earned+' earned':''].filter(Boolean).join(' · ')||'—';return `<tr data-b="${esc(b.id)}" style="cursor:pointer"><td><b>${esc(b.inv)}</b></td><td>${dt(b.ts)}</td><td>${esc(b.cust||'Walk-in')}${b.phone?`<div class="mu">${esc(b.phone)}</div>`:''}</td><td>${esc(b.mode)}</td><td class="mu">${pts}</td><td>${fm(b.total)}</td><td><button class="btn g s" data-del="${esc(b.inv)}">Delete</button></td></tr>`}).join('')||'<tr><td colspan="7" class="mu">No bills found.</td></tr>';
   $('salesTitle').textContent=(SALES.q?'Search · ':'')+PERIOD_NAME[SALES.period]+(res.count>res.bills.length?` · newest ${res.bills.length} of ${res.count}`:'');
  }catch(e){toast('Sales not loaded: '+e.message)}}
 function salesIfOpen(){if($('p-sales').classList.contains('on'))refreshSales()}
 $('perSel').onchange=()=>{SALES.period=$('perSel').value;refreshSales()};
 $('sq').oninput=()=>{SALES.q=$('sq').value.trim();clearTimeout(SALES.timer);SALES.timer=setTimeout(refreshSales,300)};
-$('sb').onclick=e=>{const tr=e.target.closest&&e.target.closest('tr[data-b]');if(!tr)return;const b=SALES.rows.find(x=>x.id===tr.dataset.b);if(b)showReceipt(b)};
+function applyDelete(r){S.bills=S.bills.filter(x=>x.inv!==r.inv);(r.customers||[]).forEach(cu=>{const k=S.customers.findIndex(x=>x.id===cu.id);if(k>=0)S.customers[k]=cu})}
+$('sb').onclick=async e=>{
+ const del=e.target.closest&&e.target.closest('button[data-del]');
+ if(del){
+  if(del.dataset.s!=='1'){del.dataset.s='1';del.textContent='Sure?';return}
+  busy=true;
+  try{const r=await rpc('deleteBill',del.dataset.del);applyDelete(r);toast('Deleted '+del.dataset.del);await refreshSales()}
+  catch(x){toast('Not deleted: '+x.message)}
+  busy=false;return}
+ const tr=e.target.closest&&e.target.closest('tr[data-b]');if(!tr)return;const b=SALES.rows.find(x=>x.id===tr.dataset.b);if(b)showReceipt(b)};
 
 /* settings */
 const sm={sName:'name',sPhone:'phone',sAddr:'addr',sGst:'gst',sPaper:'paper',sNote:'note'};
@@ -666,8 +787,9 @@ function code128(t){
  let x=10,b='';codes.forEach(c=>{const p=C128[c];for(let k=0;k<p.length;k++){const w=+p[k];if(k%2===0)b+=`<rect x="${x}" y="0" width="${w}" height="1"/>`;x+=w}});
  return `<svg viewBox="0 0 ${x+10} 1" preserveAspectRatio="none" shape-rendering="crispEdges"><g fill="#000">${b}</g></svg>`}
 S.lab={q:{}};const SZ={'50x25':[50,25],'38x25':[38,25],'40x30':[40,30],'58x40':[58,40],a4:[48,28]};
-function lblHtml(p){const [w,h]=SZ[$('lSize').value];return `<div class="lbl" style="width:${w}mm;height:${h-(w===48?0:.4)}mm"><div class="h"><span>${esc((S.cfg.name||'').toUpperCase())}</span>${$('lSz').value==='1'&&p.size?`<span class="z">${esc(p.size)}</span>`:''}</div><div class="n">${esc(p.name)}</div>${code128(p.sku)}<div class="f"><span class="c">${esc(p.sku)}</span><span class="p">${fm(p.price)}</span></div></div>`}
-function prevLab(){const p=S.products.find(x=>S.lab.q[x.id]>0)||S.products[0];$('lPrev').innerHTML=p?lblHtml(p):'<span class="mu">Add products in Stock first.</span>'}
+const LGAP=3;
+function lblHtml(p){const [w,h]=SZ[$('lSize').value];const shopPt={50:8,38:6.5,40:7,58:9,48:7}[w]||7;return `<div class="lbl" style="width:${w}mm;height:${h}mm"><div class="h"><span style="font-size:${shopPt}pt;font-weight:800;letter-spacing:.02em">${esc((S.cfg.name||'').toUpperCase())}</span>${$('lSz').value==='1'&&p.size?`<span class="z">${esc(p.size)}</span>`:''}</div><div class="n">${esc(p.name)}</div>${code128(p.sku)}<div class="f"><span class="c">${esc(p.sku)}</span><span class="p">${fm(p.price)}</span></div></div>`}
+function prevLab(){const p=S.products.find(x=>S.lab.q[x.id]>0)||S.products[0];const per=$('lSize').value==='a4'?1:Math.max(1,Math.min(2,+$('lPerRow').value||1));$('lPrev').innerHTML=p?`<div style="display:flex;gap:${LGAP}mm;width:fit-content">${Array.from({length:per},()=>lblHtml(p)).join('')}</div>`:'<span class="mu">Add products in Stock first.</span>'}
 function rLab(){
  const ae=document.activeElement;if(ae&&ae.closest&&ae.closest('#lb'))return;
  const q=$('lq').value.toLowerCase();
@@ -677,17 +799,22 @@ $('lq').oninput=rLab;$('lSize').onchange=$('lSz').onchange=prevLab;
 $('lb').oninput=e=>{if(e.target.dataset.id){S.lab.q[e.target.dataset.id]=Math.max(0,Math.round(+e.target.value||0));prevLab()}};
 $('lClr').onclick=()=>{S.lab.q={};rLab()};
 let LAST=null;
-const LCSS=`*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif}.lbl{background:#fff;color:#000;display:flex;flex-direction:column;justify-content:space-between;padding:1.2mm 1.5mm;overflow:hidden;line-height:1.1;break-inside:avoid}.lbl .h{display:flex;justify-content:space-between;align-items:center;gap:1mm;border-bottom:.2mm solid #000;padding-bottom:.5mm;font-size:5pt;font-weight:700;letter-spacing:.22em}.lbl .h span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.lbl .z{border:.25mm solid #000;padding:0 1mm;font-size:7pt;letter-spacing:0;line-height:1.2}.lbl .n{font-size:8.5pt;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.5mm}.lbl svg{flex:1 1 auto;height:0;min-height:0;width:100%;display:block;margin:.6mm 0}.lbl .f{display:flex;justify-content:space-between;align-items:baseline;gap:2mm}.lbl .c{font:7pt monospace;letter-spacing:.08em}.lbl .p{font-size:13pt;font-weight:800;line-height:1}.lg{display:flex;flex-wrap:wrap}.roll .lbl{break-after:page}`;
+const LCSS=`*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif}.lbl{background:#fff;color:#000;display:flex;flex-direction:column;justify-content:space-between;padding:1.2mm 1.5mm;overflow:hidden;line-height:1.1;break-inside:avoid}.lbl .h{display:flex;justify-content:space-between;align-items:center;gap:1mm;border-bottom:.2mm solid #000;padding-bottom:.5mm;font-size:5pt;font-weight:700;letter-spacing:.22em}.lbl .h span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.lbl .z{border:.25mm solid #000;padding:0 1mm;font-size:7pt;letter-spacing:0;line-height:1.2}.lbl .n{font-size:8.5pt;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.5mm}.lbl svg{flex:1 1 auto;height:0;min-height:0;width:100%;display:block;margin:.6mm 0}.lbl .f{display:flex;justify-content:space-between;align-items:baseline;gap:2mm}.lbl .c{font:7pt monospace;letter-spacing:.08em}.lbl .p{font-size:13pt;font-weight:800;line-height:1}.lg{display:flex;flex-wrap:wrap}.lrow{display:flex;gap:3mm;break-after:page}`;
 function tryPrint(){try{window.print()}catch(e){}toast('No print window? Use Download printable file.')}
 async function dlDoc(){
  if(!LAST)return toast('Nothing to print yet');
  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${LAST.name}</title><style>${LCSS}${LAST.css||''}</style></head><body class="${LAST.roll?'roll':''}">${LAST.body}<script>onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>`;
  try{saveFile(LAST.name,html);toast('Saved. Open the file to print.')}catch(e){toast('Not saved: '+(e.message||e.code||''))}}
 const doLabels=dl=>{
- const items=[];S.products.forEach(p=>{const n=Math.min(S.lab.q[p.id]|0,500);for(let i=0;i<n;i++)items.push(p)});if(!items.length)return toast('Enter label quantities first');
+ const items=[];S.products.forEach(q=>{const n=Math.min(S.lab.q[q.id]|0,500);for(let k=0;k<n;k++)items.push(q)});if(!items.length)return toast('Enter label quantities first');
  const k=$('lSize').value,a4=k==='a4',[w,h]=SZ[k];
+ const per=a4?1:Math.max(1,Math.min(2,+$('lPerRow').value||1));
+ const pageW=per*w+(per-1)*LGAP;
  $('printArea').className=a4?'':'roll';
- const body=`<style>@page{margin:${a4?'8mm':'0'};size:${a4?'A4':w+'mm '+h+'mm'}}</style>`+(a4?'<div class="lg">':'')+items.map(lblHtml).join('')+(a4?'</div>':'');
+ let body;
+ if(a4){body=`<style>@page{margin:8mm;size:A4}</style><div class="lg">${items.map(lblHtml).join('')}</div>`}
+ else{const rows=[];for(let q=0;q<items.length;q+=per)rows.push(items.slice(q,q+per));
+  body=`<style>@page{margin:0;size:${pageW}mm ${h}mm}</style>`+rows.map(r=>`<div class="lrow" style="width:${pageW}mm;height:${h}mm">${r.map(lblHtml).join('')}</div>`).join('')}
  LAST={body,roll:!a4,name:'barcode-labels.html'};
  if(dl)return dlDoc();
  $('printArea').innerHTML=body;tryPrint()};
