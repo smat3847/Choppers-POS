@@ -46,9 +46,20 @@ label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--m
 #mbox{background:var(--card);border:1px solid var(--bd);border-radius:2px;padding:22px;width:100%;max-width:440px}
 pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color:#000;padding:12px;margin:0 0 12px;overflow-x:auto;border:1px dashed #999;white-space:pre}
 #printArea{display:none}
-.lbl{background:#fff;color:#000;border:1px dashed #999;display:flex;flex-direction:column;justify-content:space-between;padding:1.2mm 1.5mm;overflow:hidden;font-family:Arial,Helvetica,sans-serif;line-height:1.1;break-inside:avoid}
-.lbl .h{display:flex;justify-content:space-between;align-items:center;gap:1mm;border-bottom:.2mm solid #000;padding-bottom:.5mm;font-size:5pt;font-weight:700;letter-spacing:.22em}.lbl .h span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.lbl .z{border:.25mm solid #000;padding:0 1mm;font-size:7pt;letter-spacing:0;line-height:1.2}.lbl .n{font-size:8.5pt;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.5mm}.lbl svg{flex:1 1 auto;height:0;min-height:0;width:100%;display:block;margin:.6mm 0}
-.lbl .f{display:flex;justify-content:space-between;align-items:baseline;gap:2mm}.lbl .c{font:7pt ui-monospace,Menlo,monospace;letter-spacing:.08em}.lbl .p{font-size:13pt;font-weight:800;line-height:1}.lg{display:flex;flex-wrap:wrap;gap:2mm}
+.lbl{background:#fff;color:#000;border:1px dashed #999;display:flex;flex-direction:column;justify-content:space-between;padding:1.2mm 1.6mm;overflow:hidden;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.1;break-inside:avoid;box-sizing:border-box}
+.lbl-hdr{display:flex;justify-content:space-between;align-items:center;gap:1mm;border-bottom:.25mm solid #000;padding-bottom:.4mm;flex:none}
+.lbl-brand{font-weight:800;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;line-height:1.1}
+.lbl-cat{font-size:4.6pt;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#000;color:#fff;padding:.2mm .8mm;border-radius:.3mm;white-space:nowrap;flex:none;line-height:1.1}
+.lbl-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em;margin:.3mm 0;flex:none;line-height:1.15}
+.lbl-bc{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;margin:.2mm 0;width:100%}
+.lbl-bc svg{width:100%;flex:1 1 auto;height:0;min-height:5mm;max-height:8.5mm;display:block;shape-rendering:crispEdges}
+.lbl-sku{font-family:ui-monospace,Menlo,Consolas,"Courier New",monospace;font-weight:700;letter-spacing:.12em;text-align:center;margin-top:.3mm;line-height:1;white-space:nowrap}
+.lbl-ftr{display:flex;justify-content:space-between;align-items:flex-end;border-top:.25mm solid #000;padding-top:.4mm;flex:none}
+.lbl-mrp-box{display:flex;flex-direction:column;line-height:1;text-align:left}
+.lbl-mrp-lbl{font-size:5pt;font-weight:800;letter-spacing:.04em}
+.lbl-tax{font-size:3.8pt;font-weight:600;letter-spacing:.02em;color:#333;margin-top:.2mm}
+.lbl-price{font-weight:900;line-height:.95;letter-spacing:-.02em;text-align:right}
+.lg{display:flex;flex-wrap:wrap;gap:2mm}
 @media print{body>*:not(#printArea){display:none!important}#printArea{display:block}#printArea .lbl{border:0}#printArea .lg{gap:0}#printArea .lrow{display:flex;gap:3mm;break-after:page}#printArea pre{font:12px/1.25 ui-monospace,Menlo,Consolas,monospace;color:#000;margin:0;white-space:pre}}
 
 /* responsive layout: the page fills any screen; only the working area scrolls, and wide tables drop their least important columns on small screens */
@@ -291,13 +302,15 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
  body[data-tab="bill"] #p-bill #sumCard{padding:8px 12px}
  body[data-tab="bill"] #p-bill #sumCard .saveRow{padding-top:0}
 }
+#invNo{border:none!important;border-width:0!important;outline:none!important;background:transparent!important;box-shadow:none!important;font:600 22px/1.2 var(--serif)!important;color:var(--tx)!important;padding:0!important;margin:0!important;min-height:0!important;height:auto!important;border-radius:0!important;width:auto;max-width:180px}
+#invNo:focus,#invNo:focus-visible{outline:none!important;border:none!important;box-shadow:none!important;border-color:transparent!important}
 </style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
 <header><div class="top"><span id="clock"></span><button class="lnk" id="rf">Sync</button></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
 <nav id="nav" aria-label="Main sections"></nav>
 <main id="main-area" tabindex="-1">
 <section class="pg on" id="p-bill">
-<div class="card" id="invBar"><div class="row" style="align-items:flex-end;margin-bottom:0"><div style="flex:1 1 50%"><label id="invLabel">Invoice (new bill)</label><div id="invNo" style="font:600 22px/1.2 var(--serif)">CMW-00001</div></div><div style="flex:1 1 50%;display:flex;gap:8px;align-items:flex-end"><input id="fInv" aria-label="Find invoice number" inputmode="numeric" placeholder="Invoice #" style="flex:1;min-width:0"><button class="btn g" id="fGo">Open</button><button class="btn g" id="fNew" data-label="New bill">New bill</button></div></div></div>
+<div class="card" id="invBar"><div class="row" style="align-items:center;justify-content:space-between;margin-bottom:0"><div><label id="invLabel">Invoice (new bill)</label><input id="invNo" aria-label="Invoice number. Type number and press Enter to search" value="S83527" autocomplete="off" spellcheck="false" style="font:600 22px/1.2 var(--serif);border:0;outline:none;background:transparent;padding:0;margin:0;box-shadow:none;color:var(--tx);min-height:0;height:auto;width:140px"></div><div style="display:flex;gap:8px;align-items:center"><button class="btn g" id="fNew" data-label="New bill">New bill</button></div></div></div>
 <div id="invView" style="display:none"></div>
 <div class="grid two" id="billGrid">
   <div class="card" id="custCard"><h2>1 · Customer (optional)</h2>
@@ -867,28 +880,28 @@ $('cRes').onclick=e=>{const r=e.target.closest&&e.target.closest('.res');if(!r)r
 renderCust();
 
 /* invoice lookup, edit and save */
-$('fGo').onclick=findInvoice;
-$('fInv').onkeydown=e=>{if(e.key==='Enter')findInvoice()};
+$('invNo').onfocus=()=>$('invNo').select();
+$('invNo').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();findInvoice()}};
 $('fNew').onclick=()=>askReset($('fNew'));
 $('clr').onclick=()=>askReset($('clr'));
 function refreshInvNo(){
  const e=S.editBill;
- $('invNo').textContent=e?e.inv:'S'+(S.nextNo||83527);
+ const cur=e?e.inv:'S'+(S.nextNo||83527);
+ if($('invNo'))$('invNo').value=cur;
  $('invLabel').textContent=e?'Editing invoice':'Invoice (new bill)';
  $('gs').textContent=e?'Update':'Save';
  $('go').textContent=e?'Update & print':'Save & print';
 }
 function setPay(v){if(v==='Credit')v='Cash';$('pay').value=v;$('pay').onchange();[...$('paySeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
 function setBusy(on){busy=on;$('go').disabled=on;$('gs').disabled=on}
-function clearForm(){S.editBill=null;S.cart=[];$('bd').value=0;$('bdT').value='%';$('pRedeem').value=0;$('exAmt').value=0;setPay('Cash');$('paid').value=0;$('fInv').value='';setCust('','');refreshInvNo();rCart()}
+function clearForm(){S.editBill=null;S.cart=[];$('bd').value=0;$('bdT').value='%';$('pRedeem').value=0;$('exAmt').value=0;setPay('Cash');if($('paid'))$('paid').value=0;setCust('','');refreshInvNo();rCart()}
 /* Starts a fresh invoice: clears the items, customer, discount, points, exchange and payment, leaves edit mode,
    and shows the next invoice number. Numbers are never reused. */
 function resetInvoice(){
  clearForm();
- $('fInv').value='';
  $('billGrid').style.display='';$('invView').style.display='none';
  refreshInvNo();
- toast('Fresh invoice '+$('invNo').textContent+' ready');
+ toast('Fresh invoice '+$('invNo').value+' ready');
  setTimeout(()=>$('q').focus(),50);
 }
 /* First press asks for confirmation when unsaved items are on screen, so a bill is never lost by accident. */
@@ -920,7 +933,7 @@ async function submit(printIt){
  if(exReq>c.ex)return toast('Exchange amount is more than the bill total');
  const edit=S.editBill;
  const payload={cashier:S.cashier||'',cust:name,phone,mode,discVal:+$('bd').value||0,discType:$('bdT').value,paidIn:+$('paid').value||0,redeem:c.rd,exchange:c.ex,items:c.ls.map(l=>({sku:l.p.sku,qty:l.qty,disc:l.disc||0}))};
- const snap={cart:S.cart.map(x=>({...x})),bd:$('bd').value,bdT:$('bdT').value,cPhone:$('cPhone').value,cName:$('cName').value,paid:$('paid').value,pr:$('pRedeem').value,ex:$('exAmt').value,pay:mode,editBill:edit,fInv:$('fInv').value};
+ const snap={cart:S.cart.map(x=>({...x})),bd:$('bd').value,bdT:$('bdT').value,cPhone:$('cPhone').value,cName:$('cName').value,paid:$('paid').value,pr:$('pRedeem').value,ex:$('exAmt').value,pay:mode,editBill:edit};
  // Build optimistic bill object so printing happens immediately without waiting for network latency
  const optNo=edit?edit.no:(S.nextNo||INV_START);
  const optInv=edit?edit.inv:(INV_PREFIX+optNo);
@@ -941,14 +954,20 @@ async function submit(printIt){
  }
  pendingSaves--;
 }
-function restoreBill(s){S.cart=s.cart;S.editBill=s.editBill;$('bd').value=s.bd;$('bdT').value=s.bdT;$('pRedeem').value=s.pr;$('exAmt').value=s.ex;$('paid').value=s.paid;$('fInv').value=s.fInv;setPay(s.pay);setCust(s.cPhone,s.cName);refreshInvNo();rCart()}
+function restoreBill(s){S.cart=s.cart;S.editBill=s.editBill;$('bd').value=s.bd;$('bdT').value=s.bdT;$('pRedeem').value=s.pr;$('exAmt').value=s.ex;$('paid').value=s.paid;setPay(s.pay);setCust(s.cPhone,s.cName);refreshInvNo();rCart()}
 $('go').onclick=()=>submit(true);
 $('gs').onclick=()=>submit(false);
 async function findInvoice(){
- const m=$('fInv').value.match(/\d+/);
- if(!m)return toast('Type an invoice number, for example 12');
+ const val=($('invNo').value||'').trim();
+ const m=val.match(/\d+/);
+ if(!m){toast('Type an invoice number, for example S83520');refreshInvNo();return}
  const no='S'+(+m[0]);
- try{const b=await rpc('findBill',+m[0]);if(!b)return toast('No invoice '+no);if(b.deleted)return toast(b.inv+' was deleted');loadBill(b)}catch(e){toast('Failed: '+e.message)}
+ try{
+  const b=await rpc('findBill',+m[0]);
+  if(!b){toast('No invoice '+no);refreshInvNo();return}
+  if(b.deleted){toast(b.inv+' was deleted');refreshInvNo();return}
+  loadBill(b);
+ }catch(e){toast('Failed: '+e.message);refreshInvNo()}
 }
 function loadBill(b){
  const found=b.items.map(it=>({it,p:S.products.find(x=>x.sku===String(it.sku))}));
@@ -1163,7 +1182,15 @@ function code128(t){
  C128_CACHE.set(s,svg);return svg}
 S.lab={q:{}};const SZ={'50x25':[50,25],'38x25':[38,25],'40x30':[40,30],'58x40':[58,40],a4:[48,28]};
 const LGAP=3;
-function lblHtml(p){const [w,h]=SZ[$('lSize').value];const shopPt={50:8,38:6.5,40:7,58:9,48:7}[w]||7;return `<div class="lbl" style="width:${w}mm;height:${h}mm"><div class="h"><span style="font-size:${shopPt}pt;font-weight:800;letter-spacing:.02em">${esc((S.cfg.name||'').toUpperCase())}</span></div><div class="n">${esc(p.name)}</div>${code128(p.sku)}<div class="f"><span class="c">${esc(p.sku)}</span><span class="p">${fm(p.price)}</span></div></div>`}
+function lblHtml(p){
+ const [w,h]=SZ[$('lSize').value];
+ const shopPt={50:6.8,38:5.5,40:7.2,58:8.5,48:6.8}[w]||6.8;
+ const namePt={50:7.5,38:6.5,40:8,58:9.5,48:7.5}[w]||7.5;
+ const pricePt={50:11.5,38:10,40:12.5,58:15,48:11.5}[w]||11.5;
+ const skuPt={50:5.8,38:5,40:6.2,58:7.2,48:5.8}[w]||5.8;
+ const catBadge=p.cat?`<span class="lbl-cat">${esc(p.cat.toUpperCase())}</span>`:'';
+ return `<div class="lbl" style="width:${w}mm;height:${h}mm"><div class="lbl-hdr"><span class="lbl-brand" style="font-size:${shopPt}pt">${esc((S.cfg.name||'Choppers Mens Wear').toUpperCase())}</span>${catBadge}</div><div class="lbl-name" style="font-size:${namePt}pt">${esc(p.name)}</div><div class="lbl-bc">${code128(p.sku)}<div class="lbl-sku" style="font-size:${skuPt}pt">${esc(p.sku)}</div></div><div class="lbl-ftr"><div class="lbl-mrp-box"><span class="lbl-mrp-lbl">MRP</span><span class="lbl-tax">(INCL. ALL TAXES)</span></div><div class="lbl-price" style="font-size:${pricePt}pt">${fm(p.price)}</div></div></div>`;
+}
 function prevLab(){const p=S.products.find(x=>S.lab.q[x.id]>0)||S.products[0];const per=$('lSize').value==='a4'?1:2;$('lPrev').innerHTML=p?`<div style="display:flex;gap:${LGAP}mm;width:fit-content">${Array.from({length:per},()=>lblHtml(p)).join('')}</div>`:'<span class="mu">Add products in Stock first.</span>'}
 function rLab(){
  const ae=document.activeElement;if(ae&&ae.closest&&ae.closest('#lb'))return;
@@ -1176,7 +1203,7 @@ let lqT=null;$('lq').oninput=()=>{clearTimeout(lqT);lqT=setTimeout(rLab,80)};$('
 $('lb').oninput=e=>{if(e.target.dataset.id){S.lab.q[e.target.dataset.id]=Math.max(0,Math.round(+e.target.value||0));prevLab()}};
 $('lClr').onclick=()=>{S.lab.q={};rLab()};
 let LAST=null;
-const LCSS=`*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif}.lbl{background:#fff;color:#000;display:flex;flex-direction:column;justify-content:space-between;padding:1.2mm 1.5mm;overflow:hidden;line-height:1.1;break-inside:avoid}.lbl .h{display:flex;justify-content:space-between;align-items:center;gap:1mm;border-bottom:.2mm solid #000;padding-bottom:.5mm;font-size:5pt;font-weight:700;letter-spacing:.22em}.lbl .h span:first-child{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.lbl .z{border:.25mm solid #000;padding:0 1mm;font-size:7pt;letter-spacing:0;line-height:1.2}.lbl .n{font-size:8.5pt;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.5mm}.lbl svg{flex:1 1 auto;height:0;min-height:0;width:100%;display:block;margin:.6mm 0}.lbl .f{display:flex;justify-content:space-between;align-items:baseline;gap:2mm}.lbl .c{font:7pt monospace;letter-spacing:.08em}.lbl .p{font-size:13pt;font-weight:800;line-height:1}.lg{display:flex;flex-wrap:wrap}.lrow{display:flex;gap:3mm;break-after:page}`;
+const LCSS=`*{box-sizing:border-box}body{margin:0;font-family:Inter,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif}.lbl{background:#fff;color:#000;display:flex;flex-direction:column;justify-content:space-between;padding:1.2mm 1.6mm;overflow:hidden;line-height:1.1;break-inside:avoid;box-sizing:border-box}.lbl-hdr{display:flex;justify-content:space-between;align-items:center;gap:1mm;border-bottom:.25mm solid #000;padding-bottom:.4mm;flex:none}.lbl-brand{font-weight:800;letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;line-height:1.1}.lbl-cat{font-size:4.6pt;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#000;color:#fff;padding:.2mm .8mm;border-radius:.3mm;white-space:nowrap;flex:none;line-height:1.1}.lbl-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em;margin:.3mm 0;flex:none;line-height:1.15}.lbl-bc{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1 1 auto;min-height:0;margin:.2mm 0;width:100%}.lbl-bc svg{width:100%;flex:1 1 auto;height:0;min-height:5mm;max-height:8.5mm;display:block;shape-rendering:crispEdges}.lbl-sku{font-family:ui-monospace,Menlo,Consolas,\"Courier New\",monospace;font-weight:700;letter-spacing:.12em;text-align:center;margin-top:.3mm;line-height:1;white-space:nowrap}.lbl-ftr{display:flex;justify-content:space-between;align-items:flex-end;border-top:.25mm solid #000;padding-top:.4mm;flex:none}.lbl-mrp-box{display:flex;flex-direction:column;line-height:1;text-align:left}.lbl-mrp-lbl{font-size:5pt;font-weight:800;letter-spacing:.04em}.lbl-tax{font-size:3.8pt;font-weight:600;letter-spacing:.02em;color:#333;margin-top:.2mm}.lbl-price{font-weight:900;line-height:.95;letter-spacing:-.02em;text-align:right}.lg{display:flex;flex-wrap:wrap}.lrow{display:flex;gap:3mm;break-after:page}`;
 /* One print call per click. The QR image must finish loading first, or the paper prints blank.
    A second click within a second is ignored so a double tap never prints two copies. */
 let lastPrint=0;
