@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Choppers Mens Wear · POS (Google Sheets)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap">
 <style>
 :root{--bg:#fff;--card:#fff;--tx:#000;--mu:#666;--bd:#d8d8d8;--ac:#000;--on:#fff;--gold:#555;--ok:#000;--bad:#000;--warn:#000;--serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#000;--card:#000;--tx:#fff;--mu:#a3a3a3;--bd:#333;--ac:#fff;--on:#000;--gold:#bbb;--ok:#fff;--bad:#fff;--warn:#fff}}
@@ -37,7 +37,7 @@ label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--m
 .qty{display:flex;align-items:center;gap:8px}.qty button{width:30px;height:30px;border-radius:2px;border:1px solid var(--bd);background:none;color:var(--tx);font-size:16px;cursor:pointer}.qty button:hover{border-color:var(--tx)}.qty input{width:58px;padding:6px}
 .tot{display:flex;justify-content:space-between;padding:4px 0}.tot.gt{font:600 30px/1.1 var(--serif);border-top:1px solid var(--tx);margin-top:10px;padding-top:12px}
 .seg{display:flex;border:1px solid var(--bd);border-radius:2px;overflow:hidden}.seg button{flex:1;padding:11px 2px;background:none;border:0;border-right:1px solid var(--bd);color:var(--mu);font:500 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}.seg button:last-child{border-right:0}.seg button.on{background:var(--tx);color:var(--bg)}
-.wrap{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 6px;border-bottom:1px solid var(--bd);font-size:13px}th{color:var(--mu);font:500 10px var(--sans);letter-spacing:.14em;text-transform:uppercase}
+.wrap{overflow-x:auto;content-visibility:auto;contain-intrinsic-size:0 360px}#cart,#res,#cRes,#stat{contain:content}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 6px;border-bottom:1px solid var(--bd);font-size:13px}th{color:var(--mu);font:500 10px var(--sans);letter-spacing:.14em;text-transform:uppercase}
 .tag{display:inline-block;padding:1px 9px;border:1px solid var(--bd);border-radius:2px;font-size:12px}.tag.low{border-color:var(--tx);font-weight:600}.tag.out{background:var(--tx);border-color:var(--tx);color:var(--bg);font-weight:600}
 .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}.stat div{background:var(--card);border:1px solid var(--bd);border-radius:2px;padding:14px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}.stat b{display:block;font:600 28px/1.2 var(--serif);letter-spacing:0;text-transform:none;color:var(--tx);margin-top:4px}
 #toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:11px 18px;border-radius:2px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:30;max-width:90%}#toast.on{opacity:1}
@@ -312,7 +312,7 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
   <div class="row" style="margin-top:10px">
    <div><label>Bill discount</label><input id="bd" aria-label="Bill discount" type="number" min="0" value="0"></div>
    <div><label>Type</label><select id="bdT" aria-label="Discount type"><option value="%">%</option><option value="₹">₹ flat</option></select></div><div><label>Redeem points</label><input id="pRedeem" aria-label="Redeem points" type="number" min="0" placeholder="0"><div class="mu" id="pAvail" style="margin-top:4px"></div></div><div><label>Exchange ₹</label><input id="exAmt" aria-label="Exchange amount in rupees" type="number" min="0" placeholder="0"></div>
-   </div><div class="row"><div style="flex-basis:100%"><label class="payLbl">Payment</label><select id="pay" style="display:none"><option>Cash</option><option>UPI</option><option>Card</option><option>Credit</option></select><div class="seg" id="paySeg" role="group" aria-label="Payment mode"><button class="on" data-v="Cash">Cash</button><button data-v="UPI">UPI</button><button data-v="Card">Card</button><button data-v="Credit">Credit</button></div></div></div>
+   </div><div class="row"><div style="flex-basis:100%"><label class="payLbl">Payment</label><select id="pay" style="display:none"><option>Cash</option><option>UPI</option><option>Card</option></select><div class="seg" id="paySeg" role="group" aria-label="Payment mode"><button class="on" data-v="Cash">Cash</button><button data-v="UPI">UPI</button><button data-v="Card">Card</button></div></div></div>
   <div class="row" id="paidRow" style="display:none"><div><label>Amount paid now (rest goes to ledger)</label><input id="paid" aria-label="Amount paid now" type="number" min="0" value="0"></div></div>
   <div id="tots" aria-live="polite"></div>
   <div class="row saveRow" style="margin-top:10px"><button class="btn g" id="gs" style="flex:1">Save</button><button class="btn" id="go" style="flex:1">Save &amp; print</button><button class="btn g" id="clr" data-label="Reset invoice">Reset invoice</button></div></div>
@@ -322,9 +322,9 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
  
  <div class="card"><h2 id="pTitle">Add product</h2><div class="row">
   <div><label>SKU / barcode</label><input id="pSku" aria-label="SKU or barcode"></div><div><label>Name</label><input id="pName" aria-label="Product name"></div>
-  <div><label>Size</label><input id="pSize" aria-label="Size" placeholder="M, 32, 42…"></div><div><label>Category</label><input id="pCat" aria-label="Category" list="cats" placeholder="Shirt, Jeans…"></div></div>
+  <div><label>Category</label><input id="pCat" aria-label="Category" list="cats" placeholder="Shirt, Jeans…"></div></div>
   <datalist id="cats"></datalist>
-  <div class="row"><div><label>Cost price ₹</label><input id="pCost" aria-label="Cost price" type="number" min="0"></div><div><label>Selling price ₹ (incl. GST)</label><input id="pPrice" aria-label="Selling price including GST" type="number" min="0"></div>
+  <div class="row"><div><label>Selling price ₹ (incl. GST)</label><input id="pPrice" aria-label="Selling price including GST" type="number" min="0"></div>
   <div><label>GST %</label><input id="pTax" aria-label="GST percent" type="number" min="0" value="5"></div></div>
   <button class="btn" id="pSave">Save product</button> <button class="btn g" id="pClr">Clear</button></div>
  <div class="card"><input id="iq" aria-label="Filter products" placeholder="Filter products…"><div class="wrap"><table><thead><tr><th scope="col">SKU</th><th scope="col">Item</th><th scope="col">Price</th><th scope="col"></th></tr></thead><tbody id="ib"></tbody></table></div></div>
@@ -333,14 +333,18 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
 <section class="pg" id="p-cust"><div class="card"><input id="cq" aria-label="Search customers by name or mobile" placeholder="Search customers by name or mobile…"><div class="wrap"><table><thead><tr><th scope="col">Customer</th><th scope="col">Visits</th><th scope="col">Spent</th><th scope="col">Points</th><th scope="col">Due</th></tr></thead><tbody id="cb"></tbody></table></div></div></section>
 
 <section class="pg" id="p-sales">
-<div class="card"><div class="row" style="align-items:flex-end;margin-bottom:0"><div style="flex:0 1 200px"><label>Period</label><select id="perSel" aria-label="Sales period"><option value="today">Today</option><option value="week">This week</option><option value="month">This month</option><option value="year">This year</option><option value="all">All bills</option></select></div><div style="flex:1 1 260px"><label>Search</label><input id="sq" aria-label="Search sales by customer, mobile or invoice" autocomplete="off" placeholder="Customer name, mobile number or invoice no."></div></div></div>
+<div class="card"><div class="row" style="align-items:flex-end;margin-bottom:0"><div style="flex:0 1 200px"><label>Period</label><select id="perSel" aria-label="Sales period"><option value="today">Today</option><option value="week">This week</option><option value="month">This month</option><option value="year">This year</option><option value="custom">Custom range</option><option value="all">All bills</option></select></div><div style="flex:1 1 260px"><label>Search</label><input id="sq" aria-label="Search sales by customer, mobile or invoice" autocomplete="off" placeholder="Customer name, mobile number or invoice no."></div></div>
+<div class="row" id="customDateRow" style="display:none;margin-top:12px;margin-bottom:0;align-items:flex-end">
+ <div><label>From date</label><input type="date" id="sFrom" aria-label="From date"></div>
+ <div><label>To date</label><input type="date" id="sTo" aria-label="To date"></div>
+ <div style="flex:0 0 auto"><button class="btn g" id="sDateApply" style="min-height:44px">Apply</button></div>
+</div></div>
 <div class="stat" id="stat" aria-live="polite"></div>
 <div class="card"><h2 id="salesTitle">Today's bills</h2><div class="wrap"><table><thead><tr><th scope="col">Invoice</th><th scope="col">When</th><th scope="col">Customer</th><th scope="col">Mode</th><th scope="col">Points</th><th scope="col">Total</th><th scope="col"></th></tr></thead><tbody id="sb"></tbody></table></div></div>
 </section>
 
 <section class="pg" id="p-lab"><div class="card"><h2>Barcode label printing</h2>
- <div class="row"><div><label>Label size</label><select id="lSize" aria-label="Label size"><option value="50x25">50 × 25 mm roll</option><option value="38x25">38 × 25 mm roll</option><option value="40x30">40 × 30 mm roll</option><option value="58x40">58 × 40 mm roll</option><option value="a4">A4 sheet (48 × 28 mm labels)</option></select></div><div><label>Labels per row</label><select id="lPerRow" aria-label="Labels per row"><option value="1">1 across</option><option value="2" selected>2 across</option></select></div>
- <div><label>Show size on label</label><select id="lSz" aria-label="Show size on label"><option value="1">Yes</option><option value="0">No</option></select></div></div>
+ <div class="row"><div><label>Label size</label><select id="lSize" aria-label="Label size"><option value="50x25">50 × 25 mm roll</option><option value="38x25">38 × 25 mm roll</option><option value="40x30">40 × 30 mm roll</option><option value="58x40">58 × 40 mm roll</option><option value="a4">A4 sheet (48 × 28 mm labels)</option></select></div></div>
  <div class="mu">Preview (first item with a quantity)</div><div id="lPrev" style="margin:8px 0"></div>
  <button class="btn" id="lDl">Download printable file</button> <button class="btn g" id="lPrint">Print here</button> <button class="btn g" id="lClr">Clear</button>
  <div class="mu" style="margin-top:8px">Each label shows the product name, selling price and a Code 128 barcode of the SKU with the SKU printed below it. Scanning it at billing adds the item.</div></div>
@@ -360,9 +364,13 @@ const S={products:[],customers:[],bills:[],cart:[],cfg:{name:'Choppers Mens Wear
 let db=null,editing=null,cfgLoaded=false;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const fm=n=>'₹'+(Math.round(n*100)/100).toLocaleString('en-IN',{maximumFractionDigits:2});
+const NF_IN=new Intl.NumberFormat('en-IN',{maximumFractionDigits:2});
+const DTF_SHORT=new Intl.DateTimeFormat('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+const DTF_FULL=new Intl.DateTimeFormat('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const DTF_CLOCK=new Intl.DateTimeFormat('en-IN',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+const fm=n=>'₹'+NF_IN.format(Math.round(n*100)/100);
 const id_=s=>String(s).trim().replace(/[^\w-]/g,'_');
-const dt=t=>new Date(t).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+const dt=t=>DTF_SHORT.format(t instanceof Date?t:new Date(t));
 let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
 const W=async f=>{try{await f();return true}catch(e){toast('Failed: '+(e.message||e.code||e));return false}};
 const lsGet=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
@@ -373,7 +381,7 @@ const TABS=[['bill','Billing'],['inv','Products'],['cust','Customers'],['sales',
 $('nav').innerHTML=TABS.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join('');
 function tab(t){document.querySelectorAll('.pg').forEach(p=>p.classList.toggle('on',p.id==='p-'+t));document.body.dataset.tab=t;document.querySelectorAll('nav button').forEach(b=>{b.classList.toggle('on',b.dataset.t===t);b.setAttribute('aria-current',b.dataset.t===t?'page':'false')});if(t==='set')fillSet();if(t==='inv')rInv();if(t==='cust')rCust();if(t==='lab')rLab();if(t==='sales')refreshSales();if(t==='bill')setTimeout(()=>$('q').focus(),50)}
 $('nav').onclick=e=>{const t=e.target.dataset.t;if(t)tab(t)};tab('bill');
-setInterval(()=>$('clock').textContent=new Date().toLocaleString('en-IN',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),1000);
+setInterval(()=>$('clock').textContent=DTF_CLOCK.format(Date.now()),1000);
 
 /* fonts load after the first screen; pending saves are counted so a refresh never overwrites them */
 ['https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap','https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&display=swap'].forEach(h=>{const l=document.createElement('link');l.rel='stylesheet';l.href=h;document.head.appendChild(l)});
@@ -445,7 +453,7 @@ const digitsOf=v=>String(v==null?'':v).replace(/\D/g,'');
 const skuId=sku=>String(sku).trim().replace(/[^\w-]/g,'_');
 const indexProd=p=>({...p,id:skuId(p.sku),_skuL:String(p.sku||'').toLowerCase(),_nameL:String(p.name||'').trim().toLowerCase(),_q:[p.sku,p.name,p.size,p.cat].join(' ').toLowerCase()});
 const mapProdRows=rows=>rows.map((r,i)=>indexProd({row:i+2,sku:String(r[0]||'').trim().replace(/^'/,''),name:String(r[1]||''),size:String(r[2]||''),cat:String(r[3]||''),cost:numV(r[4]),price:numV(r[5]),tax:numV(r[6])})).filter(p=>p.sku);
-const mapCustRows=rows=>rows.map((r,i)=>{const ph=digitsOf(r[0]);return{id:ph,row:i+2,phone:ph,name:String(r[1]||''),visits:numV(r[2]),spent:numV(r[3]),balance:numV(r[4]),last:numV(r[5]),points:numV(r[6])}}).filter(c=>c.phone);
+const mapCustRows=rows=>rows.map((r,i)=>{const ph=digitsOf(r[0]);const name=String(r[1]||'');return{id:ph,row:i+2,phone:ph,name,visits:numV(r[2]),spent:numV(r[3]),balance:numV(r[4]),last:numV(r[5]),points:numV(r[6]),_nameL:name.toLowerCase()}}).filter(c=>c.phone);
 async function readProducts(){return mapProdRows(await getV('Products!A2:G'))}
 async function readCustomers(){return mapCustRows(await getV('Customers!A2:G'))}
 function billFromRow(r){let items=[];try{items=JSON.parse(r[15]||'[]')}catch(e){}const inv=String(r[0]||'');return{id:inv,inv,no:numV(r[1]),ts:numV(r[3]),cashier:String(r[4]||''),cust:String(r[5]||''),phone:digitsOf(r[6]),mode:String(r[7]||''),sub:numV(r[8]),disc:numV(r[9]),tax:numV(r[10]),ro:numV(r[11]),total:numV(r[12]),paid:numV(r[13]),due:numV(r[14]),items,redeem:numV(r[16]),earned:numV(r[17]),exchange:numV(r[18]),deleted:String(r[19]||'').trim()!==''}}
@@ -475,12 +483,28 @@ async function ensurePointsHeader(){
 }
 async function getData(){
  await ensurePointsHeader();
- const [settings,pRows,cRows,colA]=await batchGetV(['Settings!A2:B','Products!A2:G','Customers!A2:G','Bills!A:A']);
+ const cachedBlen=+lsGet('cmw-blen')||0;
+ const reqRanges=['Settings!A2:B','Products!A2:G','Customers!A2:G','Bills!A:A'];
+ const canPredict=cachedBlen>=2;
+ if(canPredict)reqRanges.push(`Bills!A${Math.max(2,cachedBlen-BILLS_WINDOW+1)}:T${cachedBlen+40}`);
+ const res=await batchGetV(reqRanges);
+ const settings=res[0]||[],pRows=res[1]||[],cRows=res[2]||[],colA=res[3]||[];
  const products=mapProdRows(pRows);
+ products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);
  const customers=mapCustRows(cRows);
+ customers.sort((a,b)=>(b.last||0)-(a.last||0));
  const cfgRaw={};settings.forEach(r=>{if(r[0])cfgRaw[String(r[0]).trim()]=r[1]});
  const len=colA.length;
- const rows=len<2?[]:await getV(`Bills!A${Math.max(2,len-BILLS_WINDOW+1)}:T${len}`);
+ lsSet('cmw-blen',String(len));
+ let rows=[];
+ const start=Math.max(2,len-BILLS_WINDOW+1);
+ if(canPredict&&res[4]&&len<=cachedBlen+40&&start>=Math.max(2,cachedBlen-BILLS_WINDOW+1)){
+  const off=start-Math.max(2,cachedBlen-BILLS_WINDOW+1);
+  const count=len-start+1;
+  rows=(res[4]||[]).slice(off,off+count);
+ }else if(len>=2){
+  rows=await getV(`Bills!A${start}:T${len}`);
+ }
  return{
   products,
   customers,
@@ -490,7 +514,7 @@ async function getData(){
 async function findBill(no){const n=Math.round(+no);if(!n||n<1)return null;return (await findBillN(n,INV_PREFIX+n))||findBillN(n,'CMW-'+String(n).padStart(5,'0'))}
 const INV_START=83527,INV_PREFIX='S';
 const r2=x=>Math.round(x*100)/100;
-const fmtDate=ts=>new Date(ts).toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const fmtDate=ts=>DTF_FULL.format(ts instanceof Date?ts:new Date(ts));
 const paidOf=(mode,paidIn,grand)=>mode==='Credit'?Math.min(Math.max(+paidIn||0,0),grand):grand;
 function checkRedeem(want,avail,room){if(want>avail)throw new Error('Only '+Math.max(0,avail)+' points available');if(want>room+0.005)throw new Error('Points redeemed are more than the bill total')}
 function checkExchange(ex,room){if(ex>room+0.005)throw new Error('Exchange amount is more than the bill total')}
@@ -590,13 +614,13 @@ function updateBill(inv,b){return serial(async()=>{
  return{pointsEarned:earned,bill:billObj({inv:old.inv,no:old.no,ts:old.ts,cashier:old.cashier,name,phone,mode,paid,due,priced,t,items,want,earned,exch:ex}),customer,customers};
 })}
 async function searchBills(opts){
- const q=String((opts&&opts.q)||'').trim();const from=+((opts&&opts.from)||0)||0;
+ const q=String((opts&&opts.q)||'').trim();const from=+((opts&&opts.from)||0)||0;const to=+((opts&&opts.to)||0)||0;
  const numeric=/^\d+$/.test(q);const invLike=/^(cmw-?|s)\d*$/i.test(q);
  const qNo=parseInt(q.replace(/\D/g,''),10)||0;const qd=digitsOf(q);
  const nameQ=q.replace(/\d/g,'').trim().toLowerCase();
  const out={count:0,total:0,redeemed:0,earned:0,byMode:{},bills:[]};
  const matchBill=b=>{
-  if(!b.inv||b.deleted||b.ts<from)return;
+  if(!b.inv||b.deleted||b.ts<from||(to&&b.ts>to))return;
   if(q){const hit=(qNo&&(numeric||invLike)&&b.no===qNo)||(invLike&&q.length>3&&b.inv.toLowerCase().indexOf(q.toLowerCase())>=0)||(!invLike&&nameQ.length>=2&&b.cust.toLowerCase().indexOf(nameQ)>=0)||(numeric&&qd.length>=3&&b.phone.indexOf(qd)>=0);if(!hit)return}
   out.count++;out.total+=b.total;out.redeemed+=b.redeem||0;out.earned+=b.earned||0;out.byMode[b.mode]=(out.byMode[b.mode]||0)+b.total;out.bills.push(b)};
  // Fast path: if S.bills already covers the requested time window (and no search query requires older bills), compute immediately in memory
@@ -681,15 +705,38 @@ function saveSettings(d){return serial(async()=>{
 const SERVER={getData,findBill,saveBill,updateBill,addCustomer,searchBills,deleteBill,saveProduct,deleteProduct,receivePayment,saveSettings};
 
 const rpc=(fn,...a)=>(TOK&&TOK.exp>Date.now())?SERVER[fn](...a):getToken(true).then(()=>SERVER[fn](...a));
-function saveCache(){try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg}))}catch(e){}}
+let cacheT=null;
+function saveCache(){clearTimeout(cacheT);cacheT=setTimeout(()=>{try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg}))}catch(e){}},200)}
+S._byId=new Map();S._bySku=new Map();S._byName=new Map();S._custById=new Map();
+function rebuildIndexes(){
+ S._byId.clear();S._bySku.clear();S._byName.clear();
+ const nameCounts=new Map();
+ for(let i=0;i<S.products.length;i++){
+  const p=S.products[i];S._byId.set(p.id,p);
+  if(p.sku)S._bySku.set(String(p.sku).trim().toLowerCase(),p);
+  const nl=p._nameL||(p._nameL=String(p.name||'').trim().toLowerCase());
+  nameCounts.set(nl,(nameCounts.get(nl)||0)+1);
+ }
+ for(let i=0;i<S.products.length;i++){
+  const p=S.products[i];
+  if(nameCounts.get(p._nameL)===1)S._byName.set(p._nameL,p);
+ }
+ S._custById.clear();
+ for(let i=0;i<S.customers.length;i++){const c=S.customers[i];if(c.id){S._custById.set(c.id,c);if(!c._nameL&&c.name)c._nameL=c.name.toLowerCase()}}
+}
 (function hydrateCache(){
  const raw=lsGet('cmw-cache');if(!raw)return;
- try{const d=JSON.parse(raw);if(d&&Array.isArray(d.products)){S.products=d.products.map(indexProd);S.customers=d.customers||[];S.bills=d.bills||[];S.nextNo=d.nextNo||INV_START;Object.assign(S.cfg,d.cfg||{});cfgLoaded=true;fillSet()}}catch(e){}
+ try{const d=JSON.parse(raw);if(d&&Array.isArray(d.products)){
+  S.products=d.products.map(indexProd);
+  S.products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);
+  S.customers=d.customers||[];
+  S.customers.sort((a,b)=>(b.last||0)-(a.last||0));
+  S.bills=d.bills||[];S.nextNo=d.nextNo||INV_START;Object.assign(S.cfg,d.cfg||{});cfgLoaded=true;rebuildIndexes();fillSet()}}catch(e){}
 })();
 async function load(){
  const d=await rpc('getData');
  S.products=d.products;S.customers=d.customers;S.bills=d.bills;S.nextNo=d.nextNo;Object.assign(S.cfg,d.cfg);
- saveCache();
+ rebuildIndexes();saveCache();
  if(!cfgLoaded){cfgLoaded=true;fillSet()}
  $('st').textContent='';R()}
 function saveFile(name,data){const u=URL.createObjectURL(new Blob([data],{type:/\.html$/.test(name)?'text/html':'application/octet-stream'}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},2000);toast('Saved '+name)}
@@ -713,23 +760,38 @@ S.cashier=lsGet('cmw-cashier');
 
 /* billing */
 function addItem(p){const i=S.cart.find(x=>x.id===p.id);if(i)i.qty++;else S.cart.push({id:p.id,qty:1,disc:0});rCart()}
-const prod=id=>S.products.find(p=>p.id===id);
+const prod=id=>(S._byId&&S._byId.get(id))||S.products.find(p=>p.id===id)||null;
+const cust=id=>(S._custById&&S._custById.get(id))||S.customers.find(c=>c.id===id)||null;
 function search(){
  const q=$('q').value.trim().toLowerCase();if(!q){$('res').innerHTML='';return[]}
- const r=[];for(let i=0;i<S.products.length&&r.length<8;i++){const p=S.products[i];if((p._q||[p.sku,p.name,p.size,p.cat].join(' ').toLowerCase()).includes(q))r.push(p)}
- $('res').innerHTML=r.map(p=>`<div class="res" tabindex="0" data-id="${p.id}"><div><b>${esc(p.name)}</b> ${p.size?'· '+esc(p.size):''}<div class="mu">${esc(p.sku)} · ${esc(p.cat||'')}</div></div><div style="text-align:right"><b>${fm(p.price)}</b></div></div>`).join('')||'<div class="mu" style="padding:8px">No matching item</div>';return r}
+ const r=[];for(let i=0;i<S.products.length&&r.length<8;i++){const p=S.products[i];if((p._q||(p.sku+' '+p.name).toLowerCase()).includes(q))r.push(p)}
+ $('res').innerHTML=r.map(p=>`<div class="res" tabindex="0" data-id="${p.id}"><div><b>${esc(p.name)}</b><div class="mu">${esc(p.sku)} · ${esc(p.cat||'')}</div></div><div style="text-align:right"><b>${fm(p.price)}</b></div></div>`).join('')||'<div class="mu" style="padding:8px">No matching item</div>';return r}
 let scanT=null;
-// Exact match: a barcode (SKU) first, then a name that only one product has.
-function exactHit(q){const t=q.trim().toLowerCase();if(!t)return null;const bySku=S.products.find(p=>(p._skuL||String(p.sku).toLowerCase())===t);if(bySku)return bySku;const byName=S.products.filter(p=>(p._nameL||String(p.name).trim().toLowerCase())===t);return byName.length===1?byName[0]:null}
-// A pause adds the item only if no other product starts with the same text, so SHIRT1 does not add while SHIRT10 is being typed.
+// Ultra-fast O(1) SKU and unique product name lookup
+function exactHit(q){
+ const t=q.trim().toLowerCase();if(!t)return null;
+ return S._bySku.get(t)||S._byName.get(t)||null}
 function unambiguous(q,hit){const t=q.trim().toLowerCase();return !S.products.some(p=>p!==hit&&((p._skuL||String(p.sku).toLowerCase()).startsWith(t)||(p._nameL||String(p.name).trim().toLowerCase()).startsWith(t)))}
-function addScanned(hit){addItem(hit);$('q').value='';$('res').innerHTML='';toast('Added '+hit.name+(hit.size?' · '+hit.size:''));$('q').focus()}
-$('q').oninput=()=>{search();clearTimeout(scanT);const q=$('q').value.trim();if(!q)return;scanT=setTimeout(()=>{if($('q').value.trim()!==q)return;const hit=exactHit(q);if(hit&&unambiguous(q,hit))addScanned(hit)},180)};
+function addScanned(hit){addItem(hit);$('q').value='';$('res').innerHTML='';toast('Added '+hit.name);$('q').focus()}
+let searchRaf=null;
+$('q').oninput=()=>{
+ if(searchRaf)cancelAnimationFrame(searchRaf);
+ searchRaf=requestAnimationFrame(search);
+ clearTimeout(scanT);const q=$('q').value.trim();if(!q)return;
+ const bySku=S._bySku.get(q.toLowerCase());
+ if(bySku){scanT=setTimeout(()=>{if($('q').value.trim()===q)addScanned(bySku)},40);return}
+ scanT=setTimeout(()=>{if($('q').value.trim()!==q)return;const hit=exactHit(q);if(hit&&unambiguous(q,hit))addScanned(hit)},140);
+};
 $('q').onkeydown=e=>{if(e.key!=='Enter')return;e.preventDefault();clearTimeout(scanT);const q=$('q').value.trim();if(!q)return;const hit=exactHit(q);if(hit){addScanned(hit);return}const r=search();if(!r.length)toast('Item not found: '+q)};
 $('res').onclick=e=>{const d=e.target.closest('.res');if(d){const p=prod(d.dataset.id);if(p){addItem(p);$('q').value='';$('res').innerHTML='';$('q').focus()}}};
 function calc(){
- const ls=S.cart.map(i=>{const p=prod(i.id)||{};const net=p.price*i.qty*(1-(i.disc||0)/100);return{...i,p,net}}).filter(l=>l.p.sku!==undefined);
- const sub=ls.reduce((a,l)=>a+l.net,0);
+ const ls=[];let sub=0,itemCount=0;
+ for(let k=0;k<S.cart.length;k++){
+  const i=S.cart[k];const p=prod(i.id);
+  if(!p||p.sku===undefined)continue;
+  const net=p.price*i.qty*(1-(i.disc||0)/100);
+  ls.push({...i,p,net});sub+=net;itemCount+=i.qty;
+ }
  let v=+$('bd').value||0;let bd=$('bdT').value==='%'?sub*v/100:v;bd=Math.min(Math.max(bd,0),sub);
  const pc=$('cPhone').value;
  const want=Math.max(0,Math.floor(+$('pRedeem').value||0));
@@ -737,12 +799,12 @@ function calc(){
  const ex=Math.min(Math.max(0,+$('exAmt').value||0),Math.max(0,sub-bd-rd));
  const d=bd+rd+ex;
  const f=sub?(sub-d)/sub:0;let tax=0;
- ls.forEach(l=>{l.fin=l.net*f;l.tax=l.fin-l.fin/(1+(l.p.tax||0)/100);tax+=l.tax});
+ for(let k=0;k<ls.length;k++){const l=ls[k];l.fin=l.net*f;l.tax=l.fin-l.fin/(1+(l.p.tax||0)/100);tax+=l.tax}
  const total=sub-d,grand=Math.round(total);
- return{ls,sub,d:bd,rd,ex,tax,total,grand,ro:grand-total}}
+ return{ls,sub,d:bd,rd,ex,tax,total,grand,ro:grand-total,itemCount}}
 function rCart(){
  const c=calc();
- $('itemsN').textContent=c.ls.reduce((a,l)=>a+l.qty,0);$('itemsTot').textContent=fm(c.grand);
+ $('itemsN').textContent=c.itemCount;$('itemsTot').textContent=fm(c.grand);
  $('cart').innerHTML=c.ls.map(l=>`<div class="ci"><div><b>${esc(l.p.name)}</b> ${l.p.size?'· '+esc(l.p.size):''}<div class="mu">${fm(l.p.price)} · GST ${l.p.tax||0}%</div></div><div style="text-align:right"><b>${fm(l.net)}</b></div>
  <div class="qty"><button data-a="m" data-id="${l.id}" aria-label="Decrease quantity of ${esc(l.p.name)}">−</button><b>${l.qty}</b><button data-a="p" data-id="${l.id}" aria-label="Increase quantity of ${esc(l.p.name)}">+</button><span class="mu">Disc %</span><input type="number" min="0" max="100" value="${l.disc||0}" data-a="d" data-id="${l.id}" aria-label="Discount percent for ${esc(l.p.name)}"></div><div style="text-align:right"><button class="btn g s" data-a="x" data-id="${l.id}" aria-label="Remove ${esc(l.p.name)}">Remove</button></div></div>`).join('')||'<div class="mu">Your bill is empty. Scan a barcode or search for an item on the left.</div>';
  $('tots').innerHTML=`<div class="tot"><span>Subtotal</span><span>${fm(c.sub)}</span></div>`+(c.d?`<div class="tot"><span>Discount</span><span>−${fm(c.d)}</span></div>`:'')+`<div class="tot mu"><span>GST included</span><span>${fm(c.tax)}</span></div>`+(c.ro?`<div class="tot mu"><span>Round off</span><span>${c.ro>0?'+':''}${c.ro.toFixed(2)}</span></div>`:'')+(c.ex?`<div class="tot"><span>Exchange</span><span>−${fm(c.ex)}</span></div>`:'')+(c.rd?`<div class="tot"><span>Points redeemed</span><span>−${fm(c.rd)}</span></div>`:'')+`<div class="tot gt"><span>Total</span><span>${fm(c.grand)}</span></div>`+pointsLine(c.grand);redeemHint(c)}
@@ -755,16 +817,16 @@ $('cart').onchange=e=>{if(e.target.dataset.a==='d'){const i=S.cart.find(x=>x.id=
 $('pay').onchange=()=>$('paidRow').style.display=$('pay').value==='Credit'?'flex':'none';
 $('paySeg').onclick=e=>{const v=e.target.dataset.v;if(!v)return;$('pay').value=v;$('pay').onchange();[...$('paySeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v))};
 /* one search box for customers: type a name or a mobile number */
-function pointsLine(grand){const p=$('cPhone').value;if(!p)return'';const cu=S.customers.find(x=>x.id===p);const earn=Math.floor(grand/10);return earn?`<div class="tot mu"><span>${cu?'Points now '+(cu.points||0):'New customer'}</span><span>+${earn} points</span></div>`:''}
+function pointsLine(grand){const p=$('cPhone').value;if(!p)return'';const cu=cust(p);const earn=Math.floor(grand/10);return earn?`<div class="tot mu"><span>${cu?'Points now '+(cu.points||0):'New customer'}</span><span>+${earn} points</span></div>`:''}
 // Points the customer can use now. When editing a bill, that bill's own points are put back first.
 function availPts(pc){
- const cu=pc?S.customers.find(x=>x.id===pc):null;
+ const cu=pc?cust(pc):null;
  if(!cu)return 0;
  const e=S.editBill;
  const back=e&&e.phone===pc?(e.redeem||0)-(e.earned||0):0;
  return Math.max(0,(cu.points||0)+back)}
 function redeemHint(c){
- const pc=$('cPhone').value,cu=pc?S.customers.find(x=>x.id===pc):null;
+ const pc=$('cPhone').value,cu=pc?cust(pc):null;
  const req=Math.floor(+$('pRedeem').value||0);
  const av=availPts(pc);
  $('pAvail').innerHTML=!cu?(req?'<span style="color:var(--bad)">Select a saved customer to redeem points</span>':''):
@@ -778,7 +840,7 @@ function renderCust(){
  const chosen=!!(phone||name);
  $('cPick').style.display=chosen?'none':'';
  if(!chosen){$('cInfo').innerHTML='';return}
- const c=phone?S.customers.find(x=>x.id===phone):null;
+ const c=phone?cust(phone):null;
  $('cInfo').innerHTML=`<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><span><b style="color:var(--tx)">${esc(name||(c&&c.name)||'Customer')}</b> · ${esc(phone||'no mobile')}</span><button class="lnk" id="cChange">Change</button></div>`
   +(c?`<div class="mu" style="margin-top:4px">${c.visits||0} visits · spent ${fm(c.spent||0)} · <b style="color:var(--tx)">${c.points||0} points</b>${c.balance>0?' · due '+fm(c.balance):''}</div>`:(phone?'<div class="mu" style="margin-top:4px">New customer</div>':''));
  $('cChange').onclick=()=>{setCust('','');$('cSearch').value='';$('cSearch').focus()};
@@ -787,15 +849,19 @@ function custHits(){
  const raw=$('cSearch').value.trim();
  const digits=raw.replace(/\D/g,''),words=raw.replace(/\d/g,'').trim().toLowerCase();
  if(!raw){$('cRes').innerHTML='';$('cRes')._hits=[];return[]}
- const hits=S.customers.filter(c=>(!words||(c.name||'').toLowerCase().includes(words))&&(!digits||c.id.includes(digits))).sort((a,b)=>(b.last||0)-(a.last||0)).slice(0,6);
- const exact=!!digits&&S.customers.some(c=>c.id===digits);
+ const hits=[];
+ for(let i=0;i<S.customers.length&&hits.length<6;i++){
+  const c=S.customers[i];
+  if((!words||(c._nameL||(c.name||'').toLowerCase()).includes(words))&&(!digits||c.id.includes(digits)))hits.push(c);
+ }
+ const exact=!!digits&&S._custById.has(digits);
  const cap=t=>t.replace(/\b\w/g,ch=>ch.toUpperCase());
  $('cRes').innerHTML=hits.map((c,i)=>`<div class="res" tabindex="0" data-i="${i}"><div><b>${esc(c.name||'No name')}</b><div class="mu">${esc(c.id)} · ${c.visits||0} visits${c.balance>0?' · due '+fm(c.balance):''}</div></div></div>`).join('')
   +(exact?'':`<div class="res" tabindex="0" data-new="1"><div><b>+ Add new customer</b><div class="mu">${esc(cap(words))}${digits?' · '+esc(digits):''}</div></div></div>`);
  $('cRes')._hits=hits;return hits}
 function pickHit(c){setCust(c.id,c.name||'');$('cSearch').value='';$('cRes').innerHTML=''}
 function pickNew(){const raw=$('cSearch').value.trim();const digits=raw.replace(/\D/g,'');const words=raw.replace(/\d/g,'').trim().replace(/\b\w/g,ch=>ch.toUpperCase());$('cSearch').value='';$('cRes').innerHTML='';openNewCustomer(digits,words)}
-$('cSearch').oninput=custHits;
+let cSearchRaf=null;$('cSearch').oninput=()=>{if(cSearchRaf)cancelAnimationFrame(cSearchRaf);cSearchRaf=requestAnimationFrame(custHits)};
 $('cSearch').onkeydown=e=>{if(e.key!=='Enter')return;e.preventDefault();const hits=custHits();if(hits.length===1)pickHit(hits[0]);else if(!hits.length&&$('cSearch').value.trim())pickNew()};
 $('cRes').onclick=e=>{const r=e.target.closest&&e.target.closest('.res');if(!r)return;if(r.dataset.new)pickNew();else pickHit($('cRes')._hits[+r.dataset.i])};
 renderCust();
@@ -812,7 +878,7 @@ function refreshInvNo(){
  $('gs').textContent=e?'Update':'Save';
  $('go').textContent=e?'Update & print':'Save & print';
 }
-function setPay(v){$('pay').value=v;$('pay').onchange();[...$('paySeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
+function setPay(v){if(v==='Credit')v='Cash';$('pay').value=v;$('pay').onchange();[...$('paySeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
 function setBusy(on){busy=on;$('go').disabled=on;$('gs').disabled=on}
 function clearForm(){S.editBill=null;S.cart=[];$('bd').value=0;$('bdT').value='%';$('pRedeem').value=0;$('exAmt').value=0;setPay('Cash');$('paid').value=0;$('fInv').value='';setCust('','');refreshInvNo();rCart()}
 /* Starts a fresh invoice: clears the items, customer, discount, points, exchange and payment, leaves edit mode,
@@ -842,7 +908,7 @@ function applyResult(res,wasEdit){
  S.bills=k>=0?S.bills.map((x,i)=>i===k?b:x):[b].concat(S.bills).slice(0,300);
  (res.customers||[]).forEach(cu=>{const i=S.customers.findIndex(x=>x.id===cu.id);if(i>=0)S.customers[i]=cu;else S.customers.push(cu)});
  if(!wasEdit)S.nextNo=b.no+1;
- saveCache();
+ rebuildIndexes();saveCache();
  R()}
 async function submit(printIt){
  const c=calc();if(!c.ls.length)return toast('Bill is empty');
@@ -919,6 +985,7 @@ async function saveNewCustomer(){
  try{
   const c=await rpc('addCustomer',phone,name);
   const i=S.customers.findIndex(x=>x.id===c.id);if(i>=0)S.customers[i]=c;else S.customers.push(c);
+  rebuildIndexes();
   $('modal').classList.remove('on');
   setCust(c.id,c.name);
   toast(c.existed?'This number is already saved as '+c.name:'Customer added');
@@ -974,37 +1041,42 @@ function showReceipt(b,fresh){
 $('modal').onclick=e=>{if(e.target.id==='modal')$('modal').classList.remove('on')};
 
 /* inventory */
-const pf=['pSku','pName','pSize','pCat','pCost','pPrice','pTax'];
+const pf=['pSku','pName','pCat','pPrice','pTax'];
 function clearP(){pf.forEach(f=>$(f).value='');$('pTax').value=5;editing=null;$('pTitle').textContent='Add product';$('pSku').disabled=false}
 $('pClr').onclick=clearP;
 $('pSave').onclick=async()=>{
  const sku=$('pSku').value.trim(),name=$('pName').value.trim();if(!sku||!name||$('pPrice').value==='')return toast('SKU, name and price are required');
  const orig=editing?prod(editing):null;
- const np=indexProd({row:orig?orig.row:0,sku,name,size:$('pSize').value.trim(),cat:$('pCat').value.trim(),cost:+$('pCost').value||0,price:+$('pPrice').value||0,tax:+$('pTax').value||0});
+ const np=indexProd({row:orig?orig.row:0,sku,name,size:orig?orig.size:'',cat:$('pCat').value.trim(),cost:orig?orig.cost:0,price:+$('pPrice').value||0,tax:+$('pTax').value||0});
  $('pSave').disabled=true;busy=true;
  try{
   const savedRow=await rpc('saveProduct',{sku,name,size:np.size,cat:np.cat,cost:np.cost,price:np.price,tax:np.tax},orig?orig.sku:'');
   if(typeof savedRow==='number')np.row=savedRow;
   const k=S.products.findIndex(x=>x.sku===(orig?orig.sku:sku));
   if(k>=0)S.products[k]=np;else S.products.push(np);
-  saveCache();R();toast('Saved '+name);clearP();
+  S.products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);
+  rebuildIndexes();saveCache();R();toast('Saved '+name);clearP();
  }catch(e){toast('Failed: '+e.message)}
  $('pSave').disabled=false;busy=false};
 function rInv(){
- const q=$('iq').value.toLowerCase();const ps=S.products.filter(p=>(p._q||[p.sku,p.name,p.cat,p.size].join(' ').toLowerCase()).includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
- $('ib').innerHTML=ps.map(p=>`<tr><td>${esc(p.sku)}</td><td><b>${esc(p.name)}</b> ${p.size?'· '+esc(p.size):''}<div class="mu">${esc(p.cat||'')} · cost ${fm(p.cost||0)}</div></td><td>${fm(p.price)}</td><td style="white-space:nowrap"><button class="btn g s" data-e="${p.id}" aria-label="Edit ${esc(p.name)}">Edit</button> <button class="btn g s" data-x="${p.id}" aria-label="Delete ${esc(p.name)}">Delete</button></td></tr>`).join('')||'<tr><td colspan="4" class="mu">No products yet. Add your first item above.</td></tr>';
- $('cats').innerHTML=[...new Set(S.products.map(p=>p.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('')}
-$('iq').oninput=rInv;
+ const q=$('iq').value.toLowerCase().trim();
+ const ps=[];for(let i=0;i<S.products.length;i++){const p=S.products[i];if(!q||(p._q||p.name.toLowerCase()).includes(q))ps.push(p);if(ps.length>=100&&q)break}
+ const view=ps.slice(0,100);
+ $('ib').innerHTML=view.map(p=>`<tr><td>${esc(p.sku)}</td><td><b>${esc(p.name)}</b><div class="mu">${esc(p.cat||'')}</div></td><td>${fm(p.price)}</td><td style="white-space:nowrap"><button class="btn g s" data-e="${p.id}" aria-label="Edit ${esc(p.name)}">Edit</button> <button class="btn g s" data-x="${p.id}" aria-label="Delete ${esc(p.name)}">Delete</button></td></tr>`).join('')+(ps.length>100?`<tr><td colspan="4" class="mu" style="text-align:center;padding:10px">Showing 100 items. Type to narrow search.</td></tr>`:'')||'<tr><td colspan="4" class="mu">No products yet. Add your first item above.</td></tr>';
+ if(!$('cats').children.length)$('cats').innerHTML=[...new Set(S.products.map(p=>p.cat).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('')}
+let iqT=null;$('iq').oninput=()=>{clearTimeout(iqT);iqT=setTimeout(rInv,80)};
 $('ib').onclick=async e=>{const t=e.target;
- if(t.dataset.e){const p=prod(t.dataset.e);pf.forEach((f,i)=>$(f).value=p[['sku','name','size','cat','cost','price','tax'][i]]??'');editing=p.id;$('pSku').disabled=true;$('pTitle').textContent='Edit product';scrollTo({top:0,behavior:'smooth'})}
+ if(t.dataset.e){const p=prod(t.dataset.e);pf.forEach((f,i)=>$(f).value=p[['sku','name','cat','price','tax'][i]]??'');editing=p.id;$('pSku').disabled=true;$('pTitle').textContent='Edit product';scrollTo({top:0,behavior:'smooth'})}
  if(t.dataset.x){if(t.dataset.s!=='1'){t.dataset.s='1';t.textContent='Sure?';return}
-  busy=true;try{const p=prod(t.dataset.x);if(p){await rpc('deleteProduct',p.sku);S.products=S.products.filter(x=>x.id!==p.id);R();toast('Deleted')}}catch(x){toast('Failed: '+x.message)}busy=false}};
+  busy=true;try{const p=prod(t.dataset.x);if(p){await rpc('deleteProduct',p.sku);S.products=S.products.filter(x=>x.id!==p.id);rebuildIndexes();saveCache();R();toast('Deleted')}}catch(x){toast('Failed: '+x.message)}busy=false}};
 
 /* customers */
 function rCust(){
- const q=$('cq').value.toLowerCase();
- $('cb').innerHTML=S.customers.filter(c=>(c.name+c.id).toLowerCase().includes(q)).sort((a,b)=>(b.last||0)-(a.last||0)).slice(0,q?200:300).map(c=>`<tr tabindex="0" data-c="${c.id}" style="cursor:pointer"><td><b>${esc(c.name||'—')}</b><div class="mu">${c.id}</div></td><td>${c.visits||0}</td><td>${fm(c.spent||0)}</td><td>${c.points||0}</td><td style="color:${c.balance>0?'var(--bad)':'inherit'}">${c.balance>0?fm(c.balance):'—'}</td></tr>`).join('')||'<tr><td colspan="5" class="mu">Customers are added automatically at checkout when a mobile number is entered (or type them into the sheet).</td></tr>'}
-$('cq').oninput=rCust;
+ const q=$('cq').value.toLowerCase().trim();
+ const cs=[];for(let i=0;i<S.customers.length;i++){const c=S.customers[i];if(!q||(c._nameL||c.name.toLowerCase()).includes(q)||c.id.includes(q))cs.push(c);if(cs.length>=100&&q)break}
+ const view=cs.slice(0,100);
+ $('cb').innerHTML=view.map(c=>`<tr tabindex="0" data-c="${c.id}" style="cursor:pointer"><td><b>${esc(c.name||'—')}</b><div class="mu">${c.id}</div></td><td>${c.visits||0}</td><td>${fm(c.spent||0)}</td><td>${c.points||0}</td><td style="color:${c.balance>0?'var(--bad)':'inherit'}">${c.balance>0?fm(c.balance):'—'}</td></tr>`).join('')+(cs.length>100?`<tr><td colspan="5" class="mu" style="text-align:center;padding:10px">Showing 100 customers. Type to search others.</td></tr>`:'')||'<tr><td colspan="5" class="mu">Customers are added automatically at checkout when a mobile number is entered (or type them into the sheet).</td></tr>'}
+let cqT=null;$('cq').oninput=()=>{clearTimeout(cqT);cqT=setTimeout(rCust,80)};
 $('cb').onclick=e=>{const tr=e.target.closest('tr[data-c]');if(!tr)return;const c=S.customers.find(x=>x.id===tr.dataset.c),bs=S.bills.filter(b=>b.phone===c.id);
  $('mbox').innerHTML=`<h2>${esc(c.name||c.id)}</h2><div class="mu">${c.id} · ${c.visits||0} visits · ${fm(c.spent||0)} spent</div>`+(c.balance>0?`<div class="row" style="margin-top:10px"><div><label>Ledger due ${fm(c.balance)}. Payment received</label><input id="rp" aria-label="Amount received" type="number" min="0"></div><div style="flex:0"><label>&nbsp;</label><button class="btn" id="rb">Receive</button></div></div>`:'')+
  `<h2 style="margin-top:12px">Purchase history</h2>`+(bs.map(b=>`<div class="res" tabindex="0" data-b="${b.id}"><div><b>${b.inv}</b><div class="mu">${dt(b.ts)} · ${b.items.map(i=>esc(i.name)).join(', ').slice(0,60)}</div></div><b>${fm(b.total)}</b></div>`).join('')||'<div class="mu">No bills in recent history.</div>')+`<button class="btn g big" id="mc" style="margin-top:12px">Close</button>`;
@@ -1013,29 +1085,54 @@ $('cb').onclick=e=>{const tr=e.target.closest('tr[data-c]');if(!tr)return;const 
  if($('rb'))$('rb').onclick=async()=>{const a=Math.min(+$('rp').value||0,c.balance);if(a<=0)return;busy=true;try{await rpc('receivePayment',c.id,a);const cc=S.customers.find(x=>x.id===c.id);if(cc)cc.balance=Math.max(0,cc.balance-a);R();toast('Received '+fm(a));$('modal').classList.remove('on')}catch(x){toast('Failed: '+x.message)}busy=false}};
 
 /* sales */
-/* sales tab: period dropdown and one search box, over every bill */
-const PERIOD_NAME={today:"Today's bills",week:'This week',month:'This month',year:'This year',all:'All bills'};
+/* sales tab: period dropdown, custom date range, and one search box, over every bill */
+const PERIOD_NAME={today:"Today's bills",week:'This week',month:'This month',year:'This year',custom:'Custom range',all:'All bills'};
 const SALES={period:'today',q:'',rows:[],timer:null,seq:0};
-function periodStart(p){
+function parseDateStart(s){if(!s)return 0;const [y,m,d]=s.split('-').map(Number);if(!y||!m||!d)return 0;return new Date(y,m-1,d,0,0,0,0).getTime()}
+function parseDateEnd(s){if(!s)return 0;const [y,m,d]=s.split('-').map(Number);if(!y||!m||!d)return 0;return new Date(y,m-1,d,23,59,59,999).getTime()}
+function initCustomDates(){
+ const now=new Date();const pad=n=>String(n).padStart(2,'0');
+ const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+ if($('sFrom')&&!$('sFrom').value)$('sFrom').value=todayStr;
+ if($('sTo')&&!$('sTo').value)$('sTo').value=todayStr;
+}
+function periodRange(p){
  const d=new Date();
- if(p==='today')return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
- if(p==='week'){const back=(d.getDay()+6)%7;return new Date(d.getFullYear(),d.getMonth(),d.getDate()-back).getTime()}
- if(p==='month')return new Date(d.getFullYear(),d.getMonth(),1).getTime();
- if(p==='year')return new Date(d.getFullYear(),0,1).getTime();
- return 0}
+ if(p==='today')return {from:new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),to:0};
+ if(p==='week'){const back=(d.getDay()+6)%7;return {from:new Date(d.getFullYear(),d.getMonth(),d.getDate()-back).getTime(),to:0}}
+ if(p==='month')return {from:new Date(d.getFullYear(),d.getMonth(),1).getTime(),to:0};
+ if(p==='year')return {from:new Date(d.getFullYear(),0,1).getTime(),to:0};
+ if(p==='custom'){
+  let f=parseDateStart($('sFrom')&&$('sFrom').value);
+  let t=parseDateEnd($('sTo')&&$('sTo').value);
+  if(f&&t&&f>t){const tmp=f;f=parseDateStart($('sTo').value);t=parseDateEnd($('sFrom').value)}
+  return {from:f,to:t};
+ }
+ return {from:0,to:0}}
 async function refreshSales(){
  const seq=++SALES.seq;
  try{
-  const res=await rpc('searchBills',{q:SALES.q,from:periodStart(SALES.period)});
+  const rng=periodRange(SALES.period);
+  const res=await rpc('searchBills',{q:SALES.q,from:rng.from,to:rng.to});
   if(seq!==SALES.seq)return;
   SALES.rows=res.bills;
   const m=res.byMode||{};
   $('stat').innerHTML=`<div>Sales<b>${fm(res.total)}</b></div><div>Bills<b>${res.count}</b></div><div>Cash<b>${fm(m.Cash||0)}</b></div><div>UPI<b>${fm(m.UPI||0)}</b></div><div>Card<b>${fm(m.Card||0)}</b></div><div>Credit<b>${fm(m.Credit||0)}</b></div><div>Points used<b>${res.redeemed||0}</b></div><div>Points earned<b>${res.earned||0}</b></div>`;
   $('sb').innerHTML=res.bills.map(b=>{const pts=[b.redeem?'−'+b.redeem+' used':'',b.earned?'+'+b.earned+' earned':''].filter(Boolean).join(' · ')||'—';return `<tr tabindex="0" data-b="${esc(b.id)}" style="cursor:pointer"><td><b>${esc(b.inv)}</b></td><td>${dt(b.ts)}</td><td>${esc(b.cust||'Walk-in')}${b.phone?`<div class="mu">${esc(b.phone)}</div>`:''}</td><td>${esc(b.mode)}</td><td class="mu">${pts}</td><td>${fm(b.total)}</td><td><button class="btn g s" data-del="${esc(b.inv)}" aria-label="Delete invoice ${esc(b.inv)}">Delete</button></td></tr>`}).join('')||'<tr><td colspan="7" class="mu">No bills found.</td></tr>';
-  $('salesTitle').textContent=(SALES.q?'Search · ':'')+PERIOD_NAME[SALES.period]+(res.count>res.bills.length?` · newest ${res.bills.length} of ${res.count}`:'');
+  const perTitle=SALES.period==='custom'?('Custom range'+($('sFrom')&&$('sFrom').value?' ('+$('sFrom').value+($('sTo')&&$('sTo').value&&$('sTo').value!==$('sFrom').value?' to '+$('sTo').value:'')+')':'')):PERIOD_NAME[SALES.period];
+  $('salesTitle').textContent=(SALES.q?'Search · ':'')+perTitle+(res.count>res.bills.length?` · newest ${res.bills.length} of ${res.count}`:'');
  }catch(e){toast('Sales not loaded: '+e.message)}}
 function salesIfOpen(){if($('p-sales').classList.contains('on'))refreshSales()}
-$('perSel').onchange=()=>{SALES.period=$('perSel').value;refreshSales()};
+$('perSel').onchange=()=>{
+ SALES.period=$('perSel').value;
+ const isCustom=SALES.period==='custom';
+ if($('customDateRow'))$('customDateRow').style.display=isCustom?'flex':'none';
+ if(isCustom)initCustomDates();
+ refreshSales();
+};
+if($('sFrom'))$('sFrom').onchange=()=>refreshSales();
+if($('sTo'))$('sTo').onchange=()=>refreshSales();
+if($('sDateApply'))$('sDateApply').onclick=()=>refreshSales();
 $('sq').oninput=()=>{SALES.q=$('sq').value.trim();clearTimeout(SALES.timer);SALES.timer=setTimeout(refreshSales,300)};
 function applyDelete(r){S.bills=S.bills.filter(x=>x.inv!==r.inv);(r.customers||[]).forEach(cu=>{const k=S.customers.findIndex(x=>x.id===cu.id);if(k>=0)S.customers[k]=cu})}
 $('sb').onclick=async e=>{
@@ -1056,20 +1153,26 @@ $('sSave').onclick=async()=>{const d={};for(const k in sm)d[sm[k]]=$(k).value.tr
 
 /* barcode labels */
 const C128=['212222','222122','222221','121223','121322','131222','122213','122312','132212','221213','221312','231212','112232','122132','122231','113222','123122','123221','223211','221132','221231','213212','223112','312131','311222','321122','321221','312212','322112','322211','212123','212321','232121','111323','131123','131321','112313','132113','132311','211313','231113','231311','112133','112331','132131','113123','113321','133121','313121','211331','231131','213113','213311','213131','311123','311321','331121','312113','312311','332111','314111','221411','431111','111224','111422','121124','121421','141122','141221','112214','112412','122114','122411','142112','142211','241211','221114','413111','241112','134111','111242','121142','121241','114212','124112','124211','411212','421112','421211','212141','214121','412121','111143','111341','131141','114113','114311','411113','411311','113141','114131','311141','411131','211412','211214','211232','2331112'];
+const C128_CACHE=new Map();
 function code128(t){
- const codes=[104];let sum=104;[...String(t).replace(/[^\x20-\x7e]/g,'?')].forEach((ch,i)=>{const v=ch.charCodeAt(0)-32;codes.push(v);sum+=v*(i+1)});codes.push(sum%103,106);
+ const s=String(t);const cached=C128_CACHE.get(s);if(cached)return cached;
+ const codes=[104];let sum=104;[...s.replace(/[^\x20-\x7e]/g,'?')].forEach((ch,i)=>{const v=ch.charCodeAt(0)-32;codes.push(v);sum+=v*(i+1)});codes.push(sum%103,106);
  let x=10,b='';codes.forEach(c=>{const p=C128[c];for(let k=0;k<p.length;k++){const w=+p[k];if(k%2===0)b+=`<rect x="${x}" y="0" width="${w}" height="1"/>`;x+=w}});
- return `<svg viewBox="0 0 ${x+10} 1" preserveAspectRatio="none" shape-rendering="crispEdges"><g fill="#000">${b}</g></svg>`}
+ const svg=`<svg viewBox="0 0 ${x+10} 1" preserveAspectRatio="none" shape-rendering="crispEdges"><g fill="#000">${b}</g></svg>`;
+ if(C128_CACHE.size>500)C128_CACHE.clear();
+ C128_CACHE.set(s,svg);return svg}
 S.lab={q:{}};const SZ={'50x25':[50,25],'38x25':[38,25],'40x30':[40,30],'58x40':[58,40],a4:[48,28]};
 const LGAP=3;
-function lblHtml(p){const [w,h]=SZ[$('lSize').value];const shopPt={50:8,38:6.5,40:7,58:9,48:7}[w]||7;return `<div class="lbl" style="width:${w}mm;height:${h}mm"><div class="h"><span style="font-size:${shopPt}pt;font-weight:800;letter-spacing:.02em">${esc((S.cfg.name||'').toUpperCase())}</span>${$('lSz').value==='1'&&p.size?`<span class="z">${esc(p.size)}</span>`:''}</div><div class="n">${esc(p.name)}</div>${code128(p.sku)}<div class="f"><span class="c">${esc(p.sku)}</span><span class="p">${fm(p.price)}</span></div></div>`}
-function prevLab(){const p=S.products.find(x=>S.lab.q[x.id]>0)||S.products[0];const per=$('lSize').value==='a4'?1:Math.max(1,Math.min(2,+$('lPerRow').value||1));$('lPrev').innerHTML=p?`<div style="display:flex;gap:${LGAP}mm;width:fit-content">${Array.from({length:per},()=>lblHtml(p)).join('')}</div>`:'<span class="mu">Add products in Stock first.</span>'}
+function lblHtml(p){const [w,h]=SZ[$('lSize').value];const shopPt={50:8,38:6.5,40:7,58:9,48:7}[w]||7;return `<div class="lbl" style="width:${w}mm;height:${h}mm"><div class="h"><span style="font-size:${shopPt}pt;font-weight:800;letter-spacing:.02em">${esc((S.cfg.name||'').toUpperCase())}</span></div><div class="n">${esc(p.name)}</div>${code128(p.sku)}<div class="f"><span class="c">${esc(p.sku)}</span><span class="p">${fm(p.price)}</span></div></div>`}
+function prevLab(){const p=S.products.find(x=>S.lab.q[x.id]>0)||S.products[0];const per=$('lSize').value==='a4'?1:2;$('lPrev').innerHTML=p?`<div style="display:flex;gap:${LGAP}mm;width:fit-content">${Array.from({length:per},()=>lblHtml(p)).join('')}</div>`:'<span class="mu">Add products in Stock first.</span>'}
 function rLab(){
  const ae=document.activeElement;if(ae&&ae.closest&&ae.closest('#lb'))return;
- const q=$('lq').value.toLowerCase();
- $('lb').innerHTML=S.products.filter(p=>[p.sku,p.name,p.cat].join(' ').toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name)).map(p=>`<tr><td><b>${esc(p.name)}</b> ${p.size?'· '+esc(p.size):''}<div class="mu">${esc(p.sku)}</div></td><td>${fm(p.price)}</td><td><input type="number" min="0" style="width:80px" data-id="${p.id}" aria-label="Copies of ${esc(p.name)}" value="${S.lab.q[p.id]||''}"></td></tr>`).join('')||'<tr><td colspan="3" class="mu">Add products in Stock first.</td></tr>';
+ const q=$('lq').value.toLowerCase().trim();
+ const ps=[];for(let i=0;i<S.products.length;i++){const p=S.products[i];if(!q||[p.sku,p.name,p.cat].join(' ').toLowerCase().includes(q))ps.push(p);if(ps.length>=100&&q)break}
+ const view=ps.slice(0,100);
+ $('lb').innerHTML=view.map(p=>`<tr><td><b>${esc(p.name)}</b><div class="mu">${esc(p.sku)}</div></td><td>${fm(p.price)}</td><td><input type="number" min="0" style="width:80px" data-id="${p.id}" aria-label="Copies of ${esc(p.name)}" value="${S.lab.q[p.id]||''}"></td></tr>`).join('')+(ps.length>100?`<tr><td colspan="3" class="mu" style="text-align:center;padding:10px">Showing 100 items. Type to filter.</td></tr>`:'')||'<tr><td colspan="3" class="mu">Add products in Stock first.</td></tr>';
  prevLab()}
-$('lq').oninput=rLab;$('lSize').onchange=$('lSz').onchange=prevLab;
+let lqT=null;$('lq').oninput=()=>{clearTimeout(lqT);lqT=setTimeout(rLab,80)};$('lSize').onchange=prevLab;
 $('lb').oninput=e=>{if(e.target.dataset.id){S.lab.q[e.target.dataset.id]=Math.max(0,Math.round(+e.target.value||0));prevLab()}};
 $('lClr').onclick=()=>{S.lab.q={};rLab()};
 let LAST=null;
@@ -1091,7 +1194,7 @@ async function dlDoc(){
 const doLabels=dl=>{
  const items=[];S.products.forEach(q=>{const n=Math.min(S.lab.q[q.id]|0,500);for(let k=0;k<n;k++)items.push(q)});if(!items.length)return toast('Enter label quantities first');
  const k=$('lSize').value,a4=k==='a4',[w,h]=SZ[k];
- const per=a4?1:Math.max(1,Math.min(2,+$('lPerRow').value||1));
+ const per=a4?1:2;
  const pageW=per*w+(per-1)*LGAP;
  $('printArea').className=a4?'':'roll';
  let body;
