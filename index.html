@@ -1116,6 +1116,7 @@ function escpos(b){
    item names with amounts on the right, a clear total, the loyalty points in a black band, and the QR beside its invitation. */
 function thermalBody(b){
  const m=billModel(b),p=m.paper,small=p==58?2.2:2.4,body=p==58?2.6:2.9,nameFs=p==58?4.6:6.2,totFs=p==58?4.2:5.4,qr=p==58?24:28;
+ const nameFit=Math.max(2.4,Math.min(nameFs,(p-8)/(Math.max(1,m.name.length)*0.72)));
  const SANS="font-family:Inter,Helvetica,Arial,sans-serif";
  const hair='<div style="border-top:0.2mm solid #000;margin:2mm 0"></div>';
  const kv=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm"><span style="flex:none;font-size:${small}mm;letter-spacing:.12em;text-transform:uppercase">${esc(k)}</span><span style="text-align:right;overflow-wrap:anywhere;min-width:0">${esc(v)}</span></div>`;
@@ -1124,8 +1125,8 @@ function thermalBody(b){
  const line=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm"><span>${esc(k)}</span><span style="white-space:nowrap">${esc(v)}</span></div>`;
  const pts=m.loyalty.length?`<div style="margin-top:2.2mm;padding:1.4mm 2mm;background:#000;color:#fff;border-radius:1mm;font-size:${small}mm">${m.loyalty.map(([k,v])=>esc(k)+': '+esc(v)).join(' &nbsp;|&nbsp; ')}</div>`:'';
  return `<style>@page{margin:0;size:${p}mm auto}</style><div class="tbill" style="width:${p}mm;box-sizing:border-box;padding:4mm 4mm 5mm;background:#fff;color:#000;${SANS};font-size:${body}mm;line-height:1.3;-webkit-print-color-adjust:exact;print-color-adjust:exact">`+
-  `<div style="font-weight:800;font-size:${nameFs}mm;letter-spacing:-.01em;line-height:1;overflow-wrap:anywhere">${esc(m.name)}</div>`+
-  `<div style="margin-top:1.2mm;font-size:${small}mm">${m.addr.map(t=>esc(t)).join(' · ')}</div>`+
+  `<div style="font-weight:800;font-size:${nameFit}mm;letter-spacing:-.01em;line-height:1.05;white-space:nowrap;overflow:hidden">${esc(m.name)}</div>`+
+  `<div style="margin-top:1.2mm;font-size:${small}mm">${m.addr.map(t=>/^(Ph|GSTIN):/.test(t)?`<span style="white-space:nowrap">${esc(t)}</span>`:esc(t)).join(' · ')}</div>`+
   `<div style="margin-top:1.4mm;font-size:${small}mm;letter-spacing:.16em;font-weight:700">TAX INVOICE</div>`+
   hair+kv('Invoice',m.meta[0][1])+kv('Date',m.meta[1][1])+m.meta.slice(2).map(([k,v])=>kv(k,v)).join('')+
   hair+lab('Items',m.pcs+' pcs')+items+
