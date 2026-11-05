@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Choppers Mens Wear · POS (Google Sheets)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
 :root{--bg:#fff;--card:#fff;--tx:#000;--mu:#666;--bd:#d8d8d8;--ac:#000;--on:#fff;--gold:#555;--ok:#000;--bad:#000;--warn:#000;--serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#000;--card:#000;--tx:#fff;--mu:#a3a3a3;--bd:#333;--ac:#fff;--on:#000;--gold:#bbb;--ok:#fff;--bad:#fff;--warn:#fff}}
@@ -304,6 +304,15 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
 }
 #invNo{border:none!important;border-width:0!important;outline:none!important;background:transparent!important;box-shadow:none!important;font:600 22px/1.2 var(--serif)!important;color:var(--tx)!important;padding:0!important;margin:0!important;min-height:0!important;height:auto!important;border-radius:0!important;width:auto;max-width:180px}
 #invNo:focus,#invNo:focus-visible{outline:none!important;border:none!important;box-shadow:none!important;border-color:transparent!important}
+/* laptop windows about 768 px tall: the payment card stays whole, with a customer selected */
+@media (min-width:901px) and (max-height:780px){
+ body[data-tab="bill"] #p-bill #custCard #cInfo{display:none}
+ body[data-tab="bill"] #p-bill #sumCard{padding:6px 12px}
+ body[data-tab="bill"] #p-bill #sumCard .seg button,body[data-tab="bill"] #p-bill #sumCard .saveRow .btn{min-height:36px}
+ body[data-tab="bill"] #p-bill #sumCard input,body[data-tab="bill"] #p-bill #sumCard select{min-height:38px}
+ body[data-tab="bill"] #p-bill #sumCard .tot{padding:0}
+ body[data-tab="bill"] #p-bill #sumCard #pAvail{font-size:11px;line-height:1.25}
+}
 </style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
 <header><div class="top"><span id="clock"></span><button class="lnk" id="rf">Sync</button></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
@@ -373,6 +382,7 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
 </main>
 <div id="modal" role="dialog" aria-modal="true" aria-label="Dialog"><div id="mbox"></div></div><div id="toast" role="status" aria-live="polite"></div><div id="printArea"></div>
 <script>
+addEventListener('DOMContentLoaded',()=>{const fl=document.createElement('link');fl.rel='stylesheet';fl.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap';document.head.appendChild(fl)});
 const S={products:[],customers:[],bills:[],cart:[],cfg:{name:'Choppers Mens Wear',addr:'',gst:'',phone:'',paper:80,note:'Thank you! Visit again. Exchange within 7 days with bill.'}};
 let db=null,editing=null,cfgLoaded=false;
 const $=id=>document.getElementById(id);
@@ -394,7 +404,7 @@ const TABS=[['bill','Billing'],['inv','Products'],['cust','Customers'],['sales',
 $('nav').innerHTML=TABS.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join('');
 function tab(t){document.querySelectorAll('.pg').forEach(p=>p.classList.toggle('on',p.id==='p-'+t));document.body.dataset.tab=t;document.querySelectorAll('nav button').forEach(b=>{b.classList.toggle('on',b.dataset.t===t);b.setAttribute('aria-current',b.dataset.t===t?'page':'false')});if(t==='set')fillSet();if(t==='inv')rInv();if(t==='cust')rCust();if(t==='lab')rLab();if(t==='sales')refreshSales();if(t==='bill')setTimeout(()=>$('q').focus(),50)}
 $('nav').onclick=e=>{const t=e.target.dataset.t;if(t)tab(t)};tab('bill');
-setInterval(()=>$('clock').textContent=DTF_CLOCK.format(Date.now()),1000);
+setInterval(()=>$('clock').textContent=DTF_CLOCK.format(Date.now()),15000);
 
 /* fonts load after the first screen; pending saves are counted so a refresh never overwrites them */
 ['https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap','https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&display=swap'].forEach(h=>{const l=document.createElement('link');l.rel='stylesheet';l.href=h;document.head.appendChild(l)});
@@ -417,11 +427,15 @@ const CLIENT_ID='882271530090-r21h122mdc5alla5fhfr3no08vlpvc1c.apps.googleuserco
 const SCOPE='https://www.googleapis.com/auth/spreadsheets';
 const SID='1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g';
 const BILLS_WINDOW=300;
-let busy=false,TOK=null,tokenClient=null,pending=null,inflight=null;
+let busy=false,TOK=null,tokenClient=null,pending=null,inflight=null,REFRESH_T=null;
 const enc=encodeURIComponent;
 const emsg=e=>({needs_auth:'Sign-in needed. Tap "Sign in with Google".',gis:'Google sign-in did not load. Check your internet and reload.',popup:'Sign-in window was blocked. Allow pop-ups for this site, then tap Sign in again.',setup:'Setup needed: add your Google Client ID at the top of index.html.'})[e.code]||(e.message||String(e));
 function showSignIn(msg){$('st').innerHTML=esc(msg||'Sign in with your Google account to load the shop data.')+' <button class="lnk" id="si">Sign in with Google</button>'}
 $('st').onclick=e=>{if(e.target.id==='si')signIn()};
+function scheduleTokenRefresh(){
+ clearTimeout(REFRESH_T);
+ REFRESH_T=setTimeout(()=>{try{if(tokenClient&&!inflight)tokenClient.requestAccessToken({prompt:'none'})}catch(e){}},Math.max(60000,TOK.exp-Date.now()-300000));
+}
 function getToken(interactive){
  if(TOK&&TOK.exp>Date.now())return Promise.resolve(TOK.t);
  if(CLIENT_ID.startsWith('PASTE'))return Promise.reject(Object.assign(new Error('setup'),{code:'setup'}));
@@ -495,7 +509,7 @@ async function ensurePointsHeader(){
  HDR_DONE=true;lsSet('cmw-hdr','1');
 }
 async function getData(){
- await ensurePointsHeader();
+ ensurePointsHeader().catch(()=>{});
  const cachedBlen=+lsGet('cmw-blen')||0;
  const reqRanges=['Settings!A2:B','Products!A2:G','Customers!A2:G','Bills!A:A'];
  const canPredict=cachedBlen>=2;
@@ -568,11 +582,30 @@ function addCustomer(phone,name){return serial(async()=>{
  return{id:p,row:newRow,phone:p,name:n,visits:0,spent:0,balance:0,last:ts,points:0,existed:false};
 })}
 function nextNoFromRows(rows){let max=0;rows.forEach(r=>{const n=numV((r||[])[1]);if(n>max)max=n});return Math.max(INV_START,max+1)}
+/* A sale reads only the products on the bill and its one customer, after checking the cached row numbers.
+   If a row does not match, it reads the whole lists instead. The invoice number is always read from the sheet. */
+async function saleReads(b,phone){
+ const skus=[...new Set((b.items||[]).map(it=>String(it.sku)))];
+ const pc=skus.map(sku=>S._bySku.get(sku.trim().toLowerCase()));
+ const cc=phone?S._custById.get(phone):null;
+ if(skus.length&&pc.every(p=>p&&p.row>=2)&&(!phone||(cc&&cc.row>=2))){
+  const ranges=pc.map(p=>`Products!A${p.row}:G${p.row}`);
+  if(phone)ranges.push(`Customers!A${cc.row}:G${cc.row}`);
+  ranges.push('Bills!A:B');
+  const got=await batchGetV(ranges);
+  const pv=pc.map((p,i)=>(got[i]||[])[0]||[]);
+  const cv=phone?((got[skus.length]||[])[0]||[]):[];
+  const sameSku=pv.every((v,i)=>String(v[0]||'').trim().replace(/^'/,'').toLowerCase()===skus[i].trim().toLowerCase());
+  const sameCust=!phone||digitsOf(cv[0])===phone;
+  if(sameSku&&sameCust)return{products:pv.map((v,i)=>({...mapProdRows([v])[0],row:pc[i].row})),custs:phone?[{...mapCustRows([cv])[0],row:cc.row}]:[],ab:got[got.length-1]};
+ }
+ const [pRows,cRows,ab]=await batchGetV(['Products!A2:G','Customers!A2:G','Bills!A:B']);
+ return{products:mapProdRows(pRows),custs:mapCustRows(cRows),ab};
+}
 function saveBill(b){return serial(async()=>{
  const mode=String(b.mode||'Cash');const phone=digitsOf(b.phone);
  if(mode==='Credit'&&!phone)throw new Error('Mobile number needed for credit bills');
- const products=S.products.length?S.products:await readProducts();
- const custs=S.customers.length?S.customers:await readCustomers();
+ const {products,custs,ab}=await saleReads(b,phone);
  const priced=await priceBill(b,products);
  const cust=phone?(custs.find(x=>x.phone===phone)||null):null;
  const want=Math.max(0,Math.floor(+b.redeem||0));
@@ -583,7 +616,7 @@ function saveBill(b){return serial(async()=>{
  const paid=paidOf(mode,b.paidIn,t.grand);const due=t.grand-paid;
  const name=String(b.cust||'').trim();const cashier=String(b.cashier||'');const ts=Date.now();
  const earned=phone?Math.floor(t.grand/10):0;
- const no=S.nextNo||nextNoFromRows(await getV('Bills!A:B'));const inv=INV_PREFIX+no;
+ const no=nextNoFromRows(ab);const inv=INV_PREFIX+no;
  const items=itemsOf(priced);
  const writes=[addV('Bills!A1',[billRow({inv,no,date:fmtDate(ts),ts,cashier,name,phone,mode,priced,t,paid,due,items,want,earned,exch:ex})])];
  let customer=null;
@@ -647,12 +680,13 @@ async function searchBills(opts){
  const colA=await getV('Bills!A:A');
  let end=colA.length;
  while(end>=2){
-  const start=Math.max(2,end-399);
-  const rows=await getV(`Bills!A${start}:T${end}`);
+  const ranges=[];let e=end;
+  for(let k=0;k<3&&e>=2;k++){const st=Math.max(2,e-399);ranges.push(`Bills!A${st}:T${e}`);e=st-1}
+  const blocks=await batchGetV(ranges);
   let inPeriod=false;
-  rows.map(r=>billFromRow(r)).forEach(b=>{if(b.ts>=from)inPeriod=true;matchBill(b)});
+  blocks.forEach(rows=>rows.map(r=>billFromRow(r)).forEach(b=>{if(b.ts>=from)inPeriod=true;matchBill(b)}));
   if(!inPeriod)break;
-  end=start-1;
+  end=e;
  }
  out.total=r2(out.total);Object.keys(out.byMode).forEach(k=>{out.byMode[k]=r2(out.byMode[k])});
  out.bills.sort((a,b)=>b.ts-a.ts);out.bills=out.bills.slice(0,200);
@@ -674,7 +708,7 @@ function deleteBill(inv){return serial(async()=>{
 function saveProduct(p,origSku){return serial(async()=>{
  const sku=String(p.sku||'').trim(),name=String(p.name||'').trim();
  if(!sku||!name)throw new Error('SKU and name are required');
- const products=S.products.length?S.products:await readProducts();
+ const products=origSku&&S.products.length?S.products:await readProducts();
  if(!origSku&&products.some(x=>x.sku===sku))throw new Error('SKU already exists. Edit it from the list.');
  const row=["'"+sku,name,String(p.size||''),String(p.cat||''),numV(p.cost),numV(p.price),numV(p.tax)];
  if(origSku){
@@ -719,7 +753,9 @@ const SERVER={getData,findBill,saveBill,updateBill,addCustomer,searchBills,delet
 
 const rpc=(fn,...a)=>(TOK&&TOK.exp>Date.now())?SERVER[fn](...a):getToken(true).then(()=>SERVER[fn](...a));
 let cacheT=null;
-function saveCache(){clearTimeout(cacheT);cacheT=setTimeout(()=>{try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg}))}catch(e){}},200)}
+function writeCache(){clearTimeout(cacheT);try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg}))}catch(e){}}
+function saveCache(){clearTimeout(cacheT);cacheT=setTimeout(writeCache,200)}
+addEventListener('pagehide',writeCache);
 S._byId=new Map();S._bySku=new Map();S._byName=new Map();S._custById=new Map();
 function rebuildIndexes(){
  S._byId.clear();S._bySku.clear();S._byName.clear();
@@ -764,9 +800,9 @@ setInterval(()=>{if(busy||pendingSaves>0||document.hidden||$('modal').classList.
  tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPE,
   callback:r=>{const p=pending;pending=null;
    if(r.error){TOK=null;sessionStorage.removeItem('cmw-tok');if(p)p.rej(Object.assign(new Error(r.error),{code:'needs_auth'}));return}
-   TOK={t:r.access_token,exp:Date.now()+(r.expires_in-120)*1000};sessionStorage.setItem('cmw-tok',JSON.stringify(TOK));if(p)p.res(TOK.t)},
+   TOK={t:r.access_token,exp:Date.now()+(r.expires_in-120)*1000};sessionStorage.setItem('cmw-tok',JSON.stringify(TOK));scheduleTokenRefresh();if(p)p.res(TOK.t)},
   error_callback:e=>{const p=pending;pending=null;if(p)p.rej(Object.assign(new Error(e.type||'popup'),{code:e.type==='popup_failed_to_open'?'popup':'needs_auth'}))}});
- const s=JSON.parse(sessionStorage.getItem('cmw-tok')||'null');if(s&&s.exp>Date.now())TOK=s;
+ const s=JSON.parse(sessionStorage.getItem('cmw-tok')||'null');if(s&&s.exp>Date.now()){TOK=s;scheduleTokenRefresh()}
  try{await getToken(false);await load()}catch(e){if(e.code==='needs_auth')showSignIn();else $('st').textContent='Could not load shop data: '+e.message}
 })();
 S.cashier=lsGet('cmw-cashier');
@@ -934,20 +970,14 @@ async function submit(printIt){
  const edit=S.editBill;
  const payload={cashier:S.cashier||'',cust:name,phone,mode,discVal:+$('bd').value||0,discType:$('bdT').value,paidIn:+$('paid').value||0,redeem:c.rd,exchange:c.ex,items:c.ls.map(l=>({sku:l.p.sku,qty:l.qty,disc:l.disc||0}))};
  const snap={cart:S.cart.map(x=>({...x})),bd:$('bd').value,bdT:$('bdT').value,cPhone:$('cPhone').value,cName:$('cName').value,paid:$('paid').value,pr:$('pRedeem').value,ex:$('exAmt').value,pay:mode,editBill:edit};
- // Build optimistic bill object so printing happens immediately without waiting for network latency
- const optNo=edit?edit.no:(S.nextNo||INV_START);
- const optInv=edit?edit.inv:(INV_PREFIX+optNo);
- const optTs=edit?edit.ts:Date.now();
- const optPaid=paidOf(mode,payload.paidIn,c.grand);
- const optEarned=phone?Math.floor(c.grand/10):0;
- const optBill={id:optInv,inv:optInv,no:optNo,ts:optTs,cashier:payload.cashier,cust:name,phone,mode,paid:optPaid,due:c.grand-optPaid,sub:r2(c.sub),disc:r2(c.d),redeem:c.rd,exchange:r2(c.ex),tax:r2(c.tax),ro:r2(c.ro),total:c.grand,items:c.ls.map(l=>({sku:l.p.sku,name:l.p.name,size:l.p.size,qty:l.qty,price:l.p.price,disc:l.disc||0,amt:r2(l.fin),gst:l.p.tax||0})),earned:optEarned};
  clearForm();
- if(printIt){toast((edit?'Updating ':'Saving ')+optInv+' · printing');printInvoice(optBill)}
+ toast((edit?'Updating ':'Saving ')+'bill…');
  pendingSaves++;
  try{
   const res=edit?await rpc('updateBill',edit.inv,payload):await rpc('saveBill',payload);
   applyResult(res,!!edit);
-  if(!printIt)toast((edit?'Updated ':'Saved ')+res.bill.inv);
+  if(printIt){toast((edit?'Updated ':'Saved ')+res.bill.inv+' · printing');printInvoice(res.bill)}
+  else toast((edit?'Updated ':'Saved ')+res.bill.inv);
  }catch(e){
   if(S.cart.length===0){restoreBill(snap);toast((edit?'Not updated, bill restored: ':'Not saved, bill restored: ')+e.message)}
   else toast((edit?'Not updated: ':'Not saved: ')+e.message+'. Re-enter that bill.');
@@ -1067,16 +1097,21 @@ $('pSave').onclick=async()=>{
  const sku=$('pSku').value.trim(),name=$('pName').value.trim();if(!sku||!name||$('pPrice').value==='')return toast('SKU, name and price are required');
  const orig=editing?prod(editing):null;
  const np=indexProd({row:orig?orig.row:0,sku,name,size:orig?orig.size:'',cat:$('pCat').value.trim(),cost:orig?orig.cost:0,price:+$('pPrice').value||0,tax:+$('pTax').value||0});
- $('pSave').disabled=true;busy=true;
+ const k=S.products.findIndex(x=>x.sku===(orig?orig.sku:sku));
+ const before=k>=0?S.products[k]:null;
+ if(k>=0)S.products[k]=np;else S.products.push(np);
+ S.products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);rebuildIndexes();R();toast('Saving '+name+'…');clearP();
  try{
   const savedRow=await rpc('saveProduct',{sku,name,size:np.size,cat:np.cat,cost:np.cost,price:np.price,tax:np.tax},orig?orig.sku:'');
   if(typeof savedRow==='number')np.row=savedRow;
-  const k=S.products.findIndex(x=>x.sku===(orig?orig.sku:sku));
-  if(k>=0)S.products[k]=np;else S.products.push(np);
-  S.products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);
-  rebuildIndexes();saveCache();R();toast('Saved '+name);clearP();
- }catch(e){toast('Failed: '+e.message)}
- $('pSave').disabled=false;busy=false};
+  saveCache();toast('Saved '+name);
+ }catch(e){
+  const at=S.products.indexOf(np);
+  if(at>=0){if(before)S.products[at]=before;else S.products.splice(at,1)}
+  S.products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);rebuildIndexes();R();toast('Not saved: '+e.message);
+ }
+};
+
 function rInv(){
  const q=$('iq').value.toLowerCase().trim();
  const ps=[];for(let i=0;i<S.products.length;i++){const p=S.products[i];if(!q||(p._q||p.name.toLowerCase()).includes(q))ps.push(p);if(ps.length>=100&&q)break}
@@ -1087,7 +1122,9 @@ let iqT=null;$('iq').oninput=()=>{clearTimeout(iqT);iqT=setTimeout(rInv,80)};
 $('ib').onclick=async e=>{const t=e.target;
  if(t.dataset.e){const p=prod(t.dataset.e);pf.forEach((f,i)=>$(f).value=p[['sku','name','cat','price','tax'][i]]??'');editing=p.id;$('pSku').disabled=true;$('pTitle').textContent='Edit product';scrollTo({top:0,behavior:'smooth'})}
  if(t.dataset.x){if(t.dataset.s!=='1'){t.dataset.s='1';t.textContent='Sure?';return}
-  busy=true;try{const p=prod(t.dataset.x);if(p){await rpc('deleteProduct',p.sku);S.products=S.products.filter(x=>x.id!==p.id);rebuildIndexes();saveCache();R();toast('Deleted')}}catch(x){toast('Failed: '+x.message)}busy=false}};
+  const p=prod(t.dataset.x);if(!p)return;
+  const at=S.products.indexOf(p);S.products.splice(at,1);rebuildIndexes();R();toast('Deleting '+p.name+'…');
+  rpc('deleteProduct',p.sku).then(()=>{saveCache();toast('Deleted '+p.name)}).catch(x=>{S.products.splice(at,0,p);rebuildIndexes();R();toast('Not deleted: '+x.message)})}};
 
 /* customers */
 function rCust(){
@@ -1101,7 +1138,10 @@ $('cb').onclick=e=>{const tr=e.target.closest('tr[data-c]');if(!tr)return;const 
  `<h2 style="margin-top:12px">Purchase history</h2>`+(bs.map(b=>`<div class="res" tabindex="0" data-b="${b.id}"><div><b>${b.inv}</b><div class="mu">${dt(b.ts)} · ${b.items.map(i=>esc(i.name)).join(', ').slice(0,60)}</div></div><b>${fm(b.total)}</b></div>`).join('')||'<div class="mu">No bills in recent history.</div>')+`<button class="btn g big" id="mc" style="margin-top:12px">Close</button>`;
  $('modal').classList.add('on');$('mc').onclick=()=>$('modal').classList.remove('on');
  $('mbox').querySelectorAll('[data-b]').forEach(d=>d.onclick=()=>showReceipt(S.bills.find(b=>b.id===d.dataset.b)));
- if($('rb'))$('rb').onclick=async()=>{const a=Math.min(+$('rp').value||0,c.balance);if(a<=0)return;busy=true;try{await rpc('receivePayment',c.id,a);const cc=S.customers.find(x=>x.id===c.id);if(cc)cc.balance=Math.max(0,cc.balance-a);R();toast('Received '+fm(a));$('modal').classList.remove('on')}catch(x){toast('Failed: '+x.message)}busy=false}};
+ if($('rb'))$('rb').onclick=()=>{const a=Math.min(+$('rp').value||0,c.balance);if(a<=0)return;
+ const cc=S.customers.find(x=>x.id===c.id);const was=cc?cc.balance:0;
+ if(cc)cc.balance=Math.max(0,was-a);R();toast('Received '+fm(a));$('modal').classList.remove('on');
+ rpc('receivePayment',c.id,a).then(()=>saveCache()).catch(x=>{if(cc)cc.balance=was;R();toast('Not saved: '+x.message)})}};
 
 /* sales */
 /* sales tab: period dropdown, custom date range, and one search box, over every bill */
@@ -1134,12 +1174,7 @@ async function refreshSales(){
   const rng=periodRange(SALES.period);
   const res=await rpc('searchBills',{q:SALES.q,from:rng.from,to:rng.to});
   if(seq!==SALES.seq)return;
-  SALES.rows=res.bills;
-  const m=res.byMode||{};
-  $('stat').innerHTML=`<div>Sales<b>${fm(res.total)}</b></div><div>Bills<b>${res.count}</b></div><div>Cash<b>${fm(m.Cash||0)}</b></div><div>UPI<b>${fm(m.UPI||0)}</b></div><div>Card<b>${fm(m.Card||0)}</b></div><div>Credit<b>${fm(m.Credit||0)}</b></div><div>Points used<b>${res.redeemed||0}</b></div><div>Points earned<b>${res.earned||0}</b></div>`;
-  $('sb').innerHTML=res.bills.map(b=>{const pts=[b.redeem?'−'+b.redeem+' used':'',b.earned?'+'+b.earned+' earned':''].filter(Boolean).join(' · ')||'—';return `<tr tabindex="0" data-b="${esc(b.id)}" style="cursor:pointer"><td><b>${esc(b.inv)}</b></td><td>${dt(b.ts)}</td><td>${esc(b.cust||'Walk-in')}${b.phone?`<div class="mu">${esc(b.phone)}</div>`:''}</td><td>${esc(b.mode)}</td><td class="mu">${pts}</td><td>${fm(b.total)}</td><td><button class="btn g s" data-del="${esc(b.inv)}" aria-label="Delete invoice ${esc(b.inv)}">Delete</button></td></tr>`}).join('')||'<tr><td colspan="7" class="mu">No bills found.</td></tr>';
-  const perTitle=SALES.period==='custom'?('Custom range'+($('sFrom')&&$('sFrom').value?' ('+$('sFrom').value+($('sTo')&&$('sTo').value&&$('sTo').value!==$('sFrom').value?' to '+$('sTo').value:'')+')':'')):PERIOD_NAME[SALES.period];
-  $('salesTitle').textContent=(SALES.q?'Search · ':'')+perTitle+(res.count>res.bills.length?` · newest ${res.bills.length} of ${res.count}`:'');
+  SALES.last=res;paintSales(res);
  }catch(e){toast('Sales not loaded: '+e.message)}}
 function salesIfOpen(){if($('p-sales').classList.contains('on'))refreshSales()}
 $('perSel').onchange=()=>{
@@ -1158,17 +1193,26 @@ $('sb').onclick=async e=>{
  const del=e.target.closest&&e.target.closest('button[data-del]');
  if(del){
   if(del.dataset.s!=='1'){del.dataset.s='1';del.textContent='Sure?';return}
-  busy=true;
-  try{const r=await rpc('deleteBill',del.dataset.del);applyDelete(r);toast('Deleted '+del.dataset.del);await refreshSales()}
-  catch(x){toast('Not deleted: '+x.message)}
-  busy=false;return}
+  const inv=del.dataset.del;
+  const b=SALES.rows.find(x=>x.inv===inv)||S.bills.find(x=>x.inv===inv);
+  const billAt=S.bills.indexOf(b),was=SALES.last?JSON.parse(JSON.stringify(SALES.last)):null;
+  if(b){S.bills=S.bills.filter(x=>x!==b);
+   if(SALES.last){const L=SALES.last;L.bills=(L.bills||[]).filter(x=>x!==b);L.total=r2((L.total||0)-b.total);L.count=Math.max(0,(L.count||0)-1);L.redeemed=(L.redeemed||0)-(b.redeem||0);L.earned=(L.earned||0)-(b.earned||0);L.byMode=L.byMode||{};L.byMode[b.mode]=r2((L.byMode[b.mode]||0)-b.total);paintSales(L)}
+   else SALES.rows=SALES.rows.filter(x=>x!==b)}
+  toast('Deleting '+inv+'…');
+  rpc('deleteBill',inv).then(r=>{applyDelete(r);saveCache();toast('Deleted '+inv)}).catch(x=>{
+   if(b&&billAt>=0)S.bills=S.bills.concat([b]).sort((p,q)=>q.ts-p.ts);
+   if(was){SALES.last=was;paintSales(was)}
+   toast('Not deleted: '+x.message)});
+  return}
  const tr=e.target.closest&&e.target.closest('tr[data-b]');if(!tr)return;const b=SALES.rows.find(x=>x.id===tr.dataset.b);if(b)showReceipt(b)};
 
 /* settings */
 const sm={sName:'name',sPhone:'phone',sAddr:'addr',sGst:'gst',sPaper:'paper',sNote:'note'};
 function fillSet(){for(const k in sm)$(k).value=S.cfg[sm[k]]??'';$('sCash').value=S.cashier}
 $('sSave').onclick=async()=>{const d={};for(const k in sm)d[sm[k]]=$(k).value.trim();d.paper=+d.paper||80;S.cashier=$('sCash').value.trim();lsSet('cmw-cashier',S.cashier);
- busy=true;try{await rpc('saveSettings',d);Object.assign(S.cfg,d);toast('Settings saved')}catch(e){toast('Failed: '+e.message)}busy=false};
+ const was=Object.assign({},S.cfg);Object.assign(S.cfg,d);toast('Saving settings…');
+ rpc('saveSettings',d).then(()=>{saveCache();toast('Settings saved')}).catch(e=>{Object.assign(S.cfg,was);toast('Not saved: '+e.message)})};
 
 /* barcode labels */
 const C128=['212222','222122','222221','121223','121322','131222','122213','122312','132212','221213','221312','231212','112232','122132','122231','113222','123122','123221','223211','221132','221231','213212','223112','312131','311222','321122','321221','312212','322112','322211','212123','212321','232121','111323','131123','131321','112313','132113','132311','211313','231113','231311','112133','112331','132131','113123','113321','133121','313121','211331','231131','213113','213311','213131','311123','311321','331121','312113','312311','332111','314111','221411','431111','111224','111422','121124','121421','141122','141221','112214','112412','122114','122411','142112','142211','241211','221114','413111','241112','134111','111242','121142','121241','114212','124112','124211','411212','421112','421211','212141','214121','412121','111143','111341','131141','114113','114311','411113','411311','113141','114131','311141','411131','211412','211214','211232','2331112'];
@@ -1190,6 +1234,14 @@ function lblHtml(p){
  const skuPt={50:5.8,38:5,40:6.2,58:7.2,48:5.8}[w]||5.8;
  const catBadge=p.cat?`<span class="lbl-cat">${esc(p.cat.toUpperCase())}</span>`:'';
  return `<div class="lbl" style="width:${w}mm;height:${h}mm"><div class="lbl-hdr"><span class="lbl-brand" style="font-size:${shopPt}pt">${esc((S.cfg.name||'Choppers Mens Wear').toUpperCase())}</span>${catBadge}</div><div class="lbl-name" style="font-size:${namePt}pt">${esc(p.name)}</div><div class="lbl-bc">${code128(p.sku)}<div class="lbl-sku" style="font-size:${skuPt}pt">${esc(p.sku)}</div></div><div class="lbl-ftr"><div class="lbl-mrp-box"><span class="lbl-mrp-lbl">MRP</span><span class="lbl-tax">(INCL. ALL TAXES)</span></div><div class="lbl-price" style="font-size:${pricePt}pt">${fm(p.price)}</div></div></div>`;
+}
+function paintSales(res){
+  SALES.rows=res.bills;
+  const m=res.byMode||{};
+  $('stat').innerHTML=`<div>Sales<b>${fm(res.total)}</b></div><div>Bills<b>${res.count}</b></div><div>Cash<b>${fm(m.Cash||0)}</b></div><div>UPI<b>${fm(m.UPI||0)}</b></div><div>Card<b>${fm(m.Card||0)}</b></div><div>Credit<b>${fm(m.Credit||0)}</b></div><div>Points used<b>${res.redeemed||0}</b></div><div>Points earned<b>${res.earned||0}</b></div>`;
+  $('sb').innerHTML=res.bills.map(b=>{const pts=[b.redeem?'−'+b.redeem+' used':'',b.earned?'+'+b.earned+' earned':''].filter(Boolean).join(' · ')||'—';return `<tr tabindex="0" data-b="${esc(b.id)}" style="cursor:pointer"><td><b>${esc(b.inv)}</b></td><td>${dt(b.ts)}</td><td>${esc(b.cust||'Walk-in')}${b.phone?`<div class="mu">${esc(b.phone)}</div>`:''}</td><td>${esc(b.mode)}</td><td class="mu">${pts}</td><td>${fm(b.total)}</td><td><button class="btn g s" data-del="${esc(b.inv)}" aria-label="Delete invoice ${esc(b.inv)}">Delete</button></td></tr>`}).join('')||'<tr><td colspan="7" class="mu">No bills found.</td></tr>';
+  const perTitle=SALES.period==='custom'?('Custom range'+($('sFrom')&&$('sFrom').value?' ('+$('sFrom').value+($('sTo')&&$('sTo').value&&$('sTo').value!==$('sFrom').value?' to '+$('sTo').value:'')+')':'')):PERIOD_NAME[SALES.period];
+  $('salesTitle').textContent=(SALES.q?'Search · ':'')+perTitle+(res.count>res.bills.length?` · newest ${res.bills.length} of ${res.count}`:'');
 }
 function prevLab(){const p=S.products.find(x=>S.lab.q[x.id]>0)||S.products[0];const per=$('lSize').value==='a4'?1:2;$('lPrev').innerHTML=p?`<div style="display:flex;gap:${LGAP}mm;width:fit-content">${Array.from({length:per},()=>lblHtml(p)).join('')}</div>`:'<span class="mu">Add products in Stock first.</span>'}
 function rLab(){
