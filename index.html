@@ -1285,11 +1285,10 @@ const LGAP=3;
 function lblHtml(p){
  const [w,h]=SZ[$('lSize').value];
  const shopPt={50:6.8,38:5.5,40:7.2,58:8.5,48:6.8}[w]||6.8;
- const namePt={50:7.5,38:6.5,40:8,58:9.5,48:7.5}[w]||7.5;
  const pricePt={50:11.5,38:10,40:12.5,58:15,48:11.5}[w]||11.5;
  const skuPt={50:5.8,38:5,40:6.2,58:7.2,48:5.8}[w]||5.8;
  const catBadge=p.cat?`<span class="lbl-cat">${esc(p.cat.toUpperCase())}</span>`:'';
- return `<div class="lbl" style="width:${w}mm;height:${h}mm"><div class="lbl-hdr"><span class="lbl-brand" style="font-size:${shopPt}pt">${esc((S.cfg.name||'Choppers Mens Wear').toUpperCase())}</span>${catBadge}</div><div class="lbl-name" style="font-size:${namePt}pt">${esc(p.name)}</div><div class="lbl-bc">${code128(p.sku)}<div class="lbl-sku" style="font-size:${skuPt}pt">${esc(p.sku)}</div></div><div class="lbl-ftr"><div class="lbl-mrp-box"><span class="lbl-mrp-lbl">MRP</span><span class="lbl-tax">(INCL. ALL TAXES)</span></div><div class="lbl-price" style="font-size:${pricePt}pt">${fm(p.price)}</div></div></div>`;
+ return `<div class="lbl" style="width:${w}mm;height:${h}mm"><div class="lbl-hdr"><span class="lbl-brand" style="font-size:${shopPt}pt">${esc((S.cfg.name||'Choppers Mens Wear').toUpperCase())}</span>${catBadge}</div><div class="lbl-name" style="font-size:${namePt}pt">${esc(p.name)}</div><div class="lbl-bc">${code128(p.sku)}<div class="lbl-sku" style="font-size:${skuPt}pt">${esc(p.sku)}</div></div><div class="lbl-ftr"><div class="lbl-mrp-box"><span class="lbl-mrp-lbl">MRP</span></div><div class="lbl-price" style="font-size:${pricePt}pt">${fm(p.price)}</div></div></div>`;
 }
 function paintSales(res){
   SALES.rows=res.bills;
