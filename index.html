@@ -1014,7 +1014,7 @@ function loadBill(b){
  window.scrollTo({top:0});
  toast(missing.length?'Editing '+b.inv+'. Not in products now: '+missing.join(', '):'Editing '+b.inv);
 }
-function invoiceText(b){const r=receipt(b);return r.H.concat(r.L).join('\n')}
+function invoiceText(b){const m=billModel(b);return [...headerLines(m),...billLines(m).map(x=>x[0])].join('\n')}
 function printInvoice(b){$('printArea').innerHTML=thermalBody(b);tryPrint()}
 function downloadInvoice(b){saveFile(b.inv+'.html','<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+b.inv+'</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"></head><body style="margin:0">'+thermalBody(b)+'<script>onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>')}
 /* new customer: ask for the mobile number and name */
@@ -1041,46 +1041,102 @@ async function saveNewCustomer(){
  }catch(e){toast('Not saved: '+e.message)}
  $('ncSave').disabled=false}
 /* receipt */
-const WA_URL='https://chat.whatsapp.com/LShFrUz3iUHHZlZu4ASykm',WA_QR='data:image/png;base64,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';
+const WA_URL='https://chat.whatsapp.com/LShFrUz3iUHHZlZu4ASykm',WA_QR='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUgAAAFIAQAAAAAab1qeAAAB2ElEQVR42u2asZIsMQgD1a/u/39ZL8DgqYuGuVSTrF2rqAuDwMZ6+f1TlFFGGWWU9/uRJGptjJGpjeT5Jzw3POVDFcnI0nD18A7P9zyF5IpJLCFj9bqYhudeiX2CVEbIofQnpYXn+N+8Gkrr8+4GyICkqpFDac+TPu+Y/j0pNJT2PCcGr3EqvM8MGp6vlQgE+HjP2tvHQxG/tFNaNlWNPOnUgjalobSLT4TPIW/jdDgLOf7zvfJAxFhYTLPZxaha0PBc9+80wD7wuDfJn0tlpc4To6f+VFwyMRxKC//psfKna3eZJkynhPDcxact16pGIDUMiZ//okRGGJ7OHnhY/VDa+M/x8lXS+TUlCaWdXyqn1OOlh4263ik8NzwrY95gdJd3Y8V/rv38cfR3hkxPQzOf/zIPUZWjyp2IMwxBspM/P9SjskzVblYn7+mMCKWtX7IfIxA9O8858KH0vn+/VafcfN9uIpT+6FM9Gtt07H3fvqPMl76+D2miE521SXx+fR+iSqO4S9HjcUN4vud534f4tEqekZNz37HneZOp+x7upNK5BgnPvbIuNiX7YT3Tv2/r+x2KTB9/a9LJp+G5OO/9PkRtQ92e6T5aDM+1/wylKKOMMsrXyv/s8OirlusomwAAAABJRU5ErkJggg==';
 const WA_MSG=['* JOIN OUR WHATSAPP COMMUNITY *','Be the first to know about new collections, festive offers and exclusive deals.','Scan the QR code to join:'];
-function receipt(b){
- const w=S.cfg.paper==58?32:48,L=[],H=[],hr='-'.repeat(w);
- // Word wrap: break at spaces, and split a word only when it is longer than one line.
- const wr=t=>{const out=[];let line='';
-  String(t).trim().split(/\s+/).filter(Boolean).forEach(word=>{
-   while(word.length>w){if(line){out.push(line);line=''}out.push(word.slice(0,w));word=word.slice(w)}
-   if(!line)line=word;else if((line+' '+word).length<=w)line+=' '+word;else{out.push(line);line=word}});
-  if(line)out.push(line);return out};
- const ce=t=>' '.repeat(Math.max(0,(w-t.length)>>1))+t;
- const lr=(a,r)=>{a=String(a);r=String(r);return a.slice(0,Math.max(0,w-r.length-1)).padEnd(w-r.length)+r};
- H.push(...wr(S.cfg.name.toUpperCase()).map(ce));const nameN=H.length;
- [S.cfg.addr,S.cfg.phone&&'Ph: '+S.cfg.phone,S.cfg.gst&&'GSTIN: '+S.cfg.gst].filter(Boolean).forEach(t=>wr(t).forEach(x=>H.push(ce(x))));
- L.push(hr,lr('Invoice',b.inv),lr('Date',new Date(b.ts).toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})));
- if(b.cashier)L.push(lr('Cashier',b.cashier));if(b.cust)L.push(lr('Customer',b.cust));if(b.phone)L.push(lr('Mobile',b.phone));
- L.push(hr);b.items.forEach(i=>{wr(i.name+(i.size?' ('+i.size+')':'')).forEach(x=>L.push(x));L.push(lr(`  ${i.qty} x ${(+i.price).toFixed(2)}`+(i.disc?` -${i.disc}%`:''),(+i.amt).toFixed(2)))});
- L.push(hr,lr('Subtotal',b.sub.toFixed(2)));if(b.disc)L.push(lr('Discount','-'+b.disc.toFixed(2)));if(b.redeem)L.push(lr('Points redeemed','-'+b.redeem.toFixed(2)));if(b.exchange)L.push(lr('Exchange','-'+b.exchange.toFixed(2)));
- L.push(lr('GST incl.',b.tax.toFixed(2)));if(b.ro)L.push(lr('Round off',b.ro.toFixed(2)));
- L.push(hr,lr('TOTAL',b.total.toFixed(2)),hr,lr('Paid by '+b.mode,b.paid.toFixed(2)));if(b.due>0)L.push(lr('BALANCE DUE',b.due.toFixed(2)));
- L.push(hr);
- const cu=b.phone?S.customers.find(x=>x.id===b.phone):null;if(cu){L.push(lr('Points earned',String(b.earned||0)),lr('Total points',String(cu.points||0)))}
- wr(S.cfg.note||'').forEach(x=>L.push(ce(x)));
- if(S.cfg.note)L.push('');
- WA_MSG.forEach(t=>wr(t).forEach(x=>L.push(ce(x))));
- return{H,L,nameCount:nameN}}
+/* ---- Thermal bill. One description of the bill (billModel) is drawn three ways: as paper for printing and the preview,
+   as lines for the copy text, and as ESC/POS commands for the .bin file. ---- */
+function billModel(b){
+ const paper=S.cfg.paper==58?58:80,w=paper==58?32:48;
+ const cu=b.phone?S.customers.find(x=>x.id===b.phone):null;
+ const when=new Date(b.ts).toLocaleString('en-IN',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+ const meta=[['Invoice',b.inv],['Date',when]];
+ if(b.cashier)meta.push(['Cashier',b.cashier]);
+ if(b.cust)meta.push(['Customer',b.cust]);
+ if(b.phone)meta.push(['Mobile',b.phone]);
+ const items=b.items.map(i=>({name:String(i.name||'')+(i.size?' ('+i.size+')':''),detail:`${i.qty} x ${(+i.price).toFixed(2)}`+(i.disc?`  -${i.disc}%`:''),amt:(+i.amt).toFixed(2)}));
+ const pcs=b.items.reduce((a,i)=>a+(+i.qty||0),0);
+ const totals=[['Subtotal',b.sub.toFixed(2)]];
+ if(b.disc)totals.push(['Discount','-'+b.disc.toFixed(2)]);
+ if(b.redeem)totals.push(['Points used','-'+(+b.redeem).toFixed(2)]);
+ if(b.exchange)totals.push(['Exchange','-'+(+b.exchange).toFixed(2)]);
+ totals.push(['GST included',b.tax.toFixed(2)]);
+ if(b.ro)totals.push(['Round off',b.ro.toFixed(2)]);
+ const paid=[['Paid by '+b.mode,b.paid.toFixed(2)]];
+ if(b.due>0)paid.push(['Balance due',b.due.toFixed(2)]);
+ const loyalty=cu?[...(b.earned>0?[['Points earned','+'+b.earned]]:[]),['Points balance',String(cu.points||0)]]:[];
+ return{paper,w,name:String(S.cfg.name||'').toUpperCase(),addr:[S.cfg.addr,S.cfg.phone&&'Ph: '+S.cfg.phone,S.cfg.gst&&'GSTIN: '+S.cfg.gst].filter(Boolean),
+  meta,items,pcs,totals,total:b.total.toFixed(2),paid,loyalty,note:S.cfg.note||'',join:WA_MSG};
+}
+function wrapText(t,w){const out=[];let line='';
+ String(t).trim().split(/\s+/).filter(Boolean).forEach(word=>{
+  while(word.length>w){if(line){out.push(line);line=''}out.push(word.slice(0,w));word=word.slice(w)}
+  if(!line)line=word;else if((line+' '+word).length<=w)line+=' '+word;else{out.push(line);line=word}});
+ if(line)out.push(line);return out}
+function headerLines(m){const out=wrapText(m.name,m.w).map(x=>textCenter(x,m.w));m.addr.forEach(t=>wrapText(t,m.w).forEach(x=>out.push(textCenter(x,m.w))));return out}
+function textCenter(t,w){t=String(t);return ' '.repeat(Math.max(0,(w-t.length)>>1))+t}
+function textLR(a,r,w){a=String(a);r=String(r);return a.slice(0,Math.max(0,w-r.length-1)).padEnd(w-r.length)+r}
+function textKV(k,v,w){k=String(k);v=String(v);if(k.length+v.length+1<=w)return [textLR(k,v,w)];return [k,...wrapText(v,w).map(x=>textLR('',x,w))]}
+/* the bill as lines of text, each with a bold flag: used by the ESC/POS file and the copy text */
+function billLines(m){
+ const w=m.w,hr=c=>c.repeat(w),L=[],add=(t,bold)=>L.push([t,!!bold]);
+ add(textCenter('* TAX INVOICE *',w),true);
+ add(hr('-'));
+ m.meta.forEach(([k,v])=>textKV(k,v,w).forEach(x=>add(x)));
+ add(hr('-'));
+ add(textLR('ITEMS',m.pcs+' pcs',w),true);
+ m.items.forEach(it=>{wrapText(it.name,w).forEach(x=>add(x));add(textLR('  '+it.detail,it.amt,w))});
+ add(hr('-'));
+ m.totals.forEach(([k,v])=>add(textLR(k,v,w)));
+ add(hr('='));
+ add(textLR('TOTAL',m.total,w),true);
+ add(hr('-'));
+ m.paid.forEach(([k,v])=>add(textLR(k,v,w)));
+ if(m.loyalty.length){add(hr('-'));m.loyalty.forEach(([k,v])=>add(textLR(k,v,w)))}
+ add(hr('-'));
+ if(m.note)wrapText(m.note,w).forEach(x=>add(textCenter(x,w)));
+ add('');
+ m.join.forEach((t,i)=>wrapText(t,w).forEach(x=>add(textCenter(x,w),i===0)));
+ add(textCenter('Thank you! Visit again.',w),true);
+ return L}
 function escpos(b){
- const r=receipt(b),e=new TextEncoder(),bytes=[];const add=a=>bytes.push(...a);
- add([0x1b,0x40,0x1b,0x45,1]);const hw=S.cfg.paper==58?16:24,nl=[];S.cfg.name.toUpperCase().split(/\s+/).filter(Boolean).forEach(x=>{if(nl.length&&(nl[nl.length-1]+' '+x).length<=hw)nl[nl.length-1]+=' '+x;else nl.push(x)});add([0x1b,0x61,1,0x1d,0x21,0x11]);nl.forEach(x=>add(e.encode(x+'\n')));add([0x1d,0x21,0,0x1b,0x61,0]);add(e.encode(r.H.slice(r.nameCount).join('\n')+'\n'));add([0x1b,0x45,0]);add(e.encode(r.L.join('\n')+'\n'));
- const u=e.encode(WA_URL),k=u.length+3;add([0x1b,0x61,1,0x1d,0x28,0x6b,4,0,49,65,50,0,0x1d,0x28,0x6b,3,0,49,67,S.cfg.paper==58?5:6,0x1d,0x28,0x6b,3,0,49,69,49,0x1d,0x28,0x6b,k&255,k>>8,49,80,48]);add(u);add([0x1d,0x28,0x6b,3,0,49,81,48,0x0a,0x1b,0x61,0]);
+ const m=billModel(b),e=new TextEncoder(),bytes=[];const add=a=>bytes.push(...a);
+ const hw=m.w/2,nl=[];
+ m.name.split(/\s+/).filter(Boolean).forEach(x=>{if(nl.length&&(nl[nl.length-1]+' '+x).length<=hw)nl[nl.length-1]+=' '+x;else nl.push(x)});
+ add([0x1b,0x40,0x1b,0x61,1]);
+ add([0x1d,0x21,0x11]);nl.forEach(x=>add(e.encode(x+'\n')));add([0x1d,0x21,0]);
+ m.addr.forEach(t=>wrapText(t,m.w).forEach(x=>add(e.encode(x+'\n'))));
+ add([0x1b,0x61,0]);
+ billLines(m).forEach(([t,bold])=>{add([0x1b,0x45,bold?1:0]);add(e.encode(t+'\n'))});
+ add([0x1b,0x45,0]);
+ const u=e.encode(WA_URL),k=u.length+3;
+ add([0x1b,0x61,1,0x1d,0x28,0x6b,4,0,49,65,50,0,0x1d,0x28,0x6b,3,0,49,67,m.paper==58?5:6,0x1d,0x28,0x6b,3,0,49,69,49,0x1d,0x28,0x6b,k&255,k>>8,49,80,48]);
+ add(u);add([0x1d,0x28,0x6b,3,0,49,81,48,0x0a,0x1b,0x61,0]);
  add([0x1b,0x64,4,0x1d,0x56,0x42,0]);return new Uint8Array(bytes)}
-/* printed thermal bill: a monospaced receipt font, the shop name large and bold, each line sized to fit the paper, and the QR centred */
+/* printed thermal bill: the modern layout. The shop name leads in bold, a small TAX INVOICE line, labelled details,
+   item names with amounts on the right, a clear total, the loyalty points in a black band, and the QR beside its invitation. */
 function thermalBody(b){
- const paper=S.cfg.paper==58?58:80,qr=paper==58?30:38;
- const size=paper==58?'2.8mm':'2.6mm',nameSize=paper==58?'4.8mm':'6.2mm';
- const r=receipt(b);
- const font="font-family:'IBM Plex Mono',Menlo,Consolas,'Courier New',monospace";
- return `<style>@page{margin:0;size:${paper}mm auto}</style><div style="width:${paper}mm;box-sizing:border-box;padding:2mm;background:#fff;color:#000"><div style="${font};font-weight:700;font-size:${nameSize};line-height:1.1;text-align:center;margin-bottom:1mm;white-space:pre-wrap">${esc(S.cfg.name.toUpperCase())}</div><pre style="margin:0;${font};font-weight:500;font-size:${size};line-height:1.25;white-space:pre;overflow:hidden;color:#000">${esc(r.H.slice(r.nameCount).concat(r.L).join('\n'))}</pre><div style="text-align:center;margin-top:2mm"><img src="${WA_QR}" style="display:block;margin:0 auto;width:${qr}mm;height:${qr}mm;image-rendering:pixelated" alt="WhatsApp community QR"></div></div>`}
+ const m=billModel(b),p=m.paper,small=p==58?2.2:2.4,body=p==58?2.6:2.9,nameFs=p==58?4.6:6.2,totFs=p==58?4.2:5.4,qr=p==58?24:28;
+ const SANS="font-family:Inter,Helvetica,Arial,sans-serif";
+ const hair='<div style="border-top:0.2mm solid #000;margin:2mm 0"></div>';
+ const kv=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm"><span style="flex:none;font-size:${small}mm;letter-spacing:.12em;text-transform:uppercase">${esc(k)}</span><span style="text-align:right;overflow-wrap:anywhere;min-width:0">${esc(v)}</span></div>`;
+ const lab=(t,r)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm"><span style="font-size:${p==58?2:2.3}mm;letter-spacing:.14em;text-transform:uppercase;font-weight:600">${esc(t)}</span>${r?`<span style="font-size:${small}mm">${esc(r)}</span>`:''}</div>`;
+ const items=m.items.map(it=>`<div style="display:flex;justify-content:space-between;gap:2mm;margin-top:1.6mm"><div style="font-weight:600;flex:1 1 auto;min-width:0;overflow-wrap:anywhere">${esc(it.name)}<div style="font-weight:400;font-size:${small}mm">${esc(it.detail)}</div></div><div style="white-space:nowrap;font-weight:600">${esc(it.amt)}</div></div>`).join('');
+ const line=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm"><span>${esc(k)}</span><span style="white-space:nowrap">${esc(v)}</span></div>`;
+ const pts=m.loyalty.length?`<div style="margin-top:2.2mm;padding:1.4mm 2mm;background:#000;color:#fff;border-radius:1mm;font-size:${small}mm">${m.loyalty.map(([k,v])=>esc(k)+': '+esc(v)).join(' &nbsp;|&nbsp; ')}</div>`:'';
+ return `<style>@page{margin:0;size:${p}mm auto}</style><div class="tbill" style="width:${p}mm;box-sizing:border-box;padding:4mm 4mm 5mm;background:#fff;color:#000;${SANS};font-size:${body}mm;line-height:1.3;-webkit-print-color-adjust:exact;print-color-adjust:exact">`+
+  `<div style="font-weight:800;font-size:${nameFs}mm;letter-spacing:-.01em;line-height:1;overflow-wrap:anywhere">${esc(m.name)}</div>`+
+  `<div style="margin-top:1.2mm;font-size:${small}mm">${m.addr.map(t=>esc(t)).join(' · ')}</div>`+
+  `<div style="margin-top:1.4mm;font-size:${small}mm;letter-spacing:.16em;font-weight:700">TAX INVOICE</div>`+
+  hair+kv('Invoice',m.meta[0][1])+kv('Date',m.meta[1][1])+m.meta.slice(2).map(([k,v])=>kv(k,v)).join('')+
+  hair+lab('Items',m.pcs+' pcs')+items+
+  hair+m.totals.map(([k,v])=>line(k,v)).join('')+
+  `<div style="height:2mm"></div><div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:800;font-size:${totFs}mm"><span>Total</span><span style="white-space:nowrap">${esc(m.total)}</span></div>`+
+  `<div style="margin-top:1mm;font-size:${small}mm">${m.paid.map(([k,v])=>esc(k)+' '+esc(v)).join(' · ')}</div>`+pts+
+  `<div style="display:flex;align-items:center;gap:3mm;margin-top:4mm"><img src="${WA_QR}" alt="WhatsApp community QR" style="width:${qr}mm;height:${qr}mm;image-rendering:pixelated;flex:none"><div style="font-size:${small}mm;min-width:0"><div style="font-weight:700">${esc(m.join[0].replace(/\*/g,'').trim())}</div><div>${esc(m.join[1])}</div><div>${esc(m.join[2])}</div></div></div>`+
+  (m.note?`<div style="margin-top:3mm;font-size:${small}mm;text-align:center">${esc(m.note)}</div>`:'')+
+  `<div style="margin-top:3mm;font-size:${small}mm;text-align:center;font-weight:600">Thank you for shopping with us</div></div>`}
 function showReceipt(b,fresh){
- const r=receipt(b);$('mbox').innerHTML=(fresh?'<h2 style="color:var(--ok)">✓ Sale complete</h2>':'<h2>Receipt</h2>')+`<pre class="rc" style="margin:0;border-bottom:0">${esc(r.H.concat(r.L).join('\n'))}</pre><div style="text-align:center;background:#fff;border:1px dashed #999;border-top:0;padding-bottom:10px;margin-bottom:12px"><img src="${WA_QR}" width="130" height="130" style="display:block;margin:0 auto;image-rendering:pixelated" alt="WhatsApp community QR"></div>
+ $('mbox').innerHTML=(fresh?'<h2 style="color:var(--ok)">✓ Sale complete</h2>':'<h2>Receipt</h2>')+`<div style="display:flex;justify-content:center;overflow:auto;padding:2px 0 10px">${thermalBody(b)}</div>
  <div class="row"><button class="btn" id="mh">Download printable file</button><button class="btn g" id="mp">Print here</button><button class="btn g" id="md">ESC/POS file</button><button class="btn g" id="mc">Close</button></div><div class="mu">Print sends the receipt to your default printer. For one click with no print box, use the one-click shortcut in the setup guide. The ESC/POS file works with RawBT on Android.</div>`;
  $('modal').classList.add('on');
  $('mc').onclick=()=>$('modal').classList.remove('on');
