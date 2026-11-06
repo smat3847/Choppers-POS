@@ -101,7 +101,7 @@
   <button class="btn g" id="installBtnSettings" style="min-height:44px">Install Permanent App</button>
  </div>
 </div>
-<div class="mu" style="margin-top:10px">When installed as a PWA, this app works 100% offline like a native desktop/mobile register. Billing is instantaneous with zero wait time.</div>
+<div class="mu" style="margin-top:10px"><b>All-Day Sign-in Active:</b> Google authentication now silently auto-renews in the background so you only sign in once for the entire day. The register functions 100% offline even if internet drops.</div>
 </div>
 
 <div class="card"><h2>Disaster Recovery &amp; Data Backup</h2>
@@ -267,7 +267,19 @@ function showSignIn(msg){$('st').innerHTML=esc(msg||'Sign in with your Google ac
 $('st').onclick=e=>{if(e.target.id==='si')signIn()};
 function scheduleTokenRefresh(){
  clearTimeout(REFRESH_T);
- REFRESH_T=setTimeout(()=>{try{if(tokenClient&&!inflight)tokenClient.requestAccessToken({prompt:'none'})}catch(e){}},Math.max(60000,TOK.exp-Date.now()-300000));
+ if(!TOK||!TOK.exp)return;
+ // Silently renew token 8 minutes before it expires to keep session active all day
+ const delay=Math.max(30000,TOK.exp-Date.now()-480000);
+ REFRESH_T=setTimeout(()=>{
+  try{
+   if(tokenClient&&!inflight){
+    const hint=lsGet('cmw-email');
+    const opts={prompt:''};
+    if(hint)opts.hint=hint;
+    tokenClient.requestAccessToken(opts);
+   }
+  }catch(e){}
+ },delay);
 }
 function getToken(interactive){
  if(TOK&&TOK.exp>Date.now())return Promise.resolve(TOK.t);
@@ -276,8 +288,14 @@ function getToken(interactive){
  if(inflight)return inflight;
  inflight=new Promise((res,rej)=>{
   pending={res,rej};
-  try{tokenClient.requestAccessToken({prompt:interactive?'':'none'})}
-  catch(e){rej(Object.assign(e,{code:'popup'}))}
+  try{
+   const hint=lsGet('cmw-email');
+   const opts={prompt:interactive?'select_account':''};
+   if(hint)opts.hint=hint;
+   tokenClient.requestAccessToken(opts);
+  }catch(e){
+   rej(Object.assign(e,{code:'popup'}));
+  }
  }).finally(()=>{inflight=null});
  return inflight;
 }
@@ -637,8 +655,23 @@ document.addEventListener('visibilitychange',()=>{
  if(!ready){showSignIn(emsg({code:'gis'}));return}
  tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPE,
   callback:r=>{const p=pending;pending=null;
-   if(r.error){saveTok(null);if(p)p.rej(Object.assign(new Error(r.error),{code:'needs_auth'}));return}
-   const newTok={t:r.access_token,exp:Date.now()+(r.expires_in-120)*1000};saveTok(newTok);scheduleTokenRefresh();if(p)p.res(TOK.t)},
+   if(r.error){
+    if(!TOK||TOK.exp<=Date.now())saveTok(null);
+    if(p)p.rej(Object.assign(new Error(r.error),{code:'needs_auth'}));
+    return;
+   }
+   const newTok={t:r.access_token,exp:Date.now()+(r.expires_in-120)*1000};
+   saveTok(newTok);
+   scheduleTokenRefresh();
+   // Remember account identity for automatic silent renewal throughout the day
+   if(!lsGet('cmw-email')){
+    fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+r.access_token}})
+     .then(res=>res.json())
+     .then(info=>{if(info&&info.email)lsSet('cmw-email',info.email)})
+     .catch(()=>{});
+   }
+   if(p)p.res(TOK.t);
+  },
   error_callback:e=>{const p=pending;pending=null;if(p)p.rej(Object.assign(new Error(e.type||'popup'),{code:e.type==='popup_failed_to_open'?'popup':'needs_auth'}))}});
  const s=loadTok();if(s&&s.exp>Date.now()){TOK=s;scheduleTokenRefresh()}
  try{await getToken(false);await load()}catch(e){if(e.code==='needs_auth')showSignIn();else $('st').textContent='Could not load shop data: '+e.message}
