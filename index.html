@@ -112,6 +112,7 @@
  <input type="file" id="fBackup" accept=".json" style="display:none">
 </div>
 </div>
+
 </section>
 </main>
 <div id="modal" role="dialog" aria-modal="true" aria-label="Dialog"><div id="mbox"></div></div><div id="toast" role="status" aria-live="polite"></div><div id="printArea"></div>
@@ -252,7 +253,59 @@ let pendingSaves=0;
  }).observe(m,{attributes:true,attributeFilter:['class']});
  document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&m.classList.contains('on')){m.classList.remove('on');return}
-  if(e.key==='Enter'&&e.target&&e.target.matches&&e.target.matches('tr[data-b],tr[data-c],.res')){e.preventDefault();e.target.click()}
+  if(e.key==='Enter'&&e.target&&e.target.matches&&e.target.matches('tr[data-b],tr[data-c],.res')){e.preventDefault();e.target.click();return}
+
+  // Functional POS Keyboard Shortcuts:
+  // F12: Save & Print
+  if(e.key==='F12'){
+   e.preventDefault();
+   if(m.classList.contains('on'))return;
+   if($('go'))$('go').click();
+   return;
+  }
+  // F11: Save (without print)
+  if(e.key==='F11'){
+   e.preventDefault();
+   if(m.classList.contains('on'))return;
+   if($('gs'))$('gs').click();
+   return;
+  }
+  // F1: New Bill (fresh invoice)
+  if(e.key==='F1'){
+   e.preventDefault();
+   if(m.classList.contains('on'))m.classList.remove('on');
+   if(document.body.dataset.tab!=='bill')tab('bill');
+   if($('fNew'))$('fNew').click();
+   return;
+  }
+  // F2: Products tab
+  if(e.key==='F2'){
+   e.preventDefault();
+   if(m.classList.contains('on'))m.classList.remove('on');
+   tab('inv');
+   return;
+  }
+  // F3: Customers tab
+  if(e.key==='F3'){
+   e.preventDefault();
+   if(m.classList.contains('on'))m.classList.remove('on');
+   tab('cust');
+   return;
+  }
+  // F4: Sales tab
+  if(e.key==='F4'){
+   e.preventDefault();
+   if(m.classList.contains('on'))m.classList.remove('on');
+   tab('sales');
+   return;
+  }
+  // F5: Barcode Labels tab
+  if(e.key==='F5'){
+   e.preventDefault();
+   if(m.classList.contains('on'))m.classList.remove('on');
+   tab('lab');
+   return;
+  }
  });
 })();
 /* GitHub version: the same rules as Code.gs, run on the Google Sheet with Google sign-in */
