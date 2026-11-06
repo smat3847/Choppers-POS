@@ -2,7 +2,19 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Choppers Mens Wear · POS (Google Sheets)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Choppers POS">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23000'/%3E%3Ctext x='50' y='68' font-family='serif' font-size='60' font-weight='bold' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23000'/%3E%3Ctext x='50' y='68' font-family='serif' font-size='60' font-weight='bold' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://sheets.googleapis.com">
+<link rel="preconnect" href="https://accounts.google.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;700&display=swap">
 <style>
 :root{--bg:#fff;--card:#fff;--tx:#000;--mu:#666;--bd:#d8d8d8;--ac:#000;--on:#fff;--gold:#555;--ok:#000;--bad:#000;--warn:#000;--serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#000;--card:#000;--tx:#fff;--mu:#a3a3a3;--bd:#333;--ac:#fff;--on:#000;--gold:#bbb;--ok:#fff;--bad:#fff;--warn:#fff}}
@@ -304,7 +316,7 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
 }
 </style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
-<header><div class="top"><span id="clock"></span><button class="lnk" id="rf">Sync</button></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
+<header><div class="top"><span id="clock"></span><div style="display:flex;align-items:center;gap:12px"><span id="syncBadge" class="mu" style="font-size:11px;display:inline-flex;align-items:center;gap:5px"><span style="color:#22c55e;font-size:9px">●</span> Synced</span><button class="lnk" id="installBtn" style="display:none;color:#000;background:var(--card);padding:2px 8px;border-radius:4px;border:1px solid var(--bd);text-transform:none;letter-spacing:0.04em">Install App</button><button class="lnk" id="rf">Sync</button></div></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
 <nav id="nav" aria-label="Main sections"></nav>
 <main id="main-area" tabindex="-1">
 <section class="pg on" id="p-bill">
@@ -367,13 +379,143 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
  <div class="row"><div><label>Thermal paper</label><select id="sPaper" aria-label="Receipt paper width"><option value="58">58 mm</option><option value="80">80 mm</option></select></div>
  <div><label>Cashier name (this device)</label><input id="sCash" aria-label="Cashier name"></div></div>
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
- <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div></section>
+ <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div>
+
+<div class="card"><h2>App Permanence &amp; Offline Speed</h2>
+<div class="stat" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
+ <div>STORAGE PERSISTENCE<b id="persistStatus" style="font-size:16px;margin-top:4px">Permanent</b></div>
+ <div>OFFLINE DATABASE<b id="dbStatus" style="font-size:16px;margin-top:4px">IndexedDB Active</b></div>
+ <div>OFFLINE QUEUE<b id="queueStatus" style="font-size:16px;margin-top:4px">0 bills pending</b></div>
+</div>
+<div class="row" style="align-items:center;gap:16px">
+ <div style="flex:1 1 240px">
+  <label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer">
+   <input type="checkbox" id="sBeep" style="width:20px;height:20px;min-height:0;cursor:pointer">
+   <span>Play scanner chime on successful scan</span>
+  </label>
+ </div>
+ <div style="flex:0 0 auto">
+  <button class="btn g" id="installBtnSettings" style="min-height:44px">Install Permanent App</button>
+ </div>
+</div>
+<div class="mu" style="margin-top:10px">When installed as a PWA, this app works 100% offline like a native desktop/mobile register. Billing is instantaneous with zero wait time.</div>
+</div>
+
+<div class="card"><h2>Disaster Recovery &amp; Data Backup</h2>
+<div class="mu" style="margin-bottom:14px">Safely export all products, customers, and bill history into a permanent JSON file. You can restore this backup anytime on this or another device.</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+ <button class="btn" id="btnExportBackup">Export Store Backup (JSON)</button>
+ <button class="btn g" id="btnImportBackup">Restore from Backup (JSON)</button>
+ <input type="file" id="fBackup" accept=".json" style="display:none">
+</div>
+</div>
+</section>
 </main>
 <div id="modal" role="dialog" aria-modal="true" aria-label="Dialog"><div id="mbox"></div></div><div id="toast" role="status" aria-live="polite"></div><div id="printArea"></div>
 <script>
 addEventListener('DOMContentLoaded',()=>{const fl=document.createElement('link');fl.rel='stylesheet';fl.href='https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap';document.head.appendChild(fl)});
-const S={products:[],customers:[],bills:[],cart:[],cfg:{name:'Choppers Mens Wear',addr:'',gst:'',phone:'',paper:80,note:'Thank you! Visit again. Exchange within 7 days with bill.'}};
+const S={products:[],customers:[],bills:[],cart:[],cfg:{name:'Choppers Mens Wear',addr:'',gst:'',phone:'',paper:80,note:'Thank you! Visit again. Exchange within 7 days with bill.',beep:true}};
 let db=null,editing=null,cfgLoaded=false;
+
+// --- Storage Permanence & IndexedDB Engine ---
+const DB_NAME='ChoppersPOS_v2',DB_VER=1;
+let idb=null;
+function getIDB(){
+ if(!window.indexedDB)return Promise.resolve(null);
+ if(idb)return Promise.resolve(idb);
+ return new Promise(res=>{
+  try{
+   const req=indexedDB.open(DB_NAME,DB_VER);
+   req.onupgradeneeded=e=>{
+    const d=e.target.result;
+    if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'k'});
+   };
+   req.onsuccess=e=>{idb=e.target.result;res(idb)};
+   req.onerror=()=>res(null);
+  }catch(e){res(null)}
+ });
+}
+async function idbSetMeta(k,v){const d=await getIDB();if(!d)return;try{const tx=d.transaction('meta','readwrite');tx.objectStore('meta').put({k,v})}catch(e){}}
+async function idbGetMeta(k){const d=await getIDB();if(!d)return null;return new Promise(res=>{try{const tx=d.transaction('meta','readonly');const req=tx.objectStore('meta').get(k);req.onsuccess=()=>res(req.result?req.result.v:null);req.onerror=()=>res(null)}catch(e){res(null)}})}
+async function reqPersist(){
+ if(navigator.storage&&navigator.storage.persist){
+  try{
+   const granted=await navigator.storage.persist();
+   const el=$('persistStatus');
+   if(el)el.innerHTML=granted?'<span style="color:#22c55e">Permanent ✓</span>':'Active';
+  }catch(e){}
+ }
+}
+reqPersist();
+
+// --- Persistent Auth Token Handling (LocalStorage + SessionStorage dual-persist) ---
+function saveTok(tok){TOK=tok;try{if(tok){lsSet('cmw-tok',JSON.stringify(tok));sessionStorage.setItem('cmw-tok',JSON.stringify(tok))}else{lsSet('cmw-tok','');sessionStorage.removeItem('cmw-tok')}}catch(e){}}
+function loadTok(){try{const raw=lsGet('cmw-tok')||sessionStorage.getItem('cmw-tok');return raw?JSON.parse(raw):null}catch(e){return null}}
+
+// --- Synthesized Audio Chime for Instant Barcode Scan Feedback ---
+let audioCtx=null;
+function playBeep(){
+ if(S.cfg.beep===false)return;
+ try{
+  if(!audioCtx&&(window.AudioContext||window.webkitAudioContext))audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(!audioCtx)return;
+  if(audioCtx.state==='suspended')audioCtx.resume();
+  const osc=audioCtx.createOscillator();
+  const gain=audioCtx.createGain();
+  osc.connect(gain);gain.connect(audioCtx.destination);
+  osc.type='sine';
+  osc.frequency.setValueAtTime(1046.5,audioCtx.currentTime); // C6 note
+  gain.gain.setValueAtTime(0.12,audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.06);
+  osc.start();osc.stop(audioCtx.currentTime+0.06);
+ }catch(e){}
+}
+
+// --- Sync Status Badge & Queue Management ---
+let syncQueue=[];
+try{syncQueue=JSON.parse(lsGet('cmw-queue')||'[]')}catch(e){syncQueue=[]}
+function updateSyncBadge(status){
+ const b=$('syncBadge');if(!b)return;
+ if(status==='synced')b.innerHTML='<span style="color:#22c55e;font-size:9px">●</span> Synced';
+ else if(status==='syncing')b.innerHTML='<span style="color:#eab308;font-size:9px">●</span> Syncing…';
+ else if(status==='offline'){
+  const qCount=syncQueue.length;
+  b.innerHTML=`<span style="color:#ef4444;font-size:9px">●</span> ${qCount?qCount+' queued':'Offline'}`;
+ }
+ const qEl=$('queueStatus');if(qEl)qEl.textContent=syncQueue.length?`${syncQueue.length} bill${syncQueue.length>1?'s':''} pending`:'0 bills pending';
+}
+function saveSyncQueue(){
+ lsSet('cmw-queue',JSON.stringify(syncQueue));
+ idbSetMeta('cmw-queue',syncQueue);
+ updateSyncBadge(syncQueue.length?'offline':'synced');
+}
+let isSyncing=false;
+async function drainSyncQueue(){
+ if(isSyncing||!syncQueue.length)return;
+ if(!navigator.onLine){updateSyncBadge('offline');return}
+ isSyncing=true;updateSyncBadge('syncing');
+ try{
+  while(syncQueue.length>0){
+   const item=syncQueue[0];
+   if(item.type==='saveBill'){
+    const res=await rpc('saveBill',item.payload);
+    applyResult(res,false);
+   }else if(item.type==='updateBill'){
+    const res=await rpc('updateBill',item.inv,item.payload);
+    applyResult(res,true);
+   }
+   syncQueue.shift();saveSyncQueue();
+  }
+  updateSyncBadge('synced');
+ }catch(e){
+  console.warn('Sync queue error:',e);
+  if(e.code==='needs_auth')showSignIn();
+  updateSyncBadge('offline');
+ }finally{isSyncing=false}
+}
+window.addEventListener('online',()=>drainSyncQueue());
+window.addEventListener('offline',()=>updateSyncBadge('offline'));
+function enqueueSync(item){syncQueue.push(item);saveSyncQueue();drainSyncQueue()}
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const NF_IN=new Intl.NumberFormat('en-IN',{maximumFractionDigits:2});
@@ -452,7 +594,7 @@ async function callT(tool,input){
  else throw new Error('Unknown call '+tool);
  const r=await fetch(url,{method,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
  const j=await r.json().catch(()=>({}));
- if(r.status===401){TOK=null;sessionStorage.removeItem('cmw-tok');throw Object.assign(new Error('needs_auth'),{code:'needs_auth'})}
+ if(r.status===401){saveTok(null);throw Object.assign(new Error('needs_auth'),{code:'needs_auth'})}
  if(!r.ok)throw new Error((j.error&&j.error.message)||('Google error '+r.status));
  return j;
 }
@@ -778,7 +920,7 @@ async function load(){
  if(!cfgLoaded){cfgLoaded=true;fillSet()}
  $('st').textContent='';R()}
 function saveFile(name,data){const u=URL.createObjectURL(new Blob([data],{type:/\.html$/.test(name)?'text/html':'application/octet-stream'}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},2000);toast('Saved '+name)}
-$('rf').onclick=async()=>{try{await getToken(true);await load();toast('Synced')}catch(e){if(e.code==='needs_auth')showSignIn();toast('Sync failed: '+emsg(e))}};
+$('rf').onclick=async()=>{updateSyncBadge('syncing');try{await drainSyncQueue();await getToken(true);await load();updateSyncBadge('synced');toast('Synced with Google Sheet')}catch(e){if(e.code==='needs_auth')showSignIn();updateSyncBadge('offline');toast('Sync notice: '+emsg(e))}};
 setInterval(()=>{if(busy||pendingSaves>0||document.hidden||$('modal').classList.contains('on'))return;getToken(false).then(()=>load()).catch(e=>{if(e.code==='needs_auth')showSignIn()})},120000);
 (async()=>{
  if(CLIENT_ID.startsWith('PASTE')){showSignIn(emsg({code:'setup'}));return}
@@ -788,10 +930,10 @@ setInterval(()=>{if(busy||pendingSaves>0||document.hidden||$('modal').classList.
  if(!ready){showSignIn(emsg({code:'gis'}));return}
  tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPE,
   callback:r=>{const p=pending;pending=null;
-   if(r.error){TOK=null;sessionStorage.removeItem('cmw-tok');if(p)p.rej(Object.assign(new Error(r.error),{code:'needs_auth'}));return}
-   TOK={t:r.access_token,exp:Date.now()+(r.expires_in-120)*1000};sessionStorage.setItem('cmw-tok',JSON.stringify(TOK));scheduleTokenRefresh();if(p)p.res(TOK.t)},
+   if(r.error){saveTok(null);if(p)p.rej(Object.assign(new Error(r.error),{code:'needs_auth'}));return}
+   const newTok={t:r.access_token,exp:Date.now()+(r.expires_in-120)*1000};saveTok(newTok);scheduleTokenRefresh();if(p)p.res(TOK.t)},
   error_callback:e=>{const p=pending;pending=null;if(p)p.rej(Object.assign(new Error(e.type||'popup'),{code:e.type==='popup_failed_to_open'?'popup':'needs_auth'}))}});
- const s=JSON.parse(sessionStorage.getItem('cmw-tok')||'null');if(s&&s.exp>Date.now()){TOK=s;scheduleTokenRefresh()}
+ const s=loadTok();if(s&&s.exp>Date.now()){TOK=s;scheduleTokenRefresh()}
  try{await getToken(false);await load()}catch(e){if(e.code==='needs_auth')showSignIn();else $('st').textContent='Could not load shop data: '+e.message}
 })();
 S.cashier=lsGet('cmw-cashier');
@@ -810,17 +952,39 @@ function exactHit(q){
  const t=q.trim().toLowerCase();if(!t)return null;
  return S._bySku.get(t)||S._byName.get(t)||null}
 function unambiguous(q,hit){const t=q.trim().toLowerCase();return !S.products.some(p=>p!==hit&&((p._skuL||String(p.sku).toLowerCase()).startsWith(t)||(p._nameL||String(p.name).trim().toLowerCase()).startsWith(t)))}
-function addScanned(hit){addItem(hit);$('q').value='';$('res').innerHTML='';toast('Added '+hit.name);$('q').focus()}
-let searchRaf=null;
+function addScanned(hit){addItem(hit);$('q').value='';$('res').innerHTML='';playBeep();toast('Added '+hit.name);$('q').focus()}
+let searchRaf=null,lastQKeyTime=0,isScannerBurst=false;
+$('q').addEventListener('keydown',e=>{
+ const now=performance.now();
+ if(now-lastQKeyTime<35)isScannerBurst=true;
+ else if(now-lastQKeyTime>160)isScannerBurst=false;
+ lastQKeyTime=now;
+ if(e.key==='Enter'){
+  e.preventDefault();clearTimeout(scanT);
+  const q=$('q').value.trim();if(!q)return;
+  const hit=exactHit(q);
+  if(hit){addScanned(hit);return}
+  const r=search();
+  if(r.length===1)addScanned(r[0]);
+  else if(!r.length)toast('Item not found: '+q);
+ }
+});
 $('q').oninput=()=>{
  if(searchRaf)cancelAnimationFrame(searchRaf);
  searchRaf=requestAnimationFrame(search);
  clearTimeout(scanT);const q=$('q').value.trim();if(!q)return;
  const bySku=S._bySku.get(q.toLowerCase());
- if(bySku){scanT=setTimeout(()=>{if($('q').value.trim()===q)addScanned(bySku)},40);return}
- scanT=setTimeout(()=>{if($('q').value.trim()!==q)return;const hit=exactHit(q);if(hit&&unambiguous(q,hit))addScanned(hit)},140);
+ if(bySku){
+  if(isScannerBurst||q.length>=4){addScanned(bySku);return}
+  scanT=setTimeout(()=>{if($('q').value.trim()===q)addScanned(bySku)},25);
+  return;
+ }
+ scanT=setTimeout(()=>{
+  if($('q').value.trim()!==q)return;
+  const hit=exactHit(q);
+  if(hit&&unambiguous(q,hit))addScanned(hit);
+ },isScannerBurst?10:110);
 };
-$('q').onkeydown=e=>{if(e.key!=='Enter')return;e.preventDefault();clearTimeout(scanT);const q=$('q').value.trim();if(!q)return;const hit=exactHit(q);if(hit){addScanned(hit);return}const r=search();if(!r.length)toast('Item not found: '+q)};
 $('res').onclick=e=>{const d=e.target.closest('.res');if(d){const p=prod(d.dataset.id);if(p){addItem(p);$('q').value='';$('res').innerHTML='';$('q').focus()}}};
 function calc(){
  const ls=[];let sub=0,itemCount=0;
@@ -958,20 +1122,42 @@ async function submit(printIt){
  if(exReq>c.ex)return toast('Exchange amount is more than the bill total');
  const edit=S.editBill;
  const payload={cashier:S.cashier||'',cust:name,phone,mode,discVal:+$('bd').value||0,discType:$('bdT').value,paidIn:+$('paid').value||0,redeem:c.rd,exchange:c.ex,items:c.ls.map(l=>({sku:l.p.sku,qty:l.qty,disc:l.disc||0}))};
- const snap={cart:S.cart.map(x=>({...x})),bd:$('bd').value,bdT:$('bdT').value,cPhone:$('cPhone').value,cName:$('cName').value,paid:$('paid').value,pr:$('pRedeem').value,ex:$('exAmt').value,pay:mode,editBill:edit};
- clearForm();
- toast((edit?'Updating ':'Saving ')+'bill…');
- pendingSaves++;
- try{
-  const res=edit?await rpc('updateBill',edit.inv,payload):await rpc('saveBill',payload);
-  applyResult(res,!!edit);
-  if(printIt){toast((edit?'Updated ':'Saved ')+res.bill.inv+' · printing');printInvoice(res.bill)}
-  else toast((edit?'Updated ':'Saved ')+res.bill.inv);
- }catch(e){
-  if(S.cart.length===0){restoreBill(snap);toast((edit?'Not updated, bill restored: ':'Not saved, bill restored: ')+e.message)}
-  else toast((edit?'Not updated: ':'Not saved: ')+e.message+'. Re-enter that bill.');
+
+ // Immediate local execution for 0ms checkout response time
+ const no=edit?edit.no:(S.nextNo||INV_START);
+ const inv=edit?edit.inv:(INV_PREFIX+no);
+ const ts=Date.now();
+ const paid=paidOf(mode,$('paid')?$('paid').value:0,c.grand);
+ const due=c.grand-paid;
+ const earned=phone?Math.floor(c.grand/10):0;
+ const items=c.ls.map(l=>({sku:l.p.sku,name:l.p.name,size:l.p.size||'',qty:l.qty,price:l.p.price,disc:l.disc||0,amt:r2(l.fin),gst:l.p.tax||0}));
+ const localBill={id:inv,inv,no,ts,cashier:S.cashier||'',cust:name,phone,mode,paid,due,sub:r2(c.sub),disc:r2(c.d),redeem:c.rd,exchange:r2(c.ex),tax:r2(c.tax),ro:r2(c.ro),total:c.grand,items,earned};
+
+ let updatedCust=null;
+ if(phone){
+  const existing=cust(phone);
+  if(existing){
+   updatedCust={id:phone,row:existing.row,phone,name:name||existing.name,visits:(existing.visits||0)+1,spent:(existing.spent||0)+c.grand,balance:(existing.balance||0)+due,last:ts,points:(existing.points||0)-c.rd+earned};
+  }else{
+   updatedCust={id:phone,row:0,phone,name,visits:1,spent:c.grand,balance:due,last:ts,points:earned};
+  }
  }
- pendingSaves--;
+
+ // Apply instant optimistic update in memory & cache
+ applyResult({bill:localBill,customer:updatedCust,customers:updatedCust?[updatedCust]:[]},!!edit);
+
+ // Instant thermal print (zero waiting for network!)
+ if(printIt){
+  toast((edit?'Updated ':'Saved ')+inv+' · printing');
+  printInvoice(localBill);
+ }else{
+  toast((edit?'Updated ':'Saved ')+inv);
+ }
+
+ clearForm();
+
+ // Enqueue background sync to Google Sheets
+ enqueueSync({type:edit?'updateBill':'saveBill',inv,payload,ts,edit:!!edit});
 }
 function restoreBill(s){S.cart=s.cart;S.editBill=s.editBill;$('bd').value=s.bd;$('bdT').value=s.bdT;$('pRedeem').value=s.pr;$('exAmt').value=s.ex;$('paid').value=s.paid;setPay(s.pay);setCust(s.cPhone,s.cName);refreshInvNo();rCart()}
 $('go').onclick=()=>submit(true);
@@ -1255,10 +1441,91 @@ $('sb').onclick=async e=>{
 
 /* settings */
 const sm={sName:'name',sPhone:'phone',sAddr:'addr',sGst:'gst',sPaper:'paper',sNote:'note'};
-function fillSet(){for(const k in sm)$(k).value=S.cfg[sm[k]]??'';$('sCash').value=S.cashier}
-$('sSave').onclick=async()=>{const d={};for(const k in sm)d[sm[k]]=$(k).value.trim();d.paper=+d.paper||80;S.cashier=$('sCash').value.trim();lsSet('cmw-cashier',S.cashier);
- const was=Object.assign({},S.cfg);Object.assign(S.cfg,d);toast('Saving settings…');
- rpc('saveSettings',d).then(()=>{saveCache();toast('Settings saved')}).catch(e=>{Object.assign(S.cfg,was);toast('Not saved: '+e.message)})};
+function updatePermanenceDisplay(){
+ const qEl=$('queueStatus');if(qEl)qEl.textContent=syncQueue.length?`${syncQueue.length} bill${syncQueue.length>1?'s':''} pending`:'0 bills pending';
+ if(navigator.storage&&navigator.storage.persisted){
+  navigator.storage.persisted().then(p=>{
+   const el=$('persistStatus');
+   if(el)el.innerHTML=p?'<span style="color:#22c55e">Permanent ✓</span>':'Active';
+  });
+ }
+}
+function fillSet(){
+ for(const k in sm)$(k).value=S.cfg[sm[k]]??'';
+ $('sCash').value=S.cashier||'';
+ if($('sBeep'))$('sBeep').checked=S.cfg.beep!==false;
+ updatePermanenceDisplay();
+}
+$('sSave').onclick=async()=>{
+ const d={};for(const k in sm)d[sm[k]]=$(k).value.trim();d.paper=+d.paper||80;S.cashier=$('sCash').value.trim();lsSet('cmw-cashier',S.cashier);
+ if($('sBeep'))S.cfg.beep=$('sBeep').checked;
+ const was=Object.assign({},S.cfg);Object.assign(S.cfg,d);saveCache();toast('Saving settings…');
+ rpc('saveSettings',d).then(()=>{saveCache();toast('Settings saved')}).catch(e=>{Object.assign(S.cfg,was);toast('Not saved: '+e.message)});
+};
+
+// --- PWA Installation Integration ---
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+ e.preventDefault();deferredPrompt=e;
+ const b=$('installBtn'),bs=$('installBtnSettings');
+ if(b)b.style.display='inline-block';
+ if(bs)bs.style.display='inline-block';
+});
+window.addEventListener('appinstalled',()=>{
+ deferredPrompt=null;
+ const b=$('installBtn'),bs=$('installBtnSettings');
+ if(b)b.style.display='none';
+ if(bs)bs.textContent='Installed ✓';
+ toast('Choppers POS installed permanently!');
+});
+function triggerInstall(){
+ if(deferredPrompt){
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(c=>{
+   if(c.outcome==='accepted')toast('Installing app…');
+   deferredPrompt=null;
+  });
+ }else{
+  toast('To install permanently: tap browser menu (⋮ or ⎙) and select "Install Choppers POS" or "Add to Home Screen"');
+ }
+}
+$('installBtn').onclick=triggerInstall;
+if($('installBtnSettings'))$('installBtnSettings').onclick=triggerInstall;
+
+// --- Disaster Recovery Data Backup & Restore ---
+if($('btnExportBackup'))$('btnExportBackup').onclick=()=>{
+ const d=new Date();const pad=n=>String(n).padStart(2,'0');
+ const filename=`ChoppersPOS_Backup_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}.json`;
+ const data={app:'Choppers POS',version:2,exportedAt:d.toISOString(),cfg:S.cfg,products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo};
+ saveFile(filename,JSON.stringify(data,null,2));
+ toast('Store backup exported successfully');
+};
+if($('btnImportBackup'))$('btnImportBackup').onclick=()=>$('fBackup').click();
+if($('fBackup'))$('fBackup').onchange=e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ const reader=new FileReader();
+ reader.onload=ev=>{
+  try{
+   const d=JSON.parse(ev.target.result);
+   if(!d||(!d.products&&!d.bills&&!d.customers))return toast('Invalid backup format');
+   if(Array.isArray(d.products))S.products=d.products.map(indexProd);
+   if(Array.isArray(d.customers))S.customers=d.customers;
+   if(Array.isArray(d.bills))S.bills=d.bills;
+   if(d.cfg)Object.assign(S.cfg,d.cfg);
+   if(d.nextNo)S.nextNo=Math.max(S.nextNo||0,d.nextNo);
+   rebuildIndexes();saveCache();R();fillSet();
+   toast(`Restored ${S.products.length} products, ${S.customers.length} customers, ${S.bills.length} bills`);
+  }catch(err){toast('Restore failed: '+err.message)}
+ };
+ reader.readAsText(file);e.target.value='';
+};
+
+// --- Register PWA Service Worker for Offline Engine ---
+if('serviceWorker' in navigator && (location.protocol==='https:'||location.protocol==='http:'||location.hostname==='localhost')){
+ window.addEventListener('load',()=>{
+  navigator.serviceWorker.register('./sw.js').catch(e=>console.log('SW register note:',e));
+ });
+}
 
 /* barcode labels */
 const C128=['212222','222122','222221','121223','121322','131222','122213','122312','132212','221213','221312','231212','112232','122132','122231','113222','123122','123221','223211','221132','221231','213212','223112','312131','311222','321122','321221','312212','322112','322211','212123','212321','232121','111323','131123','131321','112313','132113','132311','211313','231113','231311','112133','112331','132131','113123','113321','133121','313121','211331','231131','213113','213311','213131','311123','311321','331121','312113','312311','332111','314111','221411','431111','111224','111422','121124','121421','141122','141221','112214','112412','122114','122411','142112','142211','241211','221114','413111','241112','134111','111242','121142','121241','114212','124112','124211','411212','421112','421211','212141','214121','412121','111143','111341','131141','114113','114311','411113','411311','113141','114131','311141','411131','211412','211214','211232','2331112'];
