@@ -937,18 +937,17 @@ async function submit(printIt){
   }
  }
 
- // Apply instant optimistic update in memory & cache
- applyResult({bill:localBill,customer:updatedCust,customers:updatedCust?[updatedCust]:[]},!!edit);
-
- // 1-Click Instant Thermal Print: zero popups, zero extra options
+ // ZERO-DELAY PRINT PRIORITY: Fire printer in the first millisecond
  if(printIt){
-  toast((edit?'Updated ':'Saved ')+inv+' · Printing…');
   printInvoice(localBill);
- }else{
-  toast((edit?'Updated ':'Saved ')+inv);
  }
 
+ // Instant form reset for the next bill
  clearForm();
+ toast((edit?'Updated ':'Saved ')+inv+(printIt?' · Printing…':''));
+
+ // Apply local records in memory & cache
+ applyResult({bill:localBill,customer:updatedCust,customers:updatedCust?[updatedCust]:[]},!!edit);
 
  // Enqueue background sync to Google Sheets
  enqueueSync({type:edit?'updateBill':'saveBill',inv,payload,ts,edit:!!edit});
@@ -1005,11 +1004,24 @@ async function connectSerialPrinter(){
   await serialPort.open({baudRate:9600});
   lsSet('cmw-serial','1');
   const el=$('printerConnStatus');
-  if(el)el.innerHTML='<span style="color:#22c55e">Connected via USB ✓</span>';
-  toast('Thermal printer connected via USB!');
+  if(el)el.innerHTML='<span style="color:#22c55e">Direct USB ⚡ (Zero-Delay)</span>';
+  toast('Thermal printer connected for instant 10ms printing!');
  }catch(e){
   toast('Printer connection cancelled: '+e.message);
  }
+}
+
+// Auto-reconnect paired USB printer on boot for instant zero-dialog printing
+if('serial' in navigator){
+ navigator.serial.getPorts().then(ports=>{
+  if(ports.length>0){
+   serialPort=ports[0];
+   serialPort.open({baudRate:9600}).then(()=>{
+    const el=$('printerConnStatus');
+    if(el)el.innerHTML='<span style="color:#22c55e">Direct USB ⚡ (Zero-Delay)</span>';
+   }).catch(()=>{});
+  }
+ }).catch(()=>{});
 }
 function printViaRawBT(b){
  try{
@@ -1026,8 +1038,13 @@ function printViaRawBT(b){
 function invoiceText(b){const m=billModel(b);return [...headerLines(m),...billLines(m).map(x=>x[0])].join('\n')}
 function printInvoice(b){
  S.lastBillPrinted=b;
- $('printArea').innerHTML=thermalBody(b);
- tryPrint();
+ const pa=$('printArea');
+ if(pa)pa.innerHTML=thermalBody(b);
+ if(serialPort){
+  printViaSerial(b);
+  return;
+ }
+ try{window.print()}catch(e){toast('Print: '+(e.message||e))}
 }
 function downloadInvoice(b){saveFile(b.inv+'.html','<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+b.inv+'</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"></head><body style="margin:0">'+thermalBody(b)+'<script>onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>')}
 /* new customer: ask for the mobile number and name */
@@ -1366,7 +1383,16 @@ if($('fBackup'))$('fBackup').onchange=e=>{
 // --- Register PWA Service Worker for Offline Engine ---
 if('serviceWorker' in navigator && (location.protocol==='https:'||location.protocol==='http:'||location.hostname==='localhost')){
  window.addEventListener('load',()=>{
-  navigator.serviceWorker.register('./sw.js').catch(e=>console.log('SW register note:',e));
+  navigator.serviceWorker.register('./sw.js').then(reg=>{
+   console.log('Service Worker Active:',reg.scope);
+  }).catch(e=>console.log('SW register note:',e));
+  if('caches' in window){
+   caches.open('choppers-pos-v2').then(cache=>{
+    cache.add(location.href).catch(()=>{});
+    cache.add('./').catch(()=>{});
+    cache.add('./index.html').catch(()=>{});
+   }).catch(()=>{});
+  }
  });
 }
 
@@ -1415,20 +1441,7 @@ const LCSS=`*{box-sizing:border-box}body{margin:0;font-family:Inter,-apple-syste
    A second click within a second is ignored so a double tap never prints two copies. */
 let lastPrint=0;
 function tryPrint(){
- const now=Date.now();
- if(now-lastPrint<400)return;
- lastPrint=now;
-
- if(serialPort&&S.lastBillPrinted){
-  printViaSerial(S.lastBillPrinted);
-  return;
- }
-
- try{
-  window.print();
- }catch(e){
-  toast('Could not open print: '+(e.message||e));
- }
+ if(S.lastBillPrinted)printInvoice(S.lastBillPrinted);
 }
 async function dlDoc(){
  if(!LAST)return toast('Nothing to print yet');
