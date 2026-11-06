@@ -376,8 +376,10 @@ pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color
 <section class="pg" id="p-set"><div class="card"><h2>Store &amp; receipt settings</h2>
  <div class="row"><div><label>Store name</label><input id="sName" aria-label="Shop name"></div><div><label>Phone</label><input id="sPhone" aria-label="Shop phone"></div></div>
  <div class="row"><div><label>Address</label><input id="sAddr" aria-label="Shop address"></div><div><label>GST number</label><input id="sGst" aria-label="GST number"></div></div>
- <div class="row"><div><label>Thermal paper</label><select id="sPaper" aria-label="Receipt paper width"><option value="58">58 mm</option><option value="80">80 mm</option></select></div>
- <div><label>Cashier name (this device)</label><input id="sCash" aria-label="Cashier name"></div></div>
+ <div class="row"><div><label>Thermal paper</label><select id="sPaper" aria-label="Receipt paper width"><option value="58">58 mm (2-inch)</option><option value="80">80 mm (3-inch)</option></select></div>
+ <div><label>Cashier name (this device)</label><input id="sCash" aria-label="Cashier name"></div>
+ <div><label>Direct USB Printer</label><button class="btn g" id="btnConnectSerial" type="button" style="min-height:44px;width:100%">Connect USB Printer</button></div></div>
+<div id="printerStatusRow" class="mu" style="margin-bottom:12px;font-size:12px">Thermal Printer: <span id="printerConnStatus" style="font-weight:600">Standard (Browser Print)</span> · In Chrome print dialog, set Margins: <b>None</b> and uncheck <b>Headers/Footers</b>.</div>
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
  <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div>
 
@@ -1146,10 +1148,11 @@ async function submit(printIt){
  // Apply instant optimistic update in memory & cache
  applyResult({bill:localBill,customer:updatedCust,customers:updatedCust?[updatedCust]:[]},!!edit);
 
- // Instant thermal print (zero waiting for network!)
+ // Instant thermal print & receipt display
  if(printIt){
   toast((edit?'Updated ':'Saved ')+inv+' · printing');
   printInvoice(localBill);
+  showReceipt(localBill, true);
  }else{
   toast((edit?'Updated ':'Saved ')+inv);
  }
@@ -1189,8 +1192,52 @@ function loadBill(b){
  window.scrollTo({top:0});
  toast(missing.length?'Editing '+b.inv+'. Not in products now: '+missing.join(', '):'Editing '+b.inv);
 }
+let serialPort=null;
+async function printViaSerial(b){
+ if(!serialPort)return false;
+ try{
+  if(!serialPort.writable)await serialPort.open({baudRate:9600});
+  const writer=serialPort.writable.getWriter();
+  await writer.write(escpos(b));
+  writer.releaseLock();
+  toast('Printed directly to USB thermal printer!');
+  return true;
+ }catch(e){
+  console.warn('Serial print error:',e);
+  return false;
+ }
+}
+async function connectSerialPrinter(){
+ if(!('serial' in navigator))return toast('Web Serial is supported in Chrome/Edge on Desktop.');
+ try{
+  serialPort=await navigator.serial.requestPort();
+  await serialPort.open({baudRate:9600});
+  lsSet('cmw-serial','1');
+  const el=$('printerConnStatus');
+  if(el)el.innerHTML='<span style="color:#22c55e">Connected via USB ✓</span>';
+  toast('Thermal printer connected via USB!');
+ }catch(e){
+  toast('Printer connection cancelled: '+e.message);
+ }
+}
+function printViaRawBT(b){
+ try{
+  const bytes=escpos(b);
+  let binary='';
+  for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
+  const b64=btoa(binary);
+  window.location.href='rawbt:data:application/octet-stream;base64,'+b64;
+  toast('Sent to RawBT Print Service');
+ }catch(e){
+  toast('RawBT error: '+e.message);
+ }
+}
 function invoiceText(b){const m=billModel(b);return [...headerLines(m),...billLines(m).map(x=>x[0])].join('\n')}
-function printInvoice(b){$('printArea').innerHTML=thermalBody(b);tryPrint()}
+function printInvoice(b){
+ S.lastBillPrinted=b;
+ $('printArea').innerHTML=thermalBody(b);
+ tryPrint();
+}
 function downloadInvoice(b){saveFile(b.inv+'.html','<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+b.inv+'</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"></head><body style="margin:0">'+thermalBody(b)+'<script>onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>')}
 /* new customer: ask for the mobile number and name */
 function openNewCustomer(phone0,name0){
@@ -1312,13 +1359,38 @@ function thermalBody(b){
   (m.note?`<div style="margin-top:3mm;font-size:${small}mm;text-align:center">${esc(m.note)}</div>`:'')+
   `<div style="margin-top:3mm;font-size:${small}mm;text-align:center;font-weight:600">Thank you for shopping with us</div></div>`}
 function showReceipt(b,fresh){
- $('mbox').innerHTML=(fresh?'<h2 style="color:var(--ok)">✓ Sale complete</h2>':'<h2>Receipt</h2>')+`<div style="display:flex;justify-content:center;overflow:auto;padding:2px 0 10px">${thermalBody(b)}</div>
- <div class="row"><button class="btn" id="mh">Download printable file</button><button class="btn g" id="mp">Print here</button><button class="btn g" id="md">ESC/POS file</button><button class="btn g" id="mc">Close</button></div><div class="mu">Print sends the receipt to your default printer. For one click with no print box, use the one-click shortcut in the setup guide. The ESC/POS file works with RawBT on Android.</div>`;
+ S.lastBillPrinted=b;
+ $('mbox').innerHTML=(fresh?'<h2 style="color:var(--ok)">✓ Sale complete · '+esc(b.inv)+'</h2>':'<h2>Receipt · '+esc(b.inv)+'</h2>')+
+  `<div style="display:flex;justify-content:center;overflow:auto;padding:2px 0 10px">${thermalBody(b)}</div>
+  <div class="row" style="margin-top:6px;gap:8px;flex-wrap:wrap">
+   <button class="btn" id="mp" style="flex:1 1 120px">Print again</button>
+   <button class="btn g" id="mSerial" style="flex:1 1 120px">USB direct</button>
+   <button class="btn g" id="mrbt" style="flex:1 1 120px">RawBT</button>
+  </div>
+  <div class="row" style="margin-top:6px;gap:8px;flex-wrap:wrap">
+   <button class="btn g" id="mh" style="flex:1 1 130px">Download HTML</button>
+   <button class="btn g" id="md" style="flex:1 1 130px">ESC/POS file</button>
+   <button class="btn g" id="mc" style="flex:0 0 70px">Close</button>
+  </div>
+  <div class="mu" style="margin-top:10px;font-size:11px;line-height:1.4">
+   <b>Print Options:</b><br>
+   • <b>Print again</b>: Opens browser print dialog (set Margins: None, uncheck Headers/footers).<br>
+   • <b>USB direct</b>: Direct print to USB thermal printer (Chrome on PC).<br>
+   • <b>RawBT</b>: Direct Bluetooth/USB print via RawBT app on Android.<br>
+   • <b>Download HTML</b>: Downloads receipt file that automatically prints on opening.
+  </div>`;
  $('modal').classList.add('on');
  $('mc').onclick=()=>$('modal').classList.remove('on');
  const setLast=()=>{LAST={body:thermalBody(b),css:'',roll:false,name:b.inv+'.html'}};
- $('mp').onclick=()=>{setLast();$('printArea').innerHTML=LAST.body;tryPrint()};$('mh').onclick=()=>{setLast();dlDoc()};
- $('md').onclick=async()=>{try{saveFile(b.inv+'.bin',escpos(b));}catch(e){toast('Download not saved: '+(e.message||e.code||''))}}}
+ $('mp').onclick=()=>{setLast();printInvoice(b)};
+ $('mSerial').onclick=async()=>{
+  if(!serialPort)await connectSerialPrinter();
+  if(serialPort)await printViaSerial(b);
+ };
+ $('mrbt').onclick=()=>printViaRawBT(b);
+ $('mh').onclick=()=>{setLast();dlDoc()};
+ $('md').onclick=async()=>{try{saveFile(b.inv+'.bin',escpos(b))}catch(e){toast('Download failed: '+e.message)}};
+}
 $('modal').onclick=e=>{if(e.target.id==='modal')$('modal').classList.remove('on')};
 
 /* inventory */
@@ -1456,6 +1528,7 @@ function fillSet(){
  if($('sBeep'))$('sBeep').checked=S.cfg.beep!==false;
  updatePermanenceDisplay();
 }
+if($('btnConnectSerial'))$('btnConnectSerial').onclick=()=>connectSerialPrinter();
 $('sSave').onclick=async()=>{
  const d={};for(const k in sm)d[sm[k]]=$(k).value.trim();d.paper=+d.paper||80;S.cashier=$('sCash').value.trim();lsSet('cmw-cashier',S.cashier);
  if($('sBeep'))S.cfg.beep=$('sBeep').checked;
@@ -1571,12 +1644,49 @@ const LCSS=`*{box-sizing:border-box}body{margin:0;font-family:Inter,-apple-syste
 /* One print call per click. The QR image must finish loading first, or the paper prints blank.
    A second click within a second is ignored so a double tap never prints two copies. */
 let lastPrint=0;
-async function tryPrint(){
- if(Date.now()-lastPrint<1000)return;
+function tryPrint(){
+ if(Date.now()-lastPrint<800)return;
  lastPrint=Date.now();
- const imgs=[...$('printArea').querySelectorAll('img')];
- await Promise.all(imgs.map(i=>(i.complete&&i.naturalWidth)?0:i.decode().catch(()=>0)));
- try{window.print()}catch(e){toast('Printing is not available in this browser. Use Download printable file.')}
+
+ if(serialPort&&S.lastBillPrinted){
+  printViaSerial(S.lastBillPrinted);
+  return;
+ }
+
+ let pIframe=$('printIframe');
+ if(!pIframe){
+  pIframe=document.createElement('iframe');
+  pIframe.id='printIframe';
+  pIframe.style.position='fixed';
+  pIframe.style.right='0';
+  pIframe.style.bottom='0';
+  pIframe.style.width='0';
+  pIframe.style.height='0';
+  pIframe.style.border='0';
+  pIframe.style.visibility='hidden';
+  document.body.appendChild(pIframe);
+ }
+
+ const htmlContent=$('printArea').innerHTML;
+ try{
+  const doc=pIframe.contentWindow.document;
+  doc.open();
+  doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Thermal Receipt</title>'
+   +'<style>@page{margin:0;size:'+(S.cfg.paper==58?'58mm auto':'80mm auto')+'}'
+   +'body{margin:0;padding:0;background:#fff;color:#000;font-family:Inter,system-ui,sans-serif}'
+   +'*{box-sizing:border-box}</style></head><body>'+htmlContent+'</body></html>');
+  doc.close();
+  setTimeout(()=>{
+   try{
+    pIframe.contentWindow.focus();
+    pIframe.contentWindow.print();
+   }catch(err){
+    window.print();
+   }
+  },80);
+ }catch(e){
+  try{window.print()}catch(err){toast('Print dialog blocked. Use the receipt popup to print or download.')}
+ }
 }
 async function dlDoc(){
  if(!LAST)return toast('Nothing to print yet');
