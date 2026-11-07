@@ -79,6 +79,10 @@
  <div class="row"><div><label>Address</label><input id="sAddr" aria-label="Shop address"></div><div><label>GST number</label><input id="sGst" aria-label="GST number"></div></div>
  <div class="row"><div><label>Thermal paper</label><select id="sPaper" aria-label="Receipt paper width"><option value="58">58 mm</option><option value="80">80 mm</option></select></div>
  <div><label>Cashier name (this device)</label><input id="sCash" aria-label="Cashier name"></div></div>
+<div class="row" style="align-items:center;margin-top:6px">
+ <div><label>Silent Printing (No Dialog)</label><button class="btn g" id="btnSilentUsb" type="button" style="min-height:42px;width:100%">Pair USB for Silent Print</button></div>
+ <div style="flex:1 1 200px"><label>&nbsp;</label><div id="silentPrintStatus" class="mu" style="font-size:12px;line-height:1.4">Standard print dialog active. Pair USB above or launch Chrome with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">--kiosk-printing</code> for 100% silent printing.</div></div>
+</div>
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
  <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div>
 
@@ -981,10 +985,80 @@ function loadBill(b){
  toast(missing.length?'Editing '+b.inv+'. Not in products now: '+missing.join(', '):'Editing '+b.inv);
 }
 function invoiceText(b){const m=billModel(b);return [...headerLines(m),...billLines(m).map(x=>x[0])].join('\n')}
-function printInvoice(b){
+
+// --- Silent Hardware Printing Engine (Zero Dialog) ---
+let silentUsbPort=null;
+async function writeSilentUsb(b){
+ if(!silentUsbPort)return false;
+ try{
+  if(!silentUsbPort.writable)await silentUsbPort.open({baudRate:9600});
+  const writer=silentUsbPort.writable.getWriter();
+  await writer.write(escpos(b));
+  writer.releaseLock();
+  toast('Printed silently via USB ⚡');
+  return true;
+ }catch(e){
+  console.warn('Silent USB error:',e);
+  return false;
+ }
+}
+async function pairSilentUsb(){
+ if(!('serial' in navigator))return toast('Web Serial is supported on Desktop Chrome/Edge.');
+ if(silentUsbPort&&silentUsbPort.writable){
+  updateSilentUsbStatus();
+  toast('USB Thermal Printer is already paired and active!');
+  return;
+ }
+ try{
+  const port=await navigator.serial.requestPort();
+  if(!port.writable)await port.open({baudRate:9600});
+  silentUsbPort=port;
+  lsSet('cmw-silent-usb','1');
+  updateSilentUsbStatus();
+  toast('USB Printer paired for silent printing!');
+ }catch(e){
+  if(e.name==='InvalidStateError'||(e.message&&e.message.toLowerCase().includes('already open'))){
+   updateSilentUsbStatus();
+   toast('USB Printer is already active and ready!');
+   return;
+  }
+  if(e.name!=='NotFoundError')toast('Printer notice: '+e.message);
+ }
+}
+function updateSilentUsbStatus(){
+ const el=$('silentPrintStatus'),btn=$('btnSilentUsb');
+ const active=silentUsbPort&&silentUsbPort.writable;
+ if(el){
+  el.innerHTML=active?
+   '<span style="color:#22c55e;font-weight:600">✓ Silent USB Active (No Dialog)</span> — Receipts print directly to the printer head in 10ms.':
+   'Standard print dialog active. Pair USB above or launch Chrome with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">--kiosk-printing</code> for 100% silent printing.';
+ }
+ if(btn){
+  btn.textContent=active?'Silent USB Active ✓':'Pair USB for Silent Print';
+  if(active)btn.classList.remove('g');else btn.classList.add('g');
+ }
+}
+if('serial' in navigator){
+ navigator.serial.getPorts().then(ports=>{
+  if(ports.length>0&&lsGet('cmw-silent-usb')==='1'){
+   silentUsbPort=ports[0];
+   if(!silentUsbPort.writable){
+    silentUsbPort.open({baudRate:9600}).then(()=>updateSilentUsbStatus()).catch(()=>updateSilentUsbStatus());
+   }else{
+    updateSilentUsbStatus();
+   }
+  }
+ }).catch(()=>{});
+}
+
+async function printInvoice(b){
  S.lastBillPrinted=b;
  const pa=$('printArea');
  if(pa)pa.innerHTML=thermalBody(b);
+ if(silentUsbPort){
+  const ok=await writeSilentUsb(b);
+  if(ok)return;
+ }
  try{window.print()}catch(e){toast('Print error: '+(e.message||e))}
 }
 function downloadInvoice(b){saveFile(b.inv+'.html','<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+b.inv+'</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"></head><body style="margin:0">'+thermalBody(b)+'<script>onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>')}
@@ -1086,40 +1160,48 @@ function escpos(b){
 /* printed thermal bill: the modern layout. The shop name leads in bold, a small TAX INVOICE line, labelled details,
    item names with amounts on the right, a clear total, the loyalty points in a black band, and the QR beside its invitation. */
 function thermalBody(b){
- const m=billModel(b),p=m.paper,small=p==58?2.2:2.4,body=p==58?2.6:2.9,nameFs=p==58?4.6:6.2,totFs=p==58?4.2:5.4,qr=p==58?24:28;
- const nameFit=Math.max(2.4,Math.min(nameFs,(p-8)/(Math.max(1,m.name.length)*0.72)));
- const SANS="font-family:Inter,Helvetica,Arial,sans-serif";
- const hair='<div style="border-top:0.2mm solid #000;margin:2mm 0"></div>';
- const kv=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm"><span style="flex:none;font-size:${small}mm;letter-spacing:.12em;text-transform:uppercase">${esc(k)}</span><span style="text-align:right;overflow-wrap:anywhere;min-width:0">${esc(v)}</span></div>`;
- const lab=(t,r)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm"><span style="font-size:${p==58?2:2.3}mm;letter-spacing:.14em;text-transform:uppercase;font-weight:600">${esc(t)}</span>${r?`<span style="font-size:${small}mm">${esc(r)}</span>`:''}</div>`;
- const items=m.items.map(it=>`<div style="display:flex;justify-content:space-between;gap:2mm;margin-top:1.6mm"><div style="font-weight:600;flex:1 1 auto;min-width:0;overflow-wrap:anywhere">${esc(it.name)}<div style="font-weight:400;font-size:${small}mm">${esc(it.detail)}</div></div><div style="white-space:nowrap;font-weight:600">${esc(it.amt)}</div></div>`).join('');
- const line=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm"><span>${esc(k)}</span><span style="white-space:nowrap">${esc(v)}</span></div>`;
- const pts=m.loyalty.length?`<div style="margin-top:2.2mm;padding:1.4mm 2mm;background:#000;color:#fff;border-radius:1mm;font-size:${small}mm">${m.loyalty.map(([k,v])=>esc(k)+': '+esc(v)).join(' &nbsp;|&nbsp; ')}</div>`:'';
+ const m=billModel(b),p=m.paper;
+ // Darker, bolder sizing optimized for 203 DPI thermal print heads
+ const small=p==58?2.6:3.0;
+ const body=p==58?3.0:3.5;
+ const totFs=p==58?5.0:6.5;
+ const qr=p==58?24:28;
+
  const rawBrand=String(m.name||'CHOPPERS MENS WEAR').trim();
  let bTitle=rawBrand,bSubtitle='';
  const bMatch=rawBrand.match(/^(.*?)\s+(MEN'?S\s*WEAR)$/i);
  if(bMatch){bTitle=bMatch[1];bSubtitle=bMatch[2];}
- const titleFs=p==58?5.6:7.4;
- const subFs=p==58?2.6:3.4;
- const addrFs=p==58?2.2:2.5;
+ const titleFs=p==58?5.8:7.6;
+ const subFs=p==58?2.8:3.5;
+ const addrFs=p==58?2.4:2.7;
 
- return `<style>@page{margin:0;size:${p}mm auto}</style><div class="tbill" style="width:${p}mm;box-sizing:border-box;padding:4mm 4mm 5mm;background:#fff;color:#000;${SANS};font-size:${body}mm;line-height:1.3;-webkit-print-color-adjust:exact;print-color-adjust:exact">`+
+ // Use Arial & Segoe UI with bold weights for maximum thermal pin heat transfer
+ const SANS="font-family:Arial,Helvetica,'Segoe UI',Roboto,-apple-system,sans-serif;-webkit-text-stroke:0.12px #000";
+ const hair='<div style="border-top:0.35mm solid #000;margin:2.5mm 0"></div>';
+ const kv=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm;font-size:${small}mm;line-height:1.35"><span style="flex:none;letter-spacing:.06em;text-transform:uppercase;font-weight:700">${esc(k)}</span><span style="text-align:right;overflow-wrap:anywhere;min-width:0;font-weight:700">${esc(v)}</span></div>`;
+ const lab=(t,r)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm;margin-top:1mm"><span style="font-size:${small}mm;letter-spacing:.12em;text-transform:uppercase;font-weight:800">${esc(t)}</span>${r?`<span style="font-size:${small}mm;font-weight:700">${esc(r)}</span>`:''}</div>`;
+ const items=m.items.map(it=>`<div style="display:flex;justify-content:space-between;gap:2mm;margin-top:2mm;line-height:1.3"><div style="font-weight:800;font-size:${body}mm;flex:1 1 auto;min-width:0;overflow-wrap:anywhere">${esc(it.name)}<div style="font-weight:600;font-size:${small}mm;color:#000">${esc(it.detail)}</div></div><div style="white-space:nowrap;font-weight:800;font-size:${body}mm">${esc(it.amt)}</div></div>`).join('');
+ const line=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm;font-weight:700;font-size:${body}mm;line-height:1.35"><span>${esc(k)}</span><span style="white-space:nowrap">${esc(v)}</span></div>`;
+ const pts=m.loyalty.length?`<div style="margin-top:2.5mm;padding:1.6mm 2.2mm;background:#000;color:#fff;border-radius:1mm;font-size:${small}mm;font-weight:700;text-align:center">${m.loyalty.map(([k,v])=>esc(k)+': '+esc(v)).join(' &nbsp;|&nbsp; ')}</div>`:'';
+
+ return `<style>@page{margin:0;size:${p}mm auto}</style><div class="tbill" style="width:${p}mm;box-sizing:border-box;padding:4mm 4mm 5mm;background:#fff;color:#000;${SANS};font-size:${body}mm;line-height:1.35;-webkit-print-color-adjust:exact;print-color-adjust:exact">`+
   `<div style="text-align:center;padding-bottom:1.5mm">`+
   `<div style="font-weight:900;font-size:${titleFs}mm;letter-spacing:0.12em;line-height:1.05;text-transform:uppercase">${esc(bTitle)}</div>`+
-  (bSubtitle?`<div style="font-weight:700;font-size:${subFs}mm;letter-spacing:0.35em;margin-top:1mm;text-transform:uppercase">${esc(bSubtitle)}</div>`:'')+
-  `<div style="margin-top:2mm;font-size:${addrFs}mm;line-height:1.35;font-weight:500;color:#000">`+
+  (bSubtitle?`<div style="font-weight:800;font-size:${subFs}mm;letter-spacing:0.35em;margin-top:1.2mm;text-transform:uppercase">${esc(bSubtitle)}</div>`:'')+
+  `<div style="margin-top:2mm;font-size:${addrFs}mm;line-height:1.35;font-weight:600;color:#000">`+
   m.addr.map(t=>`<div style="overflow-wrap:anywhere">${esc(t)}</div>`).join('')+
   `</div>`+
-  `<div style="margin-top:2.2mm;font-size:${small}mm;letter-spacing:0.2em;font-weight:800;border-top:0.25mm solid #000;border-bottom:0.25mm solid #000;padding:1mm 0">TAX INVOICE</div>`+
+  `<div style="margin-top:2.2mm;font-size:${small}mm;letter-spacing:0.2em;font-weight:900;border-top:0.35mm solid #000;border-bottom:0.35mm solid #000;padding:1mm 0">TAX INVOICE</div>`+
   `</div>`+
-  hair+kv('Invoice',m.meta[0][1])+kv('Date',m.meta[1][1])+m.meta.slice(2).map(([k,v])=>kv(k,v)).join('')+
+  kv('Invoice',m.meta[0][1])+kv('Date',m.meta[1][1])+m.meta.slice(2).map(([k,v])=>kv(k,v)).join('')+
   hair+lab('Items',m.pcs+' pcs')+items+
   hair+m.totals.map(([k,v])=>line(k,v)).join('')+
-  `<div style="height:2mm"></div><div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:800;font-size:${totFs}mm"><span>Total</span><span style="white-space:nowrap">${esc(m.total)}</span></div>`+
-  `<div style="margin-top:1mm;font-size:${small}mm">${m.paid.map(([k,v])=>esc(k)+' '+esc(v)).join(' · ')}</div>`+pts+
-  `<div style="display:flex;align-items:center;gap:3mm;margin-top:4mm"><svg viewBox="0 0 33 33" style="width:${qr}mm;height:${qr}mm;flex:none;display:block;shape-rendering:crispEdges"><path fill="#000" d="${WA_QR_PATH}"/></svg><div style="font-size:${small}mm;min-width:0"><div style="font-weight:700">${esc(m.join[0].replace(/\*/g,'').trim())}</div><div>${esc(m.join[1])}</div><div>${esc(m.join[2])}</div></div></div>`+
-  (m.note?`<div style="margin-top:3mm;font-size:${small}mm;text-align:center">${esc(m.note)}</div>`:'')+
-  `<div style="margin-top:3mm;font-size:${small}mm;text-align:center;font-weight:600">Thank you for shopping with us</div></div>`}
+  `<div style="height:2mm"></div><div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:900;font-size:${totFs}mm"><span>Total</span><span style="white-space:nowrap">${esc(m.total)}</span></div>`+
+  `<div style="margin-top:1.5mm;font-size:${body}mm;font-weight:700">${m.paid.map(([k,v])=>esc(k)+' '+esc(v)).join(' · ')}</div>`+pts+
+  `<div style="display:flex;align-items:center;gap:3mm;margin-top:4mm"><svg viewBox="0 0 33 33" style="width:${qr}mm;height:${qr}mm;flex:none;display:block;shape-rendering:crispEdges"><path fill="#000" d="${WA_QR_PATH}"/></svg><div style="font-size:${small}mm;min-width:0;line-height:1.3"><div style="font-weight:800">${esc(m.join[0].replace(/\*/g,'').trim())}</div><div style="font-weight:600">${esc(m.join[1])}</div><div style="font-weight:600">${esc(m.join[2])}</div></div></div>`+
+  (m.note?`<div style="margin-top:3mm;font-size:${small}mm;text-align:center;font-weight:600">${esc(m.note)}</div>`:'')+
+  `<div style="margin-top:3mm;font-size:${small}mm;text-align:center;font-weight:800">Thank you for shopping with us</div></div>`;
+}
 function showReceipt(b){
  S.lastBillPrinted=b;
  $('mbox').innerHTML=`<h2>Receipt · ${esc(b.inv)}</h2>
@@ -1269,6 +1351,7 @@ function fillSet(){
  if($('sBeep'))$('sBeep').checked=S.cfg.beep!==false;
  updatePermanenceDisplay();
  }
+if($('btnSilentUsb'))$('btnSilentUsb').onclick=()=>pairSilentUsb();
 $('sSave').onclick=async()=>{
  const d={};for(const k in sm)d[sm[k]]=$(k).value.trim();d.paper=+d.paper||80;S.cashier=$('sCash').value.trim();lsSet('cmw-cashier',S.cashier);
  if($('sBeep'))S.cfg.beep=$('sBeep').checked;
@@ -1374,7 +1457,12 @@ const doLabels=dl=>{
   body=`<style>@page{margin:0;size:${pageW}mm ${h}mm}</style>`+rows.map(r=>`<div class="lrow" style="width:${pageW}mm;height:${h}mm">${r.map(lblHtml).join('')}</div>`).join('')}
  LAST={body,roll:!a4,name:'barcode-labels.html'};
  if(dl)return dlDoc();
- $('printArea').innerHTML=body;printInvoice({inv:'labels'});
+ $('printArea').innerHTML=body;
+ try{
+  window.print();
+ }catch(e){
+  toast('Print error: '+(e.message||e));
+ }
 };
 $('lPrint').onclick=()=>doLabels(false);$('lDl').onclick=()=>doLabels(true);
 
