@@ -375,15 +375,16 @@ function getToken(interactive){
  }).finally(()=>{inflight=null});
  return inflight;
 }
+const today=()=>new Date().toLocaleDateString('en-CA');
 const gateShow=(msg,btn)=>{document.body.classList.remove('authed');$('gateMsg').textContent=msg||'';$('gateBtn').style.display=btn?'':'none';$('gateBtn').disabled=false};
 const gateOpen=()=>{document.body.classList.add('authed');window.dispatchEvent(new Event('resize'))};
 $('gateBtn').onclick=async()=>{const b=$('gateBtn');b.disabled=true;$('gateMsg').textContent='Signing in…';
- try{await getToken(true);await load();gateOpen();toast('Signed in')}catch(e){gateShow(emsg(e),true)}};
+ try{await getToken(true);lsSet('cmw-day',today());await load();gateOpen();toast('Signed in')}catch(e){gateShow(emsg(e),true)}};
 $('so').onclick=()=>{
  if(syncQueue.length&&!confirm(syncQueue.length+' bill(s) are not synced yet. Signing out may lose them. Sign out anyway?'))return;
  try{if(TOK&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(TOK.t,()=>{})}catch(e){}
- saveTok(null);lsSet('cmw-email','');gateShow('You have been signed out. Sign in to continue.',true)};
-async function signIn(){try{await getToken(true);await load();toast('Signed in')}catch(e){showSignIn(emsg(e))}}
+ saveTok(null);lsSet('cmw-email','');lsSet('cmw-day','');gateShow('You have been signed out. Sign in to continue.',true)};
+async function signIn(){try{await getToken(true);lsSet('cmw-day',today());await load();toast('Signed in')}catch(e){showSignIn(emsg(e))}}
 // The connection to the Google Sheet (Sheets API). Supports batchGet and batchUpdate for fewer round-trips.
 async function callT(tool,input){
  const tok=await getToken(false);
@@ -758,11 +759,26 @@ document.addEventListener('visibilitychange',()=>{
   },
   error_callback:e=>{const p=pending;pending=null;if(p)p.rej(Object.assign(new Error(e.type||'popup'),{code:e.type==='popup_failed_to_open'?'popup':'needs_auth'}))}});
  const s=loadTok();if(s&&s.exp>Date.now()){TOK=s;scheduleTokenRefresh()}
+ const signedToday=lsGet('cmw-day')===today(),valid=!!(TOK&&TOK.exp>Date.now());
+ if(!signedToday){gateShow(lsGet('cmw-email')?'New day. Sign in once to start billing.':'Sign in with your Google account to open the app.',true);return}
+ if(!valid){
+  // signed in earlier today: renew automatically, no tap needed
+  if(!navigator.onLine){gateOpen();$('st').textContent='Offline: bills will sync when you are back online.';return}
+  gateShow('Renewing sign-in…',false);
+  try{await getToken(false);await load();gateOpen()}catch(e){gateShow('Tap to continue.',true)}
+  return}
  try{await getToken(false);await load();gateOpen()}catch(e){
   if(e.code==='needs_auth'||e.code==='popup')gateShow('Sign in with your Google account to open the app.',true);
   else if(lsGet('cmw-email')){gateOpen();$('st').textContent='Could not load shop data: '+e.message}
   else gateShow('Could not connect: '+e.message+'. Check your internet and try again.',true)}
 })();
+/* one sign-in per day: when the date changes, ask for sign-in again, but never in the middle of a bill or with unsynced bills */
+function dayCheck(){
+ if(!document.body.classList.contains('authed'))return;
+ if(lsGet('cmw-day')===today())return;
+ if(busy||pendingSaves>0||syncQueue.length||(S.cart&&S.cart.length))return;
+ saveTok(null);gateShow('New day. Sign in once to start billing.',true)}
+setInterval(dayCheck,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)dayCheck()});
 S.cashier=lsGet('cmw-cashier');
 
 /* billing */
