@@ -21,7 +21,7 @@ body:not(.authed) header,body:not(.authed) nav,body:not(.authed) main,body:not(.
 #gate{display:none;--g-bg:#f6f5f2;--g-ink:#0e0e0e;--g-dim:#767676;--g-line:rgba(0,0,0,.22);--g-col:rgba(0,0,0,.62);--g-spot:rgba(255,255,255,.95);--g-vig:#e4e2dc;--g-shine:#a3a3a3}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #gate{--g-bg:#070707;--g-ink:#f3f3f0;--g-dim:#8d8d8d;--g-line:rgba(255,255,255,.28);--g-col:rgba(255,255,255,.62);--g-spot:rgba(255,255,255,.17);--g-vig:#000;--g-shine:#6f6f6f}}
 :root[data-theme="dark"] #gate{--g-bg:#070707;--g-ink:#f3f3f0;--g-dim:#8d8d8d;--g-line:rgba(255,255,255,.28);--g-col:rgba(255,255,255,.62);--g-spot:rgba(255,255,255,.17);--g-vig:#000;--g-shine:#6f6f6f}
-body:not(.authed) #gate{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;padding:clamp(22px,5vh,44px) 24px clamp(22px,5vh,40px);color:var(--g-ink);background:radial-gradient(ellipse 80% 70% at 50% 46%,transparent 35%,var(--g-vig) 130%),var(--g-bg);text-align:center}
+body:not(.authed) #gate,body.authed #gate.leaving{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;padding:clamp(22px,5vh,44px) 24px clamp(22px,5vh,40px);color:var(--g-ink);background:radial-gradient(ellipse 80% 70% at 50% 46%,transparent 35%,var(--g-vig) 130%),var(--g-bg);text-align:center}
 /* vertical columns of brand names */
 #gate .gwall{position:absolute;inset:0;display:flex;justify-content:space-evenly;pointer-events:none;user-select:none;
  -webkit-mask-image:radial-gradient(ellipse 46% 40% at 50% 50%,transparent 0,transparent 42%,rgba(0,0,0,.8) 100%),linear-gradient(transparent,#000 18%,#000 82%,transparent);mask-image:radial-gradient(ellipse 46% 40% at 50% 50%,transparent 0,transparent 42%,rgba(0,0,0,.8) 100%),linear-gradient(transparent,#000 18%,#000 82%,transparent);-webkit-mask-composite:source-in;mask-composite:intersect}
@@ -41,13 +41,24 @@ body:not(.authed) #gate{position:fixed;inset:0;z-index:1000;display:flex;flex-di
 @keyframes gWave{0%,45%,100%{color:var(--g-ink)}22%{color:var(--g-shine)}}
 @keyframes gSub{from{opacity:0;letter-spacing:.3em}to{opacity:1;letter-spacing:.55em}}
 /* bottom sign-in */
-#gate .gbot{position:relative;z-index:2;width:min(340px,100%)}
+#gate .gbot{position:relative;z-index:2;width:min(340px,100%);margin:clamp(30px,6vh,56px) auto 0}
 #gate #gateMsg{margin:0 0 14px;min-height:18px;font:400 12.5px/1.5 var(--sans);color:var(--g-dim)}
 #gate #gateMsg:empty{display:none}
 #gate.busy #gateMsg::after{content:"";display:inline-block;width:1ch;overflow:hidden;vertical-align:bottom;animation:gDots 1s steps(4) infinite}
 #gate #gateBtn{width:100%;min-height:50px;margin:0;background:transparent;color:var(--g-ink);border:1px solid var(--g-ink);border-radius:999px;font:600 11px var(--sans);letter-spacing:.24em;transition:background .25s,color .25s}
 #gate #gateBtn:hover{background:var(--g-ink);color:var(--g-bg);opacity:1}
 @keyframes gDots{from{width:0}to{width:3ch}}
+/* after sign-in: zoom into the shop name, then reveal the app */
+body.authed #gate.leaving{pointer-events:none;animation:gOut .55s ease .72s forwards}
+#gate.leaving .gwall{opacity:0;transition:opacity .5s ease}
+#gate.leaving .gsub,#gate.leaving .gbot{opacity:0;transition:opacity .25s ease}
+#gate.leaving .gspot{animation:none;opacity:0;transition:opacity .4s ease}
+#gate.leaving .gname{transform:scale(26);opacity:0;transition:transform 1.2s cubic-bezier(.66,0,.9,.4),opacity .35s ease .85s}
+body.entering header,body.entering nav{animation:gFade .7s ease .6s both}
+body.entering main{animation:gZin .9s cubic-bezier(.2,.7,.2,1) .6s both}
+@keyframes gOut{from{opacity:1}to{opacity:0}}
+@keyframes gFade{from{opacity:0}to{opacity:1}}
+@keyframes gZin{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){#gate .gc,#gate .gspot,#gate .gname span,#gate .gsub{animation:none!important}}
 </style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
@@ -152,7 +163,7 @@ body:not(.authed) #gate{position:fixed;inset:0;z-index:1000;display:flex;flex-di
 </section>
 </main>
 <div id="modal" role="dialog" aria-modal="true" aria-label="Dialog"><div id="mbox"></div></div><div id="toast" role="status" aria-live="polite"></div><div id="printArea"></div>
-<div id="gate" role="dialog" aria-modal="true" aria-label="Sign in"><div class="gwall" id="gwall" aria-hidden="true"></div><div class="gmid"><div class="gspot" aria-hidden="true"></div><h1 class="gname" aria-label="Choppers"><span style="--i:0">C</span><span style="--i:1">H</span><span style="--i:2">O</span><span style="--i:3">P</span><span style="--i:4">P</span><span style="--i:5">E</span><span style="--i:6">R</span><span style="--i:7">S</span></h1><div class="gsub">MENS WEAR</div></div><div class="gbot"><p id="gateMsg">Checking sign-in…</p><button class="btn" id="gateBtn" style="display:none">Sign in with Google</button></div></div>
+<div id="gate" role="dialog" aria-modal="true" aria-label="Sign in"><div class="gwall" id="gwall" aria-hidden="true"></div><div class="gmid"><div class="gspot" aria-hidden="true"></div><h1 class="gname" aria-label="Choppers"><span style="--i:0">C</span><span style="--i:1">H</span><span style="--i:2">O</span><span style="--i:3">P</span><span style="--i:4">P</span><span style="--i:5">E</span><span style="--i:6">R</span><span style="--i:7">S</span></h1><div class="gsub">MENS WEAR</div><div class="gbot"><p id="gateMsg">Checking sign-in…</p><button class="btn" id="gateBtn" style="display:none">Sign in with Google</button></div></div></div>
 <script>
 // Instant font stack ready
 const S={products:[],customers:[],bills:[],cart:[],cfg:{name:'Choppers Mens Wear',addr:'',gst:'',phone:'',paper:80,note:'Thank you! Visit again. Exchange within 7 days with bill.',beep:true}};
@@ -391,9 +402,15 @@ function getToken(interactive){
 }
 const today=()=>new Date().toLocaleDateString('en-CA');
 const gateShow=(msg,btn)=>{document.body.classList.remove('authed');$('gateMsg').textContent=msg||'';$('gateBtn').style.display=btn?'':'none';$('gateBtn').disabled=false};
-const gateOpen=()=>{document.body.classList.add('authed');window.dispatchEvent(new Event('resize'))};
+const gateOpen=zoom=>{
+ const g=$('gate'),b=document.body;
+ if(zoom&&g&&!b.classList.contains('authed')&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)){
+  g.classList.add('leaving');b.classList.add('authed','entering');
+  setTimeout(()=>{g.classList.remove('leaving');b.classList.remove('entering')},1700);
+ }else b.classList.add('authed');
+ window.dispatchEvent(new Event('resize'))};
 $('gateBtn').onclick=async()=>{const b=$('gateBtn');b.disabled=true;$('gateMsg').textContent='Signing in…';
- try{await getToken(true);lsSet('cmw-day',today());await load();gateOpen();toast('Signed in')}catch(e){gateShow(emsg(e),true)}};
+ try{await getToken(true);lsSet('cmw-day',today());await load();gateOpen(true);toast('Signed in')}catch(e){gateShow(emsg(e),true)}};
 $('so').onclick=()=>{
  if(syncQueue.length&&!confirm(syncQueue.length+' bill(s) are not synced yet. Signing out may lose them. Sign out anyway?'))return;
  try{if(TOK&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(TOK.t,()=>{})}catch(e){}
