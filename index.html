@@ -64,7 +64,8 @@ body.entering main{animation:gZin .9s cubic-bezier(.2,.7,.2,1) .6s both}
 :root{--ok:#15803d;--bad:#b91c1c;--warn:#b45309;--card:#fff}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#0e0e0e;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24}}
 :root[data-theme="dark"]{--card:#0e0e0e;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24}
-body{font-variant-numeric:tabular-nums}
+body{font-variant-numeric:tabular-nums;-webkit-tap-highlight-color:transparent}
+button,input,select,.res,nav,tr[tabindex]{touch-action:manipulation}
 body:not(.authed) #mbar{display:none!important}
 /* readable small text */
 label{font-size:11px}
@@ -808,7 +809,8 @@ const SERVER={getData,findBill,saveBill,updateBill,addCustomer,searchBills,delet
 const rpc=(fn,...a)=>(TOK&&TOK.exp>Date.now())?SERVER[fn](...a):getToken(true).then(()=>SERVER[fn](...a));
 let cacheT=null;
 function writeCache(){clearTimeout(cacheT);try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg}))}catch(e){}}
-function saveCache(){clearTimeout(cacheT);cacheT=setTimeout(writeCache,200)}
+function saveCache(){clearTimeout(cacheT);cacheT=setTimeout(()=>{if(window.requestIdleCallback)requestIdleCallback(writeCache,{timeout:3000});else writeCache()},500)}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)writeCache()});
 addEventListener('pagehide',writeCache);
 S._byId=new Map();S._bySku=new Map();S._byName=new Map();S._custById=new Map();
 function rebuildIndexes(){
@@ -1465,8 +1467,12 @@ async function refreshSales(){
  const seq=++SALES.seq;
  try{
   const rng=periodRange(SALES.period);
+  const key=SALES.q+'|'+rng.from+'|'+rng.to;SALES.cache=SALES.cache||{};
+  if(SALES.cache[key])paintSales(SALES.cache[key]);
   const res=await rpc('searchBills',{q:SALES.q,from:rng.from,to:rng.to});
   if(seq!==SALES.seq)return;
+  SALES.cache[key]=res;
+  const ks=Object.keys(SALES.cache);if(ks.length>12)delete SALES.cache[ks[0]];
   SALES.last=res;paintSales(res);
  }catch(e){toast('Sales not loaded: '+e.message)}}
 function salesIfOpen(){if($('p-sales').classList.contains('on'))refreshSales()}
@@ -1674,6 +1680,8 @@ if(bar&&go&&cart&&tots){
  btn.onclick=function(){go.click()};
  upd();
 }
+(function(){function warm(){if(!document.body.classList.contains('authed'))return;document.removeEventListener('pointerdown',warm,true);document.removeEventListener('keydown',warm,true);try{if(!audioCtx&&(window.AudioContext||window.webkitAudioContext))audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume()}catch(e){}}
+document.addEventListener('pointerdown',warm,true);document.addEventListener('keydown',warm,true)})();
 document.addEventListener('focusin',function(e){var t=e.target;if(t&&t.tagName==='INPUT'&&t.type==='number'&&!t.getAttribute('inputmode'))t.setAttribute('inputmode','decimal')});
 })();</script>
 </body></html>
