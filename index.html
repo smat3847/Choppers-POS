@@ -1161,19 +1161,19 @@ function escpos(b){
    item names with amounts on the right, a clear total, the loyalty points in a black band, and the QR beside its invitation. */
 function thermalBody(b){
  const m=billModel(b),p=m.paper;
- // Darker, bolder sizing optimized for 203 DPI thermal print heads
- const small=p==58?2.6:3.0;
- const body=p==58?3.0:3.5;
- const totFs=p==58?5.0:6.5;
- const qr=p==58?24:28;
+ // Sizes tuned for 203 DPI thermal heads: regular weight, but never below ~2.8mm so thin strokes stay legible
+ const small=p==58?2.9:3.2;
+ const body=p==58?3.2:3.6;
+ const totFs=p==58?5.4:6.8;
+ const qr=p==58?26:30;
 
  const rawBrand=String(m.name||'CHOPPERS MENS WEAR').trim();
  let bTitle=rawBrand,bSubtitle='';
  const bMatch=rawBrand.match(/^(.*?)\s+(MEN'?S\s*WEAR)$/i);
  if(bMatch){bTitle=bMatch[1];bSubtitle=bMatch[2];}
  const titleFs=p==58?5.8:7.6;
- const subFs=p==58?2.8:3.5;
- const addrFs=p==58?2.4:2.7;
+ const subFs=p==58?3.0:3.6;
+ const addrFs=p==58?2.8:3.1;
 
  // Use Arial & Segoe UI with bold weights for maximum thermal pin heat transfer
  const SANS="font-family:Arial,Helvetica,'Segoe UI',Roboto,-apple-system,sans-serif;-webkit-font-smoothing:antialiased";
