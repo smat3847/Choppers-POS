@@ -60,13 +60,97 @@ body.entering main{animation:gZin .9s cubic-bezier(.2,.7,.2,1) .6s both}
 @keyframes gFade{from{opacity:0}to{opacity:1}}
 @keyframes gZin{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){#gate .gc,#gate .gspot,#gate .gname span,#gate .gsub{animation:none!important}}
+/* ===== UI polish pass ===== */
+:root{--ok:#15803d;--bad:#b91c1c;--warn:#b45309;--card:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#0e0e0e;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24}}
+:root[data-theme="dark"]{--card:#0e0e0e;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24}
+body{font-variant-numeric:tabular-nums}
+body:not(.authed) #mbar{display:none!important}
+/* readable small text */
+label{font-size:11px}
+th{font-size:11px}
+h3{font-size:11.5px}
+.lnk{font-size:11px;padding:6px 2px 3px}
+header .top{font-size:11.5px}
+/* status colours */
+.tag.low{color:var(--warn);border-color:var(--warn)}
+.tag.out{background:var(--bad);border-color:var(--bad);color:#fff}
+/* focus */
+:focus-visible{outline:2px solid var(--tx);outline-offset:2px}
+input:focus-visible,select:focus-visible{outline:0;border-color:var(--tx);box-shadow:0 0 0 3px color-mix(in srgb,var(--tx) 16%,transparent)}
+.res:focus-visible,tr:focus-visible{outline-offset:-2px}
+/* touch-friendly controls */
+input:not([type=checkbox]):not([type=radio]),select{min-height:44px}
+.btn{min-height:44px;transition:opacity .15s,transform .1s,background .15s,border-color .15s;position:relative}
+.btn.s{min-height:36px;padding:6px 12px}
+.btn:not(:disabled):hover{opacity:.88}
+.btn.g:not(:disabled):hover{opacity:1}
+.btn:not(:disabled):active{transform:scale(.97)}
+.btn:disabled{cursor:not-allowed}
+.btn.loading{color:transparent!important;--sp:var(--on)}
+.btn.g.loading{--sp:var(--tx)}
+.btn.loading::after{content:"";position:absolute;inset:0;margin:auto;width:16px;height:16px;border:2px solid var(--sp);border-right-color:transparent;border-radius:50%;animation:uiSpin .7s linear infinite}
+@keyframes uiSpin{to{transform:rotate(360deg)}}
+.qty button{width:40px;height:40px;font-size:18px}
+.qty input{min-height:40px;width:64px}
+.res{min-height:52px;align-items:center;padding:10px 6px}
+.seg button{min-height:44px}
+/* invoice bar: New bill sits left, next to the invoice number */
+#invBar .invrow{display:flex;align-items:center;justify-content:space-between;gap:16px}
+#invBar #invNo{font:600 22px/1.2 var(--serif);border:0;border-bottom:1px solid transparent;border-radius:0;outline:none;background:transparent;padding:0;margin:0;box-shadow:none;color:var(--tx);min-height:0;height:auto;width:140px}
+#invBar #invNo:focus,#invBar #invNo:focus-visible{box-shadow:none;border-bottom-color:var(--tx)}
+#invBar .invrow .btn{margin:0;margin-left:auto;flex:none}
+.saveRow{align-items:stretch}
+.saveRow .btn{margin:0}
+/* desktop numeric columns */
+#p-sales table td:nth-child(6),#p-sales table th:nth-child(6),
+#p-cust table td:nth-child(n+3),#p-cust table th:nth-child(n+3){text-align:right}
+#p-inv table td:nth-child(3),#p-inv table th:nth-child(3),
+#p-lab table td:nth-child(2),#p-lab table th:nth-child(2){text-align:right}
+/* mobile bottom total bar */
+#mbar{display:none}
+nav button .ic{display:none}
+@media screen and (max-width:700px){
+ nav{order:4;min-height:58px}
+ nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:56px;padding:6px 2px;text-transform:none;letter-spacing:.02em;font-size:10.5px}
+ nav button .ic{display:block;width:20px;height:20px;flex:none}
+ nav button span{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+ body.authed[data-tab="bill"] #mbar.on{order:3;flex:none;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:10px 14px;background:var(--card);border-top:1px solid var(--tx)}
+ #mbar .mb-t{display:flex;flex-direction:column;line-height:1.1}
+ #mbar .mb-t span{font:500 10px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}
+ #mbar .mb-t b{font:600 26px/1.1 var(--serif)}
+ #mbar .btn{flex:1 1 auto;max-width:220px;min-height:48px}
+ #toast{bottom:calc(132px + env(safe-area-inset-bottom,0px))}
+ /* tables become readable cards instead of dropping columns */
+ #p-sales table,#p-sales tbody,#p-cust table,#p-cust tbody{display:block}
+ #p-sales thead,#p-cust thead{display:none}
+ #p-sales tbody tr{display:grid;grid-template-columns:1fr auto;gap:3px 12px;padding:12px 2px;border-bottom:1px solid var(--bd)}
+ #p-cust tbody tr{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 16px;padding:12px 2px;border-bottom:1px solid var(--bd)}
+ #p-sales table td,#p-cust table td{display:block;border:0;padding:0;text-align:left}
+ #p-sales table td:nth-child(2),#p-sales table td:nth-child(4),#p-sales table td:nth-child(5),#p-cust table td:nth-child(2),#p-cust table td:nth-child(3){display:block}
+ #p-sales table td[colspan],#p-cust table td[colspan]{grid-column:1/-1;flex:1 1 100%;padding:10px 0}
+ #p-sales table td:nth-child(1){grid-column:1;grid-row:1;font-size:15px}
+ #p-sales table td:nth-child(6){grid-column:2;grid-row:1;text-align:right;font:600 20px/1.1 var(--serif)}
+ #p-sales table td:nth-child(3){grid-column:1;grid-row:2}
+ #p-sales table td:nth-child(2){grid-column:2;grid-row:2;text-align:right;color:var(--mu);font-size:12px}
+ #p-sales table td:nth-child(4){grid-column:1;grid-row:3;color:var(--mu);font-size:12px}
+ #p-sales table td:nth-child(5){grid-column:2;grid-row:3;text-align:right;font-size:12px}
+ #p-sales table td:nth-child(7){grid-column:1/-1;grid-row:4;text-align:right;padding-top:6px}
+ #p-cust table td:nth-child(1){flex:1 1 55%;font-size:15px}
+ #p-cust table td:nth-child(3){flex:0 0 auto;order:1;text-align:right;font:600 20px/1.1 var(--serif)}
+ #p-cust table td:nth-child(2),#p-cust table td:nth-child(4),#p-cust table td:nth-child(5){order:2;font-size:12px;color:var(--mu)}
+ #p-cust table td:nth-child(2)::before{content:"Visits ";letter-spacing:.04em}
+ #p-cust table td:nth-child(4)::before{content:"Points ";letter-spacing:.04em}
+ #p-cust table td:nth-child(5)::before{content:"Due ";letter-spacing:.04em}
+ #p-inv table td:nth-child(3){text-align:right}
+}
 </style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
-<header><div class="top"><span id="clock"></span><div style="display:flex;align-items:center;gap:12px"><span id="syncBadge" class="mu" style="font-size:11px;display:inline-flex;align-items:center;gap:5px"><span style="color:#22c55e;font-size:9px">●</span> Synced</span><button class="lnk" id="installBtn" style="display:none;color:#000;background:var(--card);padding:2px 8px;border-radius:4px;border:1px solid var(--bd);text-transform:none;letter-spacing:0.04em">Install App</button><button class="lnk" id="rf">Sync</button><button class="lnk" id="so">Sign out</button></div></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
+<header><div class="top"><span id="clock"></span><div style="display:flex;align-items:center;gap:12px"><span id="syncBadge" class="mu" style="font-size:11px;display:inline-flex;align-items:center;gap:5px"><span style="color:var(--ok);font-size:9px">●</span> Synced</span><button class="lnk" id="installBtn" style="display:none;color:#000;background:var(--card);padding:2px 8px;border-radius:4px;border:1px solid var(--bd);text-transform:none;letter-spacing:0.04em">Install App</button><button class="lnk" id="rf">Sync</button><button class="lnk" id="so">Sign out</button></div></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
 <nav id="nav" aria-label="Main sections"></nav>
 <main id="main-area" tabindex="-1">
 <section class="pg on" id="p-bill">
-<div class="card" id="invBar"><div class="row" style="align-items:center;justify-content:space-between;margin-bottom:0"><div><label id="invLabel">Invoice (new bill)</label><input id="invNo" aria-label="Invoice number. Type number and press Enter to search" value="S83527" autocomplete="off" spellcheck="false" style="font:600 22px/1.2 var(--serif);border:0;outline:none;background:transparent;padding:0;margin:0;box-shadow:none;color:var(--tx);min-height:0;height:auto;width:140px"></div><div style="display:flex;gap:8px;align-items:center"><button class="btn g" id="fNew" data-label="New bill">New bill</button></div></div></div>
+<div class="card" id="invBar"><div class="invrow"><div><label id="invLabel">Invoice (new bill)</label><input id="invNo" aria-label="Invoice number. Type number and press Enter to search" value="S83527" autocomplete="off" spellcheck="false"></div><button class="btn g" id="fNew" data-label="New bill">New bill</button></div></div>
 <div id="invView" style="display:none"></div>
 <div class="grid two" id="billGrid">
   <div class="card" id="custCard"><h2>1 · Customer (optional)</h2>
@@ -162,6 +246,7 @@ body.entering main{animation:gZin .9s cubic-bezier(.2,.7,.2,1) .6s both}
 
 </section>
 </main>
+<div id="mbar"><div class="mb-t"><span>Total</span><b id="mbTot">₹0</b></div><button class="btn" id="mbGo" type="button">Save &amp; print</button></div>
 <div id="modal" role="dialog" aria-modal="true" aria-label="Dialog"><div id="mbox"></div></div><div id="toast" role="status" aria-live="polite"></div><div id="printArea"></div>
 <div id="gate" role="dialog" aria-modal="true" aria-label="Sign in"><div class="gwall" id="gwall" aria-hidden="true"></div><div class="gmid"><div class="gspot" aria-hidden="true"></div><h1 class="gname" aria-label="Choppers"><span style="--i:0">C</span><span style="--i:1">H</span><span style="--i:2">O</span><span style="--i:3">P</span><span style="--i:4">P</span><span style="--i:5">E</span><span style="--i:6">R</span><span style="--i:7">S</span></h1><div class="gsub">MENS WEAR</div><div class="gbot"><p id="gateMsg">Checking sign-in…</p><button class="btn" id="gateBtn" style="display:none">Sign in with Google</button></div></div></div>
 <script>
@@ -194,7 +279,7 @@ async function reqPersist(){
   try{
    const granted=await navigator.storage.persist();
    const el=$('persistStatus');
-   if(el)el.innerHTML=granted?'<span style="color:#22c55e">Permanent ✓</span>':'Active';
+   if(el)el.innerHTML=granted?'<span style="color:var(--ok)">Permanent ✓</span>':'Active';
   }catch(e){}
  }
 }
@@ -228,11 +313,11 @@ let syncQueue=[];
 try{syncQueue=JSON.parse(lsGet('cmw-queue')||'[]')}catch(e){syncQueue=[]}
 function updateSyncBadge(status){
  const b=$('syncBadge');if(!b)return;
- if(status==='synced')b.innerHTML='<span style="color:#22c55e;font-size:9px">●</span> Synced';
- else if(status==='syncing')b.innerHTML='<span style="color:#eab308;font-size:9px">●</span> Syncing…';
+ if(status==='synced')b.innerHTML='<span style="color:var(--ok);font-size:9px">●</span> Synced';
+ else if(status==='syncing')b.innerHTML='<span style="color:var(--warn);font-size:9px">●</span> Syncing…';
  else if(status==='offline'){
   const qCount=syncQueue.length;
-  b.innerHTML=`<span style="color:#ef4444;font-size:9px">●</span> ${qCount?qCount+' queued':'Offline'}`;
+  b.innerHTML=`<span style="color:var(--bad);font-size:9px">●</span> ${qCount?qCount+' queued':'Offline'}`;
  }
  const qEl=$('queueStatus');if(qEl)qEl.textContent=syncQueue.length?`${syncQueue.length} bill${syncQueue.length>1?'s':''} pending`:'0 bills pending';
 }
@@ -284,9 +369,10 @@ const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 
 /* tabs */
 const TABS=[['bill','Billing'],['inv','Products'],['cust','Customers'],['sales','Sales'],['lab','Labels'],['set','Settings']];
-$('nav').innerHTML=TABS.map(t=>`<button data-t="${t[0]}">${t[1]}</button>`).join('');
+const NAVIC={"bill": `<path d="M5 3v18l2.5-1.6L10 21l2-1.6 2 1.6 2.5-1.6L19 21V3l-2.5 1.6L14 3l-2 1.6L10 3 7.5 4.6z"/><path d="M9 9h6M9 13h6"/>`, "inv": `<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>`, "cust": `<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>`, "sales": `<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>`, "lab": `<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1"/>`, "set": `<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>`};
+$('nav').innerHTML=TABS.map(t=>`<button data-t="${t[0]}"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${NAVIC[t[0]]}</svg><span>${t[1]}</span></button>`).join('');
 function tab(t){document.querySelectorAll('.pg').forEach(p=>p.classList.toggle('on',p.id==='p-'+t));document.body.dataset.tab=t;document.querySelectorAll('nav button').forEach(b=>{b.classList.toggle('on',b.dataset.t===t);b.setAttribute('aria-current',b.dataset.t===t?'page':'false')});if(t==='set')fillSet();if(t==='inv')rInv();if(t==='cust')rCust();if(t==='lab')rLab();if(t==='sales')refreshSales();if(t==='bill')setTimeout(()=>$('q').focus(),50)}
-$('nav').onclick=e=>{const t=e.target.dataset.t;if(t)tab(t)};tab('bill');
+$('nav').onclick=e=>{const b=e.target.closest('button');const t=b&&b.dataset.t;if(t)tab(t)};tab('bill');
 setInterval(()=>$('clock').textContent=DTF_CLOCK.format(Date.now()),15000);
 
 // Fonts loaded via head stylesheet with system-ui fallback
@@ -957,7 +1043,7 @@ function refreshInvNo(){
  $('go').textContent=e?'Update & print':'Save & print';
 }
 function setPay(v){if(v==='Credit')v='Cash';$('pay').value=v;$('pay').onchange();[...$('paySeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
-function setBusy(on){busy=on;$('go').disabled=on;$('gs').disabled=on}
+function setBusy(on){busy=on;$('go').disabled=on;$('gs').disabled=on;$('go').classList.toggle('loading',on);$('gs').classList.toggle('loading',on)}
 function clearForm(){S.editBill=null;S.cart=[];$('bd').value=0;$('bdT').value='%';$('pRedeem').value=0;$('exAmt').value=0;setPay('Cash');if($('paid'))$('paid').value=0;setCust('','');refreshInvNo();rCart()}
 /* Starts a fresh invoice: clears the items, customer, discount, points, exchange and payment, leaves edit mode,
    and shows the next invoice number. Numbers are never reused. */
@@ -1109,7 +1195,7 @@ function updateSilentUsbStatus(){
  const active=silentUsbPort&&silentUsbPort.writable;
  if(el){
   el.innerHTML=active?
-   '<span style="color:#22c55e;font-weight:600">✓ Silent USB Active (No Dialog)</span> — Receipts print directly to the printer head in 10ms.':
+   '<span style="color:var(--ok);font-weight:600">✓ Silent USB Active (No Dialog)</span> — Receipts print directly to the printer head in 10ms.':
    'Standard print dialog active. Pair USB above or launch Chrome with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">--kiosk-printing</code> for 100% silent printing.';
  }
  if(btn){
@@ -1420,7 +1506,7 @@ function updatePermanenceDisplay(){
  if(navigator.storage&&navigator.storage.persisted){
   navigator.storage.persisted().then(p=>{
    const el=$('persistStatus');
-   if(el)el.innerHTML=p?'<span style="color:#22c55e">Permanent ✓</span>':'Active';
+   if(el)el.innerHTML=p?'<span style="color:var(--ok)">Permanent ✓</span>':'Active';
   });
  }
 }
@@ -1570,4 +1656,23 @@ w.innerHTML=html;
 function busy(){g.classList.toggle('busy',/…\s*$/.test(m.textContent||''))}
 busy();new MutationObserver(busy).observe(m,{childList:true,characterData:true,subtree:true});
 })();</script>
-</body></html> 
+<script>(function(){
+var bar=document.getElementById('mbar'),go=document.getElementById('go'),cart=document.getElementById('cart'),tots=document.getElementById('tots'),grid=document.getElementById('billGrid');
+if(bar&&go&&cart&&tots){
+ var tot=document.getElementById('mbTot'),btn=document.getElementById('mbGo');
+ function upd(){
+  var has=!!cart.querySelector('.ci'),vis=!grid||grid.style.display!=='none';
+  bar.classList.toggle('on',has&&vis);
+  var t=tots.querySelector('.tot.gt span:last-child');if(t)tot.textContent=t.textContent;
+  btn.textContent=go.textContent;btn.disabled=go.disabled;btn.classList.toggle('loading',go.classList.contains('loading'));
+ }
+ var mo=new MutationObserver(upd);
+ mo.observe(cart,{childList:true,subtree:true});mo.observe(tots,{childList:true,subtree:true});
+ mo.observe(go,{attributes:true,childList:true,characterData:true,subtree:true});
+ if(grid)mo.observe(grid,{attributes:true,attributeFilter:['style']});
+ btn.onclick=function(){go.click()};
+ upd();
+}
+document.addEventListener('focusin',function(e){var t=e.target;if(t&&t.tagName==='INPUT'&&t.type==='number'&&!t.getAttribute('inputmode'))t.setAttribute('inputmode','decimal')});
+})();</script>
+</body></html>
