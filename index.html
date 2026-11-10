@@ -1123,32 +1123,32 @@ function textLR(a,r,w){a=String(a);r=String(r);return a.slice(0,Math.max(0,w-r.l
 function textKV(k,v,w){k=String(k);v=String(v);if(k.length+v.length+1<=w)return [textLR(k,v,w)];return [k,...wrapText(v,w).map(x=>textLR('',x,w))]}
 /* the bill as lines of text, each with a bold flag: used by the ESC/POS file and the copy text */
 function billLines(m){
- const w=m.w,hr=c=>c.repeat(w),L=[],add=(t,bold)=>L.push([t,!!bold]);
- add(textCenter('* TAX INVOICE *',w),true);
+ const w=m.w,hr=c=>c.repeat(w),L=[],add=(t,bold)=>L.push([t,false]);
+ add(textCenter('* TAX INVOICE *',w));
  add(hr('-'));
  m.meta.forEach(([k,v])=>textKV(k,v,w).forEach(x=>add(x)));
  add(hr('-'));
- add(textLR('ITEMS',m.pcs+' pcs',w),true);
+ add(textLR('ITEMS',m.pcs+' pcs',w));
  m.items.forEach(it=>{wrapText(it.name,w).forEach(x=>add(x));add(textLR('  '+it.detail,it.amt,w))});
  add(hr('-'));
  m.totals.forEach(([k,v])=>add(textLR(k,v,w)));
  add(hr('='));
- add(textLR('TOTAL',m.total,w),true);
+ add(textLR('TOTAL',m.total,w));
  add(hr('-'));
  m.paid.forEach(([k,v])=>add(textLR(k,v,w)));
  if(m.loyalty.length){add(hr('-'));m.loyalty.forEach(([k,v])=>add(textLR(k,v,w)))}
  add(hr('-'));
  if(m.note)wrapText(m.note,w).forEach(x=>add(textCenter(x,w)));
  add('');
- m.join.forEach((t,i)=>wrapText(t,w).forEach(x=>add(textCenter(x,w),i===0)));
- add(textCenter('Thank you! Visit again.',w),true);
+ m.join.forEach((t,i)=>wrapText(t,w).forEach(x=>add(textCenter(x,w))));
+ add(textCenter('Thank you! Visit again.',w));
  return L}
 function escpos(b){
  const m=billModel(b),e=new TextEncoder(),bytes=[];const add=a=>bytes.push(...a);
  const hw=m.w/2,nl=[];
  m.name.split(/\s+/).filter(Boolean).forEach(x=>{if(nl.length&&(nl[nl.length-1]+' '+x).length<=hw)nl[nl.length-1]+=' '+x;else nl.push(x)});
  add([0x1b,0x40,0x1b,0x61,1]);
- add([0x1d,0x21,0x11]);nl.forEach(x=>add(e.encode(x+'\n')));add([0x1d,0x21,0]);
+ add([0x1b,0x45,1,0x1d,0x21,0x11]);nl.forEach(x=>add(e.encode(x+'\n')));add([0x1d,0x21,0,0x1b,0x45,0]);
  m.addr.forEach(t=>wrapText(t,m.w).forEach(x=>add(e.encode(x+'\n'))));
  add([0x1b,0x61,0]);
  billLines(m).forEach(([t,bold])=>{add([0x1b,0x45,bold?1:0]);add(e.encode(t+'\n'))});
@@ -1176,31 +1176,31 @@ function thermalBody(b){
  const addrFs=p==58?2.4:2.7;
 
  // Use Arial & Segoe UI with bold weights for maximum thermal pin heat transfer
- const SANS="font-family:Arial,Helvetica,'Segoe UI',Roboto,-apple-system,sans-serif;-webkit-text-stroke:0.12px #000";
- const hair='<div style="border-top:0.35mm solid #000;margin:2.5mm 0"></div>';
- const kv=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm;font-size:${small}mm;line-height:1.35"><span style="flex:none;letter-spacing:.06em;text-transform:uppercase;font-weight:700">${esc(k)}</span><span style="text-align:right;overflow-wrap:anywhere;min-width:0;font-weight:700">${esc(v)}</span></div>`;
- const lab=(t,r)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm;margin-top:1mm"><span style="font-size:${small}mm;letter-spacing:.12em;text-transform:uppercase;font-weight:800">${esc(t)}</span>${r?`<span style="font-size:${small}mm;font-weight:700">${esc(r)}</span>`:''}</div>`;
- const items=m.items.map(it=>`<div style="display:flex;justify-content:space-between;gap:2mm;margin-top:2mm;line-height:1.3"><div style="font-weight:800;font-size:${body}mm;flex:1 1 auto;min-width:0;overflow-wrap:anywhere">${esc(it.name)}<div style="font-weight:600;font-size:${small}mm;color:#000">${esc(it.detail)}</div></div><div style="white-space:nowrap;font-weight:800;font-size:${body}mm">${esc(it.amt)}</div></div>`).join('');
- const line=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm;font-weight:700;font-size:${body}mm;line-height:1.35"><span>${esc(k)}</span><span style="white-space:nowrap">${esc(v)}</span></div>`;
- const pts=m.loyalty.length?`<div style="margin-top:2.5mm;padding:1.6mm 2.2mm;background:#000;color:#fff;border-radius:1mm;font-size:${small}mm;font-weight:700;text-align:center">${m.loyalty.map(([k,v])=>esc(k)+': '+esc(v)).join(' &nbsp;|&nbsp; ')}</div>`:'';
+ const SANS="font-family:Arial,Helvetica,'Segoe UI',Roboto,-apple-system,sans-serif;-webkit-font-smoothing:antialiased";
+ const hair='<div style="border-top:0.2mm dashed #000;margin:2.5mm 0"></div>';
+ const kv=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm;font-size:${small}mm;line-height:1.35"><span style="flex:none;letter-spacing:.06em;text-transform:uppercase;font-weight:400">${esc(k)}</span><span style="text-align:right;overflow-wrap:anywhere;min-width:0;font-weight:400">${esc(v)}</span></div>`;
+ const lab=(t,r)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm;margin-top:1mm"><span style="font-size:${small}mm;letter-spacing:.12em;text-transform:uppercase;font-weight:400">${esc(t)}</span>${r?`<span style="font-size:${small}mm;font-weight:400">${esc(r)}</span>`:''}</div>`;
+ const items=m.items.map(it=>`<div style="display:flex;justify-content:space-between;gap:2mm;margin-top:2mm;line-height:1.3"><div style="font-weight:400;font-size:${body}mm;flex:1 1 auto;min-width:0;overflow-wrap:anywhere">${esc(it.name)}<div style="font-weight:400;font-size:${small}mm;color:#000">${esc(it.detail)}</div></div><div style="white-space:nowrap;font-weight:400;font-size:${body}mm">${esc(it.amt)}</div></div>`).join('');
+ const line=(k,v)=>`<div style="display:flex;justify-content:space-between;align-items:baseline;gap:2mm;font-weight:400;font-size:${body}mm;line-height:1.35"><span>${esc(k)}</span><span style="white-space:nowrap">${esc(v)}</span></div>`;
+ const pts=m.loyalty.length?`<div style="margin-top:2.5mm;padding:1.6mm 2.2mm;background:#000;color:#fff;border-radius:1mm;font-size:${small}mm;font-weight:400;text-align:center">${m.loyalty.map(([k,v])=>esc(k)+': '+esc(v)).join(' &nbsp;|&nbsp; ')}</div>`:'';
 
  return `<style>@page{margin:0;size:${p}mm auto}</style><div class="tbill" style="width:${p}mm;box-sizing:border-box;padding:4mm 4mm 5mm;background:#fff;color:#000;${SANS};font-size:${body}mm;line-height:1.35;-webkit-print-color-adjust:exact;print-color-adjust:exact">`+
   `<div style="text-align:center;padding-bottom:1.5mm">`+
-  `<div style="font-weight:900;font-size:${titleFs}mm;letter-spacing:0.12em;line-height:1.05;text-transform:uppercase">${esc(bTitle)}</div>`+
-  (bSubtitle?`<div style="font-weight:800;font-size:${subFs}mm;letter-spacing:0.35em;margin-top:1.2mm;text-transform:uppercase">${esc(bSubtitle)}</div>`:'')+
-  `<div style="margin-top:2mm;font-size:${addrFs}mm;line-height:1.35;font-weight:600;color:#000">`+
+  `<div style="font-weight:800;font-size:${titleFs}mm;letter-spacing:0.12em;line-height:1.05;text-transform:uppercase">${esc(bTitle)}</div>`+
+  (bSubtitle?`<div style="font-weight:400;font-size:${subFs}mm;letter-spacing:0.4em;margin-top:1.2mm;text-transform:uppercase">${esc(bSubtitle)}</div>`:'')+
+  `<div style="margin-top:2mm;font-size:${addrFs}mm;line-height:1.35;font-weight:400;color:#000">`+
   m.addr.map(t=>`<div style="overflow-wrap:anywhere">${esc(t)}</div>`).join('')+
   `</div>`+
-  `<div style="margin-top:2.2mm;font-size:${small}mm;letter-spacing:0.2em;font-weight:900;border-top:0.35mm solid #000;border-bottom:0.35mm solid #000;padding:1mm 0">TAX INVOICE</div>`+
+  `<div style="margin-top:2.2mm;font-size:${small}mm;letter-spacing:0.2em;font-weight:400;border-top:0.2mm solid #000;border-bottom:0.2mm solid #000;padding:1mm 0">TAX INVOICE</div>`+
   `</div>`+
   kv('Invoice',m.meta[0][1])+kv('Date',m.meta[1][1])+m.meta.slice(2).map(([k,v])=>kv(k,v)).join('')+
   hair+lab('Items',m.pcs+' pcs')+items+
   hair+m.totals.map(([k,v])=>line(k,v)).join('')+
-  `<div style="height:2mm"></div><div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:900;font-size:${totFs}mm"><span>Total</span><span style="white-space:nowrap">${esc(m.total)}</span></div>`+
-  `<div style="margin-top:1.5mm;font-size:${body}mm;font-weight:700">${m.paid.map(([k,v])=>esc(k)+' '+esc(v)).join(' · ')}</div>`+pts+
-  `<div style="display:flex;align-items:center;gap:3mm;margin-top:4mm"><svg viewBox="0 0 33 33" style="width:${qr}mm;height:${qr}mm;flex:none;display:block;shape-rendering:crispEdges"><path fill="#000" d="${WA_QR_PATH}"/></svg><div style="font-size:${small}mm;min-width:0;line-height:1.3"><div style="font-weight:800">${esc(m.join[0].replace(/\*/g,'').trim())}</div><div style="font-weight:600">${esc(m.join[1])}</div><div style="font-weight:600">${esc(m.join[2])}</div></div></div>`+
-  (m.note?`<div style="margin-top:3mm;font-size:${small}mm;text-align:center;font-weight:600">${esc(m.note)}</div>`:'')+
-  `<div style="margin-top:3mm;font-size:${small}mm;text-align:center;font-weight:800">Thank you for shopping with us</div></div>`;
+  `<div style="height:2mm"></div><div style="display:flex;justify-content:space-between;align-items:baseline;font-weight:400;font-size:${totFs}mm"><span>Total</span><span style="white-space:nowrap">${esc(m.total)}</span></div>`+
+  `<div style="margin-top:1.5mm;font-size:${body}mm;font-weight:400">${m.paid.map(([k,v])=>esc(k)+' '+esc(v)).join(' · ')}</div>`+pts+
+  `<div style="display:flex;align-items:center;gap:3mm;margin-top:4mm"><svg viewBox="0 0 33 33" style="width:${qr}mm;height:${qr}mm;flex:none;display:block;shape-rendering:crispEdges"><path fill="#000" stroke="#000" stroke-width="0.08" d="${WA_QR_PATH}"/></svg><div style="font-size:${small}mm;min-width:0;line-height:1.3"><div style="font-weight:400">${esc(m.join[0].replace(/\*/g,'').trim())}</div><div style="font-weight:400">${esc(m.join[1])}</div><div style="font-weight:400">${esc(m.join[2])}</div></div></div>`+
+  (m.note?`<div style="margin-top:3mm;font-size:${small}mm;text-align:center;font-weight:400">${esc(m.note)}</div>`:'')+
+  `<div style="margin-top:3mm;font-size:${small}mm;text-align:center;font-weight:400">Thank you for shopping with us</div></div>`;
 }
 function showReceipt(b){
  S.lastBillPrinted=b;
