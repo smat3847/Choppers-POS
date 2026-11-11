@@ -229,7 +229,7 @@ nav button .ic{display:none}
  <div style="flex:1 1 200px"><label>&nbsp;</label><div id="silentPrintStatus" class="mu" style="font-size:12px;line-height:1.4">Standard print dialog active. Pair USB above or launch Chrome with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">--kiosk-printing</code> for 100% silent printing.</div></div>
 </div>
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
- <button class="btn" id="sSave">Save settings</button></div>
+ <button class="btn" id="sSave">Save settings</button> <button class="btn g" id="impBtn" type="button">Import old data from Google Sheet (one-time)</button></div>
 
 <div class="card"><h2>App Permanence &amp; Offline Speed</h2>
 <div class="stat" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
@@ -646,6 +646,49 @@ const fbReceivePayment=(phone,amount)=>serial(()=>fdb.runTransaction(async tx=>{
  tx.update(ref,{balance:c.balance-a,u:Date.now()});return c.balance-a}));
 const fbSaveSettings=d=>serial(async()=>{const o={};for(const k of ['name','addr','phone','gst','paper','note'])o[k]=d[k]==null?'':d[k];await fdb.doc('meta/settings').set(o,{merge:true});return true});
 const SERVER={getData:fbGetData,findBill:fbFindBill,saveBill:fbSaveBill,updateBill:fbUpdateBill,addCustomer:fbAddCustomer,searchBills:fbSearchBills,deleteBill:fbDeleteBill,saveProduct:fbSaveProduct,deleteProduct:fbDeleteProduct,receivePayment:fbReceivePayment,saveSettings:fbSaveSettings};
+/* ===== One-time import from the old Google Sheet (loads Google sign-in only when you tap the button) ===== */
+const IMP_CLIENT_ID='882271530090-r21h122mdc5alla5fhfr3no08vlpvc1c.apps.googleusercontent.com';
+const IMP_SID='1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g';
+const IMP_SCOPE='https://www.googleapis.com/auth/spreadsheets.readonly';
+function impLoadGis(){return new Promise((res,rej)=>{
+ if(window.google&&google.accounts&&google.accounts.oauth2)return res();
+ const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';
+ sc.onload=()=>res();sc.onerror=()=>rej(new Error('Google sign-in did not load. Check internet.'));document.head.appendChild(sc)})}
+function impToken(){return new Promise((res,rej)=>{
+ const tc=google.accounts.oauth2.initTokenClient({client_id:IMP_CLIENT_ID,scope:IMP_SCOPE,
+  callback:r=>r.error?rej(new Error(r.error)):res(r.access_token),
+  error_callback:e=>rej(new Error(e.type||'Sign-in popup was blocked or closed'))});
+ tc.requestAccessToken({prompt:'select_account'})})}
+async function impGet(tok,range){
+ const r=await fetch('https://sheets.googleapis.com/v4/spreadsheets/'+IMP_SID+'/values/'+encodeURIComponent(range)+'?valueRenderOption=UNFORMATTED_VALUE',{headers:{Authorization:'Bearer '+tok}});
+ const j=await r.json().catch(()=>({}));
+ if(!r.ok)throw new Error((j.error&&j.error.message)||('Google error '+r.status));
+ return j.values||[]}
+async function importFromSheet(){
+ if(!FB_READY)throw new Error('Firebase is not set up');
+ await impLoadGis();const tok=await impToken();
+ const pr=await impGet(tok,'Products!A2:G'),cr=await impGet(tok,'Customers!A2:G'),sr=await impGet(tok,'Settings!A2:B'),br=await impGet(tok,'Bills!A2:T');
+ const clean=v=>String(v||'').trim().replace(/^'/,'');
+ const u=Date.now(),ops=[];
+ pr.forEach(r=>{const sku=clean(r[0]);if(!sku)return;ops.push([fcol('products').doc(skuId(sku)),{sku,name:String(r[1]||''),size:String(r[2]||''),cat:String(r[3]||''),cost:numV(r[4]),price:numV(r[5]),tax:numV(r[6]),deleted:false,u}])});
+ cr.forEach(r=>{const ph=digitsOf(r[0]);if(!ph)return;ops.push([fcol('customers').doc(ph),{phone:ph,name:String(r[1]||''),visits:numV(r[2]),spent:numV(r[3]),balance:numV(r[4]),last:numV(r[5]),points:numV(r[6]),u}])});
+ let maxNo=0;
+ br.forEach(r=>{const inv=String(r[0]||'').trim();if(!inv)return;let items=[];try{items=JSON.parse(r[15]||'[]')}catch(e){}
+  const no=numV(r[1]);maxNo=Math.max(maxNo,no);
+  ops.push([fcol('bills').doc(inv),{inv,no,date:String(r[2]||''),ts:numV(r[3]),cashier:String(r[4]||''),cust:String(r[5]||''),phone:digitsOf(r[6]),mode:String(r[7]||''),sub:numV(r[8]),disc:numV(r[9]),tax:numV(r[10]),ro:numV(r[11]),total:numV(r[12]),paid:numV(r[13]),due:numV(r[14]),items,redeem:numV(r[16]),earned:numV(r[17]),exchange:numV(r[18]),deleted:String(r[19]||'').trim()!=='',u}])});
+ const cfg={};sr.forEach(r=>{if(r[0])cfg[String(r[0]).trim()]=clean(r[1])});
+ ops.push([fdb.doc('meta/settings'),cfg]);
+ ops.push([fdb.doc('meta/counter'),{next:Math.max(INV_START,maxNo+1)}]);
+ for(let i=0;i<ops.length;i+=400){
+  const b=fdb.batch();ops.slice(i,i+400).forEach(([ref,d])=>b.set(ref,d));await b.commit();
+  toast('Importing… '+Math.min(i+400,ops.length)+' / '+ops.length)}
+ window.FBSINCE=0;await load();return ops.length}
+$('impBtn').onclick=async()=>{
+ if(!confirm('Copy products, customers, bills and settings from the old Google Sheet into Firebase? Records with the same ID are overwritten. Do this only once.'))return;
+ const b=$('impBtn');b.disabled=true;
+ try{const n=await importFromSheet();toast('Imported '+n+' records ✓')}catch(e){toast('Import failed: '+emsg(e))}
+ b.disabled=false};
+
 const rpc=(fn,...a)=>Promise.resolve().then(()=>SERVER[fn](...a));
 let cacheT=null;
 function writeCache(){clearTimeout(cacheT);try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg,fbs:window.FBSINCE||0}))}catch(e){}}
