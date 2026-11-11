@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Choppers Mens Wear · POS (Google Sheets)</title>
+<title>Choppers Mens Wear · POS</title>
 <meta name="theme-color" content="#000000">
 <script>try{var _t=localStorage.getItem("choppers-theme");if(_t==="light"||_t==="dark")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -13,8 +13,6 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://sheets.googleapis.com">
-<link rel="preconnect" href="https://accounts.google.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap">
 <style>:root{--bg:#fff;--card:#fff;--tx:#000;--mu:#666;--bd:#d8d8d8;--ac:#000;--on:#fff;--gold:#555;--ok:#000;--bad:#000;--warn:#000;--serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)} @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#000;--card:#000;--tx:#fff;--mu:#a3a3a3;--bd:#333;--ac:#fff;--on:#000;--gold:#bbb;--ok:#fff;--bad:#fff;--warn:#fff}}:root[data-theme="dark"]{color-scheme:dark;--bg:#000;--card:#000;--tx:#fff;--mu:#a3a3a3;--bd:#333;--ac:#fff;--on:#000;--gold:#bbb;--ok:#fff;--bad:#fff;--warn:#fff} *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)} body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 var(--sans);-webkit-font-smoothing:antialiased} header{text-align:center;padding:14px 16px 10px;border-bottom:1px solid var(--bd)} header .top{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--mu);letter-spacing:.04em} .brand h1{margin:4px 0 0;font:600 32px/1 var(--serif);letter-spacing:.3em;padding-left:.3em} .brand .sub{font-size:10px;letter-spacing:.55em;color:var(--gold);padding-left:.55em;margin-top:6px;font-weight:500} .stt{font-size:11px;color:var(--mu);margin-top:8px}.stt a{color:inherit}.stt:empty{display:none} .lnk{background:none;border:0;border-bottom:1px solid var(--bd);color:var(--tx);font:500 10.5px var(--sans);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:0 0 1px} nav{display:flex;justify-content:center;gap:30px;padding:0 12px;background:var(--bg);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5;overflow-x:auto} nav button{flex:0 0 auto;border:0;border-bottom:2px solid transparent;background:none;color:var(--mu);padding:14px 2px 12px;font:500 11px var(--sans);letter-spacing:.16em;text-transform:uppercase;cursor:pointer} nav button.on{color:var(--tx);border-bottom-color:var(--tx)} @media(max-width:700px){nav{position:fixed;top:auto;bottom:0;left:0;right:0;justify-content:space-around;gap:0;border-top:1px solid var(--bd);border-bottom:0;padding:0 0 env(safe-area-inset-bottom,0px);overflow:hidden}nav button{flex:1;padding:13px 0 11px;font-size:9px;letter-spacing:.05em;border-bottom:0;border-top:2px solid transparent}nav button.on{border-top-color:var(--tx)}main{padding-bottom:90px!important}.brand h1{font-size:26px}} main{padding:22px 16px;max-width:1080px;margin:auto}.pg{display:none}.pg.on{display:block} .card{background:var(--card);border:1px solid var(--bd);border-radius:2px;padding:18px;margin-bottom:16px} .grid{display:grid;gap:16px}@media(min-width:900px){.two{grid-template-columns:1.15fr 1fr}#p-bill .two>.card{position:sticky;top:60px;align-self:start}} h3{margin:0 0 12px;font:600 10.5px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--mu)} #mbox h3:first-child{font:600 24px/1.2 var(--serif);letter-spacing:0;text-transform:none;color:var(--tx)} input,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:2px;padding:10px 11px;width:100%;min-width:0} input:focus,select:focus{outline:0;border-color:var(--tx)}#q{font-size:16px;padding:14px} label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);display:block;margin-bottom:5px} .row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}.row>div{flex:1 1 130px} .btn{border:1px solid var(--ac);background:var(--ac);color:var(--on);padding:12px 20px;border-radius:2px;font:600 11px var(--sans);letter-spacing:.16em;text-transform:uppercase;cursor:pointer} .btn:disabled{opacity:.5;cursor:default}.btn.g{background:none;color:var(--tx);border-color:var(--bd)}.btn.g:hover{border-color:var(--tx)} .btn.big{width:100%;padding:16px}.btn.s{padding:6px 10px;font-size:10px} .res{display:flex;justify-content:space-between;gap:10px;padding:12px 2px;border-bottom:1px solid var(--bd);cursor:pointer}.res:hover{background:var(--bg)} .mu{color:var(--mu);font-size:12px} .ci{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:12px 0;border-bottom:1px solid var(--bd)} .qty{display:flex;align-items:center;gap:8px}.qty button{width:30px;height:30px;border-radius:2px;border:1px solid var(--bd);background:none;color:var(--tx);font-size:16px;cursor:pointer}.qty button:hover{border-color:var(--tx)}.qty input{width:58px;padding:6px} .tot{display:flex;justify-content:space-between;padding:4px 0}.tot.gt{font:600 30px/1.1 var(--serif);border-top:1px solid var(--tx);margin-top:10px;padding-top:12px} .seg{display:flex;border:1px solid var(--bd);border-radius:2px;overflow:hidden}.seg button{flex:1;padding:11px 2px;background:none;border:0;border-right:1px solid var(--bd);color:var(--mu);font:500 11px var(--sans);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}.seg button:last-child{border-right:0}.seg button.on{background:var(--tx);color:var(--bg)} .wrap{overflow-x:auto;content-visibility:auto;contain-intrinsic-size:0 360px}#cart,#res,#cRes,#stat{contain:content}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:11px 6px;border-bottom:1px solid var(--bd);font-size:13px}th{color:var(--mu);font:500 10px var(--sans);letter-spacing:.14em;text-transform:uppercase} .tag{display:inline-block;padding:1px 9px;border:1px solid var(--bd);border-radius:2px;font-size:12px}.tag.low{border-color:var(--tx);font-weight:600}.tag.out{background:var(--tx);border-color:var(--tx);color:var(--bg);font-weight:600} .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}.stat div{background:var(--card);border:1px solid var(--bd);border-radius:2px;padding:14px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu)}.stat b{display:block;font:600 28px/1.2 var(--serif);letter-spacing:0;text-transform:none;color:var(--tx);margin-top:4px} #toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:11px 18px;border-radius:2px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:30;max-width:90%}#toast.on{opacity:1} @media(min-width:701px){#toast{bottom:28px}} #modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-start;justify-content:center;padding:24px 12px;overflow:auto;z-index:20}#modal.on{display:flex} #mbox{background:var(--card);border:1px solid var(--bd);border-radius:2px;padding:22px;width:100%;max-width:440px} pre.rc{font:13px/1.3 ui-monospace,Menlo,Consolas,monospace;background:#fff;color:#000;padding:12px;margin:0 0 12px;overflow-x:auto;border:1px dashed #999;white-space:pre} #printArea{display:none} .lbl{background:#fff;color:#000;border:1px dashed #999;display:flex;flex-direction:column;justify-content:space-between;padding:1.2mm 1.6mm;overflow:hidden;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.1;break-inside:avoid;box-sizing:border-box} .lbl-top{display:flex;justify-content:space-between;align-items:flex-start;gap:2mm;flex:none}.lbl-price{font-family:Inter,Helvetica,Arial,sans-serif;font-weight:800;letter-spacing:-.03em;line-height:1;white-space:nowrap;flex:none}.lbl-brand{font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-align:right;line-height:1.15;max-width:60%;min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.lbl-name{font-weight:500;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.7mm;padding-bottom:.6mm;border-bottom:.25mm solid #000;line-height:1.2;flex:none}.lbl-bc{display:flex;flex-direction:column;align-items:stretch;justify-content:center;flex:1 1 auto;min-height:0;margin:.8mm 0 .5mm;width:100%}.lbl-bc svg{width:100%;flex:1 1 auto;height:0;min-height:8mm;max-height:none;display:block;shape-rendering:crispEdges}.lbl-sku{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;letter-spacing:.2em;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1;flex:none} .lg{display:flex;flex-wrap:wrap;gap:2mm} @media print{body>*:not(#printArea){display:none!important}#printArea{display:block}#printArea .lbl{border:0}#printArea .lg{gap:0}#printArea .lrow{display:flex;gap:3mm;break-after:page;break-inside:avoid;overflow:hidden}#printArea .lrow:last-of-type{break-after:auto!important}html,body{height:auto!important;min-height:0!important;overflow:visible!important}#printArea{margin:0;padding:0}#printArea pre{font:12px/1.25 ui-monospace,Menlo,Consolas,monospace;color:#000;margin:0;white-space:pre}} @media screen{:root{padding:0!important} html,body{height:100%;margin:0;overflow:hidden;max-width:100%} body{display:flex;flex-direction:column;height:100vh;height:100dvh;min-height:0} header{order:0;flex:none;padding:12px 16px 10px;padding-top:calc(12px + env(safe-area-inset-top,0px))} nav{order:1;flex:none;position:static;top:auto;z-index:auto;justify-content:center;gap:28px;padding:0 12px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none} nav::-webkit-scrollbar{display:none} main{order:2;flex:1 1 auto;min-height:0;min-width:0;width:100%;max-width:1100px;margin:0 auto;padding:16px;padding-bottom:16px;box-sizing:border-box;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch} .grid>*,.row>div,.stat>div{min-width:0} .card{max-width:100%;box-sizing:border-box} .wrap{max-width:100%} img,svg,input,select,button{max-width:100%} .mu,.res b,.card h3,.ci b{overflow-wrap:anywhere} #p-bill .two>.card{position:sticky;top:0;align-self:start} @media (min-width:1400px){main{max-width:1280px}} @media (max-width:900px){#p-bill .two>.card{position:static}} @media (max-width:700px){nav{order:3;justify-content:space-around;gap:0;padding:0 0 env(safe-area-inset-bottom,0px);border-top:1px solid var(--bd);border-bottom:0} nav button{flex:1 1 0;min-width:0;padding:12px 2px 10px;font-size:9px;letter-spacing:0;border-bottom:0;border-top:2px solid transparent;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} nav button.on{border-top-color:var(--tx)} header{padding:8px 12px 6px;padding-top:calc(8px + env(safe-area-inset-top,0px))} header .top{font-size:10px} .brand h1{font-size:24px} .brand .sub{font-size:9px;letter-spacing:.45em} .stt{margin-top:4px;font-size:11px} main{padding:12px} .card{padding:14px} .btn.big{padding:14px} #toast{bottom:calc(66px + env(safe-area-inset-bottom,0px))} #p-sales table th:nth-child(2),#p-sales table td:nth-child(2),#p-sales table th:nth-child(4),#p-sales table td:nth-child(4){display:none} #lPrev{zoom:.75} #p-cust table th:nth-child(2),#p-cust table td:nth-child(2),#p-cust table th:nth-child(3),#p-cust table td:nth-child(3){display:none} #p-inv table th:nth-child(1),#p-inv table td:nth-child(1){display:none} #p-inv td:last-child{white-space:nowrap} } @media (max-width:420px){#p-sales table th:nth-child(5),#p-sales table td:nth-child(5){display:none} #lPrev{zoom:.62} .stat{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px} .stat b{font-size:20px} th,td{padding:9px 4px} } @media (max-width:400px){nav button{font-size:8px}} @media (min-width:900px){#p-bill.on{display:grid;grid-template-columns:1.15fr 1fr;grid-template-rows:auto 1fr;gap:16px;align-items:start} #p-bill>#invBar{grid-column:1;grid-row:1;margin-bottom:0} #p-bill>#invView{grid-column:1 / span 2;grid-row:1 / span 2} #billGrid{display:contents} #billGrid>div:first-child{grid-column:1;grid-row:2;min-width:0;align-self:start} #billGrid>.card{grid-column:2;grid-row:1 / span 2;position:static;max-height:calc(100dvh - 170px);margin-bottom:0} #billGrid>.card .row>div{flex:1 1 110px} } #res,#cRes{max-height:min(220px,26dvh);overflow-y:auto} @media (min-width:900px) and (max-height:860px){#billGrid>.card h3{margin-bottom:8px} #invBar{padding:12px 14px} header{padding-top:8px;padding-bottom:6px} .brand h1{font-size:26px} main{padding-top:12px;padding-bottom:12px} #billGrid>.card .row{margin-bottom:6px} #billGrid>.card #clr{margin-top:6px} #tots .tot{padding:2px 0} #tots .tot.gt{font-size:24px;padding-top:6px;margin-top:4px} } @media (min-width:900px){#billGrid>.card{display:flex;flex-direction:column;min-height:0;overflow-y:auto} #billGrid>.card>*{flex:none} #billGrid>.card>#cart{flex:1 1 auto;min-height:100px;overflow-y:auto} } @media (max-height:520px) and (orientation:landscape){header{padding-top:4px;padding-bottom:4px} .brand .sub{display:none} .brand h1{font-size:20px} .stt:empty{display:none} main{padding-top:10px;padding-bottom:10px} } } .skip{position:absolute;left:8px;top:-80px;z-index:100;background:var(--tx);color:var(--bg);padding:10px 14px;border-radius:8px;font-weight:600;text-decoration:none} .skip:focus{top:8px} @media screen{:root{--radius:12px} body{background:#f2f2f0} @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:#000}}:root[data-theme="dark"] body{background:#000}:root[data-theme="dark"],:root:not([data-theme="light"]){--radius:12px} .card{border-radius:var(--radius);border:1px solid var(--bd);box-shadow:0 1px 2px rgba(0,0,0,.06);padding:18px} .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px} .stat div{border-radius:var(--radius);box-shadow:0 1px 2px rgba(0,0,0,.06)} h2{font:600 12px/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin:0 0 12px} #mbox h2:first-child{font:600 24px/1.2 var(--serif);letter-spacing:0;text-transform:none;color:var(--tx)} label{font-size:12px;letter-spacing:.04em;color:var(--mu);margin-bottom:6px} input,select,textarea{background:var(--card);color:var(--tx);border:1px solid #8c8c8c;border-radius:8px;min-height:44px;font-size:16px;padding:10px 12px} input::placeholder{color:var(--mu);opacity:1} .btn{min-height:44px;border-radius:8px;font-size:13px;letter-spacing:.06em;padding:12px 18px;transition:opacity .15s} .btn:hover{opacity:.85} .btn:disabled{opacity:.45;cursor:not-allowed} .btn.g{background:var(--card);color:var(--tx);border:1.5px solid var(--tx)} .btn.s{min-height:40px;padding:8px 12px;font-size:12px} .qty button{width:44px;height:44px;border-radius:8px;font-size:18px} .qty input{width:64px;min-height:44px} .res{border-radius:8px;padding:12px 10px;margin:4px 0;border:1px solid var(--bd);min-height:44px;align-items:center} .res:hover{background:var(--bg)} th,td{padding:12px 8px} @media (max-width:700px){th,td{padding:10px 5px}} th{font-size:12px;letter-spacing:.06em;text-transform:uppercase} .tag{border-radius:999px;padding:3px 10px;font-size:12px} .lnk{min-height:44px;padding:10px 8px;font-size:12px} #cart{min-height:170px} .ci>*{min-width:0} .qty{flex-wrap:wrap;row-gap:6px} .qty .mu{white-space:nowrap;font-size:12px} #fInv{padding:10px 8px} .seg button{min-height:44px;padding:10px 14px} #toast{border-radius:12px;font-size:14px;padding:12px 18px;box-shadow:0 4px 14px rgba(0,0,0,.18)} #mbox{border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.25)} nav button{min-height:44px;border-radius:8px} nav button:hover{background:rgba(0,0,0,.05)} @media (min-width:701px){nav button.on{background:var(--tx);color:var(--bg);border-color:var(--tx);border-radius:999px;padding:10px 18px} nav button{border-bottom:0;padding:10px 18px} } @media (max-width:700px){nav button{min-height:52px;font-size:10.5px;letter-spacing:-.02em;text-transform:none;font-weight:600;padding:12px 0 10px} nav button{min-height:52px} input,select{font-size:16px} .btn{min-height:48px} }:focus{outline:none}:focus-visible{outline:3px solid var(--tx);outline-offset:2px;border-radius:4px} input:focus-visible,select:focus-visible,textarea:focus-visible{outline:none;border-color:var(--tx);box-shadow:0 0 0 3px rgba(0,0,0,.28)} @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important} } } #itemsFoot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-top:2px solid var(--tx);padding-top:12px;margin-top:8px;flex:none} #itemsFoot .mu{font-size:12px;letter-spacing:.06em;text-transform:uppercase} #itemsFoot #itemsTot{font:600 26px/1.1 var(--serif)} #itemsFoot #itemsN{font:600 18px/1.1 var(--sans)} #p-bill #custCard,#p-bill #addCard,#p-bill #sumCard,#p-bill #itemsCard{position:static;max-height:none;overflow:visible;margin:0} #p-bill #itemsCard{display:flex;flex-direction:column;min-height:0} #p-bill #itemsCard>h2{flex:none} #p-bill #itemsCard #cart{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin-top:4px} #p-bill #itemsCard #cart .ci:last-child{border-bottom:0} #p-bill #itemsCard #cart .ci{padding:9px 0} @media (min-width:901px){#p-bill.on{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-rows:auto auto auto auto;gap:16px;align-items:start} #p-bill>#invBar{grid-column:1;grid-row:1;margin-bottom:0} #p-bill>#invView{grid-column:1 / span 2;grid-row:1 / span 4} #p-bill #billGrid{display:contents} #p-bill #custCard{grid-column:1;grid-row:2} #p-bill #addCard{grid-column:1;grid-row:3} #p-bill #sumCard{grid-column:1;grid-row:4} #p-bill #itemsCard{grid-column:2;grid-row:1 / span 4;align-self:stretch;position:sticky;top:12px;max-height:calc(100dvh - 190px);overflow:hidden} } @media (max-width:900px){#p-bill.on{display:flex;flex-direction:column;gap:12px} #p-bill #billGrid{display:flex;flex-direction:column;gap:12px} #p-bill #billGrid>.card{align-self:stretch;width:auto} #p-bill #itemsCard #cart{max-height:none;overflow:visible} } @media (min-width:901px){header{display:flex!important;align-items:center;justify-content:space-between;text-align:left;padding:8px 20px!important} header .brand{display:flex;align-items:baseline;gap:12px;order:1} header .brand h1{font-size:20px!important;margin:0!important;letter-spacing:.24em;padding-left:0!important} header .brand .sub{margin:0!important;font-size:9px!important;padding-left:0!important} header .top{order:2;gap:14px} header .stt{order:3} nav{padding:0 12px} nav button{padding:9px 16px;min-height:40px} body[data-tab="bill"]{overflow:hidden} body[data-tab="bill"] main{max-width:none!important;width:100%;margin:0;padding:10px 14px!important;display:flex;flex-direction:column;overflow:hidden} body[data-tab="bill"] #p-bill.on{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,42fr) minmax(0,58fr);grid-template-rows:auto auto auto minmax(0,1fr);gap:10px;align-items:start;width:100%} body[data-tab="bill"] #p-bill>#invBar{grid-column:1;grid-row:1;margin:0;padding:10px 14px} body[data-tab="bill"] #p-bill>#invBar .row{display:flex;align-items:center;gap:12px;flex-wrap:nowrap;margin:0} body[data-tab="bill"] #p-bill>#invBar .row>div:first-child{flex:0 0 auto!important;display:flex;align-items:baseline;gap:10px} body[data-tab="bill"] #p-bill>#invBar #invLabel{margin:0;white-space:nowrap} body[data-tab="bill"] #p-bill>#invBar .row>div:last-child{flex:1 1 auto!important;min-width:0} body[data-tab="bill"] #p-bill>#invView{grid-column:1 / span 2;grid-row:1 / span 4;min-height:0;overflow:auto} body[data-tab="bill"] #p-bill #billGrid{display:contents} body[data-tab="bill"] #p-bill #custCard{grid-column:1;grid-row:2;margin:0;padding:12px 14px;align-self:start;position:static;max-height:none;overflow:visible} body[data-tab="bill"] #p-bill #addCard{grid-column:1;grid-row:3;margin:0;padding:12px 14px;align-self:start;position:static;max-height:none;overflow:visible} body[data-tab="bill"] #p-bill #sumCard{grid-column:1;grid-row:4;margin:0;padding:12px 14px;align-self:stretch;position:static;min-height:0;max-height:none;overflow-y:auto;display:flex;flex-direction:column} body[data-tab="bill"] #p-bill #sumCard .row{margin-bottom:8px} body[data-tab="bill"] #p-bill #sumCard .saveRow{margin-top:auto!important;padding-top:8px} body[data-tab="bill"] #p-bill #sumCard .saveRow #clr{flex:0 0 auto} body[data-tab="bill"] #p-bill #itemsCard{grid-column:2;grid-row:1 / span 4;margin:0;padding:14px 16px;align-self:stretch;position:static;display:flex;flex-direction:column;min-height:0;max-height:none;overflow:hidden} body[data-tab="bill"] #p-bill #itemsCard #cart{flex:1 1 auto;min-height:0;max-height:none;overflow-y:auto;margin-top:4px} body[data-tab="bill"] #p-bill #itemsCard .ci{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;align-items:center;gap:16px;padding:8px 0} body[data-tab="bill"] #p-bill #itemsCard .ci .qty{flex-wrap:nowrap} body[data-tab="bill"] #p-bill #itemsCard .ci>div:nth-child(2){min-width:84px;text-align:right} body[data-tab="bill"] #p-bill #itemsCard .ci>div:nth-child(4){min-width:84px;text-align:right} body[data-tab="bill"] #p-bill #itemsCard #itemsFoot{padding-top:10px;margin-top:6px} } @media (max-width:900px){#p-bill #sumCard .saveRow #clr{flex:1 0 100%} } @media (min-width:901px){body[data-tab="bill"] #p-bill #custCard,body[data-tab="bill"] #p-bill #addCard{padding:10px 12px} body[data-tab="bill"] #p-bill #custCard h2,body[data-tab="bill"] #p-bill #addCard h2,body[data-tab="bill"] #p-bill #sumCard h2,body[data-tab="bill"] #p-bill #itemsCard h2{margin-bottom:8px} body[data-tab="bill"] #p-bill #sumCard{padding:10px 12px} body[data-tab="bill"] #p-bill #sumCard .row{margin-bottom:6px} body[data-tab="bill"] #p-bill #sumCard label{margin-bottom:3px} body[data-tab="bill"] #p-bill #sumCard input,body[data-tab="bill"] #p-bill #sumCard select{min-height:40px;padding:8px 10px} body[data-tab="bill"] #p-bill #sumCard .seg button{min-height:38px;padding:8px 12px} body[data-tab="bill"] #p-bill #sumCard .tot{padding:1px 0} body[data-tab="bill"] #p-bill #sumCard .tot.gt{font:600 24px/1.1 var(--serif);margin-top:2px;padding-top:4px} body[data-tab="bill"] #p-bill #sumCard .saveRow button{min-height:42px} } @media (min-width:901px){body[data-tab="bill"] #p-bill #sumCard .payLbl{display:none} body[data-tab="bill"] #p-bill #sumCard .row{margin-bottom:4px} body[data-tab="bill"] #p-bill #sumCard .saveRow{padding-top:4px} } @media (min-width:901px) and (max-height:760px){body[data-tab="bill"] #p-bill>#invBar{padding:8px 12px} body[data-tab="bill"] #p-bill>#invBar input,body[data-tab="bill"] #p-bill>#invBar .btn{min-height:38px} body[data-tab="bill"] #p-bill #custCard{padding:8px 12px} body[data-tab="bill"] #p-bill #addCard{padding:8px 12px} body[data-tab="bill"] #p-bill #addCard input{min-height:40px} body[data-tab="bill"] #p-bill #custCard #cInfo:empty{display:none} body[data-tab="bill"] #p-bill #custCard #cInfo{margin-top:0} body[data-tab="bill"] #p-bill #sumCard .tot.gt{font-size:22px} body[data-tab="bill"] #p-bill #sumCard #tots{font-size:13px;line-height:1.3} body[data-tab="bill"] #p-bill #sumCard .saveRow .btn{min-height:38px} body[data-tab="bill"] #p-bill #sumCard .row{margin-bottom:2px} body[data-tab="bill"] #p-bill #sumCard{padding:8px 12px} body[data-tab="bill"] #p-bill #sumCard .saveRow{padding-top:0} } #invNo{border:none!important;border-width:0!important;outline:none!important;background:transparent!important;box-shadow:none!important;font:600 22px/1.2 var(--serif)!important;color:var(--tx)!important;padding:0!important;margin:0!important;min-height:0!important;height:auto!important;border-radius:0!important;width:auto;max-width:180px} #invNo:focus,#invNo:focus-visible{outline:none!important;border:none!important;box-shadow:none!important;border-color:transparent!important} @media (min-width:901px) and (max-height:780px){body[data-tab="bill"] #p-bill #custCard #cInfo{display:none} body[data-tab="bill"] #p-bill #sumCard{padding:6px 12px} body[data-tab="bill"] #p-bill #sumCard .seg button,body[data-tab="bill"] #p-bill #sumCard .saveRow .btn{min-height:36px} body[data-tab="bill"] #p-bill #sumCard input,body[data-tab="bill"] #p-bill #sumCard select{min-height:38px} body[data-tab="bill"] #p-bill #sumCard .tot{padding:0} body[data-tab="bill"] #p-bill #sumCard #pAvail{font-size:11px;line-height:1.25} } 
 /* sign-in gate: nothing of the app shows until the user is signed in */
@@ -46,6 +44,7 @@ body:not(.authed) #gate,body.authed #gate.leaving{position:fixed;inset:0;z-index
 #gate #gateMsg:empty{display:none}
 #gate.busy #gateMsg::after{content:"";display:inline-block;width:1ch;overflow:hidden;vertical-align:bottom;animation:gDots 1s steps(4) infinite}
 #gate #gateBtn{width:100%;min-height:50px;margin:0;background:transparent;color:var(--g-ink);border:1px solid var(--g-ink);border-radius:999px;font:600 11px var(--sans);letter-spacing:.24em;transition:background .25s,color .25s}
+#gate #gateForm{display:flex;flex-direction:column;gap:10px}#gate #gateForm input{width:100%;min-height:50px;box-sizing:border-box;background:transparent;color:var(--g-ink);border:1px solid var(--g-line);border-radius:999px;padding:0 22px;text-align:center;font:500 12px var(--sans);letter-spacing:.24em;outline:none}#gate #gateForm input:focus{border-color:var(--g-ink)}#gate #gateForm input::placeholder{color:var(--g-dim)}
 #gate #gateBtn:hover{background:var(--g-ink);color:var(--g-bg);opacity:1}
 @keyframes gDots{from{width:0}to{width:3ch}}
 /* after sign-in: zoom into the shop name, then reveal the app */
@@ -159,7 +158,9 @@ nav button .ic{display:none}
  #p-cust table td:nth-child(5)::before{content:"Due ";letter-spacing:.04em}
  #p-inv table td:nth-child(3){text-align:right}
 }
-</style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
+</style><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
 <header><div class="top"><span id="clock"></span><div style="display:flex;align-items:center;gap:12px"><span id="syncBadge" class="mu" style="font-size:11px;display:inline-flex;align-items:center;gap:5px"><span style="color:var(--ok);font-size:9px">●</span> Synced</span><button class="lnk" id="installBtn" style="display:none;color:#000;background:var(--card);padding:2px 8px;border-radius:4px;border:1px solid var(--bd);text-transform:none;letter-spacing:0.04em">Install App</button><button class="lnk" id="rf">Sync</button></div></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
 <nav id="nav" aria-label="Main sections"></nav>
@@ -228,7 +229,7 @@ nav button .ic{display:none}
  <div style="flex:1 1 200px"><label>&nbsp;</label><div id="silentPrintStatus" class="mu" style="font-size:12px;line-height:1.4">Standard print dialog active. Pair USB above or launch Chrome with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">--kiosk-printing</code> for 100% silent printing.</div></div>
 </div>
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
- <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div>
+ <button class="btn" id="sSave">Save settings</button></div>
 
 <div class="card"><h2>App Permanence &amp; Offline Speed</h2>
 <div class="stat" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
@@ -247,12 +248,12 @@ nav button .ic{display:none}
   <button class="btn g" id="installBtnSettings" style="min-height:44px">Install Permanent App</button>
  </div>
 </div>
-<div class="mu" style="margin-top:10px"><b>All-Day Sign-in Active:</b> Google authentication now silently auto-renews in the background so you only sign in once for the entire day. The register functions 100% offline even if internet drops.</div>
+<div class="mu" style="margin-top:10px"><b>Staying signed in:</b> your login is remembered on this device. Billing keeps working offline and syncs when the internet is back.</div>
 </div>
 
 <div class="card"><h2>Appearance &amp; Account</h2>
 <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px"><div><b>Theme</b><div class="mu">Switch the whole app between light and dark mode.</div></div><button class="btn g" id="themeBtn" type="button" style="min-height:44px">Dark mode</button></div>
-<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between"><div><b>Account</b><div class="mu">Sign out of Google on this device.</div></div><button class="btn g" id="so" type="button" style="min-height:44px">Sign out</button></div>
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between"><div><b>Account</b><div class="mu">Sign out of this device.</div></div><button class="btn g" id="so" type="button" style="min-height:44px">Sign out</button></div>
 </div>
 
 <div class="card"><h2>Disaster Recovery &amp; Data Backup</h2>
@@ -268,7 +269,7 @@ nav button .ic{display:none}
 </main>
 <div id="mbar"><div class="mb-t"><span>Total</span><b id="mbTot">₹0</b></div><button class="btn" id="mbGo" type="button">Save &amp; print</button></div>
 <div id="modal" role="dialog" aria-modal="true" aria-label="Dialog"><div id="mbox"></div></div><div id="toast" role="status" aria-live="polite"></div><div id="printArea"></div>
-<div id="gate" role="dialog" aria-modal="true" aria-label="Sign in"><div class="gwall" id="gwall" aria-hidden="true"></div><div class="gmid"><div class="gspot" aria-hidden="true"></div><h1 class="gname" aria-label="Choppers"><span style="--i:0">C</span><span style="--i:1">H</span><span style="--i:2">O</span><span style="--i:3">P</span><span style="--i:4">P</span><span style="--i:5">E</span><span style="--i:6">R</span><span style="--i:7">S</span></h1><div class="gsub">MENS WEAR</div><div class="gbot"><p id="gateMsg">Checking sign-in…</p><button class="btn" id="gateBtn" style="display:none">Sign in with Google</button></div></div></div>
+<div id="gate" role="dialog" aria-modal="true" aria-label="Sign in"><div class="gwall" id="gwall" aria-hidden="true"></div><div class="gmid"><div class="gspot" aria-hidden="true"></div><h1 class="gname" aria-label="Choppers"><span style="--i:0">C</span><span style="--i:1">H</span><span style="--i:2">O</span><span style="--i:3">P</span><span style="--i:4">P</span><span style="--i:5">E</span><span style="--i:6">R</span><span style="--i:7">S</span></h1><div class="gsub">MENS WEAR</div><div class="gbot"><p id="gateMsg">Checking sign-in…</p><form id="gateForm" autocomplete="on" style="display:none"><input id="gUser" type="text" name="username" placeholder="USERNAME" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"><input id="gPass" type="password" name="password" placeholder="PASSWORD" autocomplete="current-password"><button class="btn" id="gateBtn" type="submit">SIGN IN</button></form></div></div></div>
 <script>
 // Instant font stack ready
 const S={products:[],customers:[],bills:[],cart:[],cfg:{name:'Choppers Mens Wear',addr:'',gst:'',phone:'',paper:80,note:'Thank you! Visit again. Exchange within 7 days with bill.',beep:true}};
@@ -304,10 +305,6 @@ async function reqPersist(){
  }
 }
 reqPersist();
-
-// --- Persistent Auth Token Handling (LocalStorage + SessionStorage dual-persist) ---
-function saveTok(tok){TOK=tok;try{if(tok){lsSet('cmw-tok',JSON.stringify(tok));sessionStorage.setItem('cmw-tok',JSON.stringify(tok))}else{lsSet('cmw-tok','');sessionStorage.removeItem('cmw-tok')}}catch(e){}}
-function loadTok(){try{const raw=lsGet('cmw-tok')||sessionStorage.getItem('cmw-tok');return raw?JSON.parse(raw):null}catch(e){return null}}
 
 // --- Synthesized Audio Chime for Instant Barcode Scan Feedback ---
 let audioCtx=null;
@@ -384,8 +381,8 @@ const id_=s=>String(s).trim().replace(/[^\w-]/g,'_');
 const dt=t=>DTF_SHORT.format(t instanceof Date?t:new Date(t));
 let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
 const W=async f=>{try{await f();return true}catch(e){toast('Failed: '+(e.message||e.code||e));return false}};
-const lsGet=k=>{try{return localStorage.getItem(k)||''}catch(e){return ''}};
-const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+function lsGet(k){try{return localStorage.getItem(k)||''}catch(e){return ''}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 
 /* tabs */
 const TABS=[['bill','Billing'],['inv','Products'],['cust','Customers'],['sales','Sales'],['lab','Labels'],['set','Settings']];
@@ -462,52 +459,12 @@ let pendingSaves=0;
   }
  });
 })();
-/* GitHub version: the same rules as Code.gs, run on the Google Sheet with Google sign-in */
-const CLIENT_ID='882271530090-r21h122mdc5alla5fhfr3no08vlpvc1c.apps.googleusercontent.com';
-const SCOPE='https://www.googleapis.com/auth/spreadsheets';
-const SID='1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g';
 const BILLS_WINDOW=300;
-let busy=false,TOK=null,tokenClient=null,pending=null,inflight=null,REFRESH_T=null;
-const enc=encodeURIComponent;
-const emsg=e=>({needs_auth:'Sign-in needed. Tap "Sign in with Google".',gis:'Google sign-in did not load. Check your internet and reload.',popup:'Sign-in window was blocked. Allow pop-ups for this site, then tap Sign in again.',setup:'Setup needed: add your Google Client ID at the top of index.html.'})[e.code]||(e.message||String(e));
-function showSignIn(msg){$('st').innerHTML=esc(msg||'Sign in with your Google account to load the shop data.')+' <button class="lnk" id="si">Sign in with Google</button>'}
-$('st').onclick=e=>{if(e.target.id==='si')signIn()};
-function scheduleTokenRefresh(){
- clearTimeout(REFRESH_T);
- if(!TOK||!TOK.exp)return;
- // Silently renew token 8 minutes before it expires to keep session active all day
- const delay=Math.max(30000,TOK.exp-Date.now()-480000);
- REFRESH_T=setTimeout(()=>{
-  try{
-   if(tokenClient&&!inflight){
-    const hint=lsGet('cmw-email');
-    const opts={prompt:''};
-    if(hint)opts.hint=hint;
-    tokenClient.requestAccessToken(opts);
-   }
-  }catch(e){}
- },delay);
-}
-function getToken(interactive){
- if(TOK&&TOK.exp>Date.now())return Promise.resolve(TOK.t);
- if(CLIENT_ID.startsWith('PASTE'))return Promise.reject(Object.assign(new Error('setup'),{code:'setup'}));
- if(!tokenClient)return Promise.reject(Object.assign(new Error('gis'),{code:'gis'}));
- if(inflight)return inflight;
- inflight=new Promise((res,rej)=>{
-  pending={res,rej};
-  try{
-   const hint=lsGet('cmw-email');
-   const opts={prompt:interactive?'select_account':''};
-   if(hint)opts.hint=hint;
-   tokenClient.requestAccessToken(opts);
-  }catch(e){
-   rej(Object.assign(e,{code:'popup'}));
-  }
- }).finally(()=>{inflight=null});
- return inflight;
-}
+let busy=false;
+const emsg=e=>(e&&e.message)||String(e);
+function showSignIn(msg){gateShow(msg||'Please sign in again.',true)}
 const today=()=>new Date().toLocaleDateString('en-CA');
-const gateShow=(msg,btn)=>{document.body.classList.remove('authed');$('gateMsg').textContent=msg||'';$('gateBtn').style.display=btn?'':'none';$('gateBtn').disabled=false};
+const gateShow=(msg,btn)=>{document.body.classList.remove('authed');$('gateMsg').textContent=msg||'';$('gateForm').style.display=btn?'flex':'none';$('gateBtn').disabled=false};
 const gateOpen=zoom=>{
  const g=$('gate'),b=document.body;
  if(zoom&&g&&!b.classList.contains('authed')&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)){
@@ -515,103 +472,18 @@ const gateOpen=zoom=>{
   setTimeout(()=>{g.classList.remove('leaving');b.classList.remove('entering')},1700);
  }else b.classList.add('authed');
  window.dispatchEvent(new Event('resize'))};
-$('gateBtn').onclick=async()=>{const b=$('gateBtn');b.disabled=true;$('gateMsg').textContent='Signing in…';
- try{await getToken(true);lsSet('cmw-day',today());await load();gateOpen(true);toast('Signed in')}catch(e){gateShow(emsg(e),true)}};
+let manualLogin=false;
+$('gateForm').onsubmit=async e=>{e.preventDefault();const b=$('gateBtn');b.disabled=true;manualLogin=true;$('gateMsg').textContent='Signing in…';
+ try{await fauth.signInWithEmailAndPassword(uEmail($('gUser').value),$('gPass').value)}catch(err){manualLogin=false;gateShow(fbErr(err),true);$('gPass').value=''}};
 $('so').onclick=()=>{
  if(syncQueue.length&&!confirm(syncQueue.length+' bill(s) are not synced yet. Signing out may lose them. Sign out anyway?'))return;
- try{if(TOK&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(TOK.t,()=>{})}catch(e){}
- saveTok(null);lsSet('cmw-email','');lsSet('cmw-day','');gateShow('You have been signed out. Sign in to continue.',true)};
-async function signIn(){try{await getToken(true);lsSet('cmw-day',today());await load();toast('Signed in')}catch(e){showSignIn(emsg(e))}}
-// The connection to the Google Sheet (Sheets API). Supports batchGet and batchUpdate for fewer round-trips.
-async function callT(tool,input){
- const tok=await getToken(false);
- const base='https://sheets.googleapis.com/v4/spreadsheets/'+SID;
- let url,method,body;
- if(tool==='get_values'){method='GET';url=base+'/values/'+enc(input.range)+'?valueRenderOption=UNFORMATTED_VALUE'}
- else if(tool==='batch_get_values'){method='GET';url=base+'/values:batchGet?valueRenderOption=UNFORMATTED_VALUE&'+input.ranges.map(r=>'ranges='+enc(r)).join('&')}
- else if(tool==='update_values'){method='PUT';url=base+'/values/'+enc(input.range)+'?valueInputOption=USER_ENTERED';body={range:input.range,majorDimension:'ROWS',values:input.values}}
- else if(tool==='batch_update_values'){method='POST';url=base+'/values:batchUpdate';body={valueInputOption:'USER_ENTERED',data:input.data}}
- else if(tool==='append_values'){method='POST';url=base+'/values/'+enc(input.range)+':append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS';body={values:input.values}}
- else if(tool==='batch_clear_values'){method='POST';url=base+'/values:batchClear';body={ranges:input.ranges}}
- else throw new Error('Unknown call '+tool);
- const r=await fetch(url,{method,headers:{Authorization:'Bearer '+tok,'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
- const j=await r.json().catch(()=>({}));
- if(r.status===401){saveTok(null);throw Object.assign(new Error('needs_auth'),{code:'needs_auth'})}
- if(!r.ok)throw new Error((j.error&&j.error.message)||('Google error '+r.status));
- return j;
-}
-const getV=async range=>(await callT('get_values',{range})).values||[];
-const batchGetV=async ranges=>((await callT('batch_get_values',{ranges})).valueRanges||[]).map(v=>v.values||[]);
-const putV=(range,values)=>callT('update_values',{range,values});
-const batchPutV=data=>callT('batch_update_values',{data});
-const addV=(range,values)=>callT('append_values',{range,values});
-const clearV=range=>callT('batch_clear_values',{ranges:[range]});
+ fauth.signOut().then(()=>{lsSet('cmw-cashier','');S.cashier='';$('gPass').value='';gateShow('You have been signed out.',true)})};
 let jobQ=Promise.resolve();
 function serial(fn){const p=jobQ.then(fn);jobQ=p.catch(()=>{});return p}
 const numV=v=>v===''||v==null?0:+String(v).replace(/[₹,\s]/g,'')||0;
 const digitsOf=v=>String(v==null?'':v).replace(/\D/g,'');
 const skuId=sku=>String(sku).trim().replace(/[^\w-]/g,'_');
 const indexProd=p=>({...p,id:skuId(p.sku),_skuL:String(p.sku||'').toLowerCase(),_nameL:String(p.name||'').trim().toLowerCase(),_q:[p.sku,p.name,p.size,p.cat].join(' ').toLowerCase()});
-const mapProdRows=rows=>rows.map((r,i)=>indexProd({row:i+2,sku:String(r[0]||'').trim().replace(/^'/,''),name:String(r[1]||''),size:String(r[2]||''),cat:String(r[3]||''),cost:numV(r[4]),price:numV(r[5]),tax:numV(r[6])})).filter(p=>p.sku);
-const mapCustRows=rows=>rows.map((r,i)=>{const ph=digitsOf(r[0]);const name=String(r[1]||'');return{id:ph,row:i+2,phone:ph,name,visits:numV(r[2]),spent:numV(r[3]),balance:numV(r[4]),last:numV(r[5]),points:numV(r[6]),_nameL:name.toLowerCase()}}).filter(c=>c.phone);
-async function readProducts(){return mapProdRows(await getV('Products!A2:G'))}
-async function readCustomers(){return mapCustRows(await getV('Customers!A2:G'))}
-function billFromRow(r){let items=[];try{items=JSON.parse(r[15]||'[]')}catch(e){}const inv=String(r[0]||'');return{id:inv,inv,no:numV(r[1]),ts:numV(r[3]),cashier:String(r[4]||''),cust:String(r[5]||''),phone:digitsOf(r[6]),mode:String(r[7]||''),sub:numV(r[8]),disc:numV(r[9]),tax:numV(r[10]),ro:numV(r[11]),total:numV(r[12]),paid:numV(r[13]),due:numV(r[14]),items,redeem:numV(r[16]),earned:numV(r[17]),exchange:numV(r[18]),deleted:String(r[19]||'').trim()!==''}}
-async function billWindow(){
- const len=(await getV('Bills!A:A')).length;
- if(len<2)return{rows:[]};
- const start=Math.max(2,len-BILLS_WINDOW+1);
- return{rows:await getV(`Bills!A${start}:T${len}`)}}
-function nextNoOf(rows){let max=0;rows.forEach(r=>{const n=numV(r[1]);if(n>max)max=n});return Math.max(INV_START,max+1)}
-async function findBillN(n,inv){
- const mem=S.bills.find(b=>b.inv===inv);if(mem)return mem;
- const colA=await getV('Bills!A:A');
- const idx=(n<colA.length&&String((colA[n]||[])[0]||'')===inv)?n:colA.findIndex(r=>String((r||[])[0]||'')===inv);
- if(idx<0)return null;
- const row=(await getV(`Bills!A${idx+1}:T${idx+1}`))[0]||[];
- return billFromRow(row)}
-let HDR_DONE=lsGet('cmw-hdr')==='1';
-async function ensurePointsHeader(){
- if(HDR_DONE)return;
- const [h,b,e]=await batchGetV(['Customers!G1:G1','Bills!Q1:R1','Bills!S1:S1']);
- const data=[];
- if(!(h[0]&&String(h[0][0]||'').trim()))data.push({range:'Customers!G1',majorDimension:'ROWS',values:[['Points']]});
- if(!(b[0]&&String(b[0][0]||'').trim()))data.push({range:'Bills!Q1',majorDimension:'ROWS',values:[['Points Redeemed','Points Earned']]});
- if(!(e[0]&&String(e[0][0]||'').trim()))data.push({range:'Bills!S1',majorDimension:'ROWS',values:[['Exchange Amount']]});
- if(data.length)await batchPutV(data);
- HDR_DONE=true;lsSet('cmw-hdr','1');
-}
-async function getData(){
- ensurePointsHeader().catch(()=>{});
- const cachedBlen=+lsGet('cmw-blen')||0;
- const reqRanges=['Settings!A2:B','Products!A2:G','Customers!A2:G','Bills!A:A'];
- const canPredict=cachedBlen>=2;
- if(canPredict)reqRanges.push(`Bills!A${Math.max(2,cachedBlen-BILLS_WINDOW+1)}:T${cachedBlen+40}`);
- const res=await batchGetV(reqRanges);
- const settings=res[0]||[],pRows=res[1]||[],cRows=res[2]||[],colA=res[3]||[];
- const products=mapProdRows(pRows);
- products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);
- const customers=mapCustRows(cRows);
- customers.sort((a,b)=>(b.last||0)-(a.last||0));
- const cfgRaw={};settings.forEach(r=>{if(r[0])cfgRaw[String(r[0]).trim()]=r[1]});
- const len=colA.length;
- lsSet('cmw-blen',String(len));
- let rows=[];
- const start=Math.max(2,len-BILLS_WINDOW+1);
- if(canPredict&&res[4]&&len<=cachedBlen+40&&start>=Math.max(2,cachedBlen-BILLS_WINDOW+1)){
-  const off=start-Math.max(2,cachedBlen-BILLS_WINDOW+1);
-  const count=len-start+1;
-  rows=(res[4]||[]).slice(off,off+count);
- }else if(len>=2){
-  rows=await getV(`Bills!A${start}:T${len}`);
- }
- return{
-  products,
-  customers,
-  bills:rows.map(r=>billFromRow(r)).filter(b=>b.inv&&!b.deleted).sort((a,b)=>b.ts-a.ts),
-  nextNo:nextNoOf(rows),
-  cfg:{name:String(cfgRaw.name||'Choppers Mens Wear'),addr:String(cfgRaw.addr||''),phone:String(cfgRaw.phone||'').replace(/^'/,''),gst:String(cfgRaw.gst||'').replace(/^'/,''),paper:numV(cfgRaw.paper)||80,note:String(cfgRaw.note||'')}}}
-async function findBill(no){const n=Math.round(+no);if(!n||n<1)return null;return (await findBillN(n,INV_PREFIX+n))||findBillN(n,'CMW-'+String(n).padStart(5,'0'))}
 const INV_START=83527,INV_PREFIX='S';
 const r2=x=>Math.round(x*100)/100;
 const fmtDate=ts=>DTF_FULL.format(ts instanceof Date?ts:new Date(ts));
@@ -620,9 +492,9 @@ function checkRedeem(want,avail,room){if(want>avail)throw new Error('Only '+Math
 function checkExchange(ex,room){if(ex>room+0.005)throw new Error('Exchange amount is more than the bill total')}
 async function priceBill(b,products){
  if(!b||!b.items||!b.items.length)throw new Error('Bill is empty');
- const byId={};(products||await readProducts()).forEach(p=>{byId[p.sku]=p});
+ const byId={};(products||[]).forEach(p=>{byId[p.sku]=p});
  let sub=0;
- const lines=b.items.map(it=>{const p=byId[String(it.sku)];if(!p)throw new Error('Item not found in the sheet: '+it.sku);const qty=Math.max(1,Math.round(+it.qty||0));const disc=Math.min(100,Math.max(0,+it.disc||0));const net=p.price*qty*(1-disc/100);sub+=net;return{p,qty,disc,net}});
+ const lines=b.items.map(it=>{const p=byId[String(it.sku)];if(!p)throw new Error('Item not found: '+it.sku);const qty=Math.max(1,Math.round(+it.qty||0));const disc=Math.min(100,Math.max(0,+it.disc||0));const net=p.price*qty*(1-disc/100);sub+=net;return{p,qty,disc,net}});
  let d0=b.discType==='%'?sub*(+b.discVal||0)/100:(+b.discVal||0);
  d0=Math.min(Math.max(d0,0),sub);
  return{lines,sub,d0}}
@@ -632,201 +504,151 @@ function totalsOf(priced,rd,ex){
  const total=priced.sub-d,grand=Math.round(total);
  return{tax,total,grand,ro:grand-total}}
 const itemsOf=priced=>priced.lines.map(l=>({sku:l.p.sku,name:l.p.name,size:l.p.size,qty:l.qty,price:l.p.price,disc:l.disc,amt:r2(l.fin),gst:l.p.tax||0}));
-function billRow(o){return[o.inv,o.no,o.date,o.ts,o.cashier,o.name,o.phone?"'"+o.phone:'',o.mode,r2(o.priced.sub),r2(o.priced.d0),r2(o.t.tax),r2(o.t.ro),o.t.grand,r2(o.paid),r2(o.due),JSON.stringify(o.items),o.want,o.earned,r2(o.exch||0)]}
 function billObj(o){return{id:o.inv,inv:o.inv,no:o.no,ts:o.ts,cashier:o.cashier,cust:o.name,phone:o.phone,mode:o.mode,paid:o.paid,due:o.due,sub:r2(o.priced.sub),disc:r2(o.priced.d0),redeem:o.want,exchange:r2(o.exch||0),tax:r2(o.t.tax),ro:r2(o.t.ro),total:o.t.grand,items:o.items,earned:o.earned}}
-const writeCust=(row,c)=>putV(`Customers!A${row}:G${row}`,[["'"+c.phone,c.name,c.visits,c.spent,c.balance,c.last,c.points]]);
-async function findBillRow(inv){
- const n=parseInt(String(inv).replace(/\D/g,''),10);
- if(!n)return null;
- const colA=await getV('Bills!A:A');
- const idx=(n<colA.length&&String((colA[n]||[])[0]||'')===inv)?n:colA.findIndex(r=>String((r||[])[0]||'')===inv);
- if(idx<0)return null;
- const row=idx+1;
- return{row,values:(await getV(`Bills!A${row}:T${row}`))[0]||[]}}
-function addCustomer(phone,name){return serial(async()=>{
- const p=digitsOf(phone);const n=String(name||'').trim();
- if(p.length!==10)throw new Error('Mobile number must be 10 digits');
- if(!n)throw new Error('Name is required');
- const custs=S.customers.length?S.customers:await readCustomers();
- const f=custs.find(x=>x.phone===p);
- if(f)return{id:f.phone,row:f.row,phone:f.phone,name:f.name,visits:f.visits,spent:f.spent,balance:f.balance,last:f.last,points:f.points,existed:true};
- const ts=Date.now();await addV('Customers!A1',[["'"+p,n,0,0,0,ts,0]]);
- const newRow=(custs.reduce((m,x)=>Math.max(m,x.row||1),1))+1;
- return{id:p,row:newRow,phone:p,name:n,visits:0,spent:0,balance:0,last:ts,points:0,existed:false};
-})}
-function nextNoFromRows(rows){let max=0;rows.forEach(r=>{const n=numV((r||[])[1]);if(n>max)max=n});return Math.max(INV_START,max+1)}
-/* A sale reads only the products on the bill and its one customer, after checking the cached row numbers.
-   If a row does not match, it reads the whole lists instead. The invoice number is always read from the sheet. */
-async function saleReads(b,phone){
+/* ===== Firebase version: Firestore data + username/password login ===== */
+const FIREBASE_CONFIG={apiKey:'AIzaSyBgyU9JDBa7ByerRfdR7UNziC45IZIheL8',authDomain:'choppersclothing.firebaseapp.com',projectId:'choppersclothing',storageBucket:'choppersclothing.firebasestorage.app',messagingSenderId:'1048542849848',appId:'1:1048542849848:web:f35dbaf5d02f7e639b6fcd'};
+const FB_READY=typeof firebase!=='undefined'&&!String(FIREBASE_CONFIG.apiKey).startsWith('PASTE');
+let fdb=null,fauth=null;
+if(FB_READY){firebase.initializeApp(FIREBASE_CONFIG);fauth=firebase.auth();fdb=firebase.firestore();fdb.enablePersistence({synchronizeTabs:true}).catch(()=>{})}
+window.FBSINCE=0;
+const fcol=n=>fdb.collection(n);
+const uEmail=u=>{u=String(u||'').trim().toLowerCase();return u.includes('@')?u:u.replace(/[^a-z0-9._-]/g,'')+'@choppers.app'};
+const fbErr=e=>({'auth/invalid-credential':'Wrong username or password.','auth/wrong-password':'Wrong username or password.','auth/user-not-found':'Wrong username or password.','auth/invalid-email':'Enter your username.','auth/too-many-requests':'Too many attempts. Wait a minute and try again.','auth/network-request-failed':'No internet. Check your connection.','permission-denied':'Not allowed. Check the Firestore rules.'})[e.code]||e.message||String(e);
+const mkProd=(id,o)=>indexProd({row:1,sku:o.sku,name:o.name||'',size:o.size||'',cat:o.cat||'',cost:+o.cost||0,price:+o.price||0,tax:+o.tax||0});
+const mkCust=(id,o)=>({id,row:1,phone:id,name:o.name||'',visits:+o.visits||0,spent:+o.spent||0,balance:+o.balance||0,last:+o.last||0,points:+o.points||0,_nameL:String(o.name||'').toLowerCase()});
+const custDoc=c=>({phone:c.phone,name:c.name,visits:c.visits,spent:c.spent,balance:c.balance,last:c.last,points:c.points,u:Date.now()});
+async function fbDelta(col,cur,since,toObj){
+ let q=fcol(col);if(since)q=q.where('u','>',since-120000);
+ const snap=await q.get();const m=new Map(since?cur.map(x=>[x.id,x]):[]);
+ snap.forEach(d=>{const o=d.data();if(o.deleted)m.delete(d.id);else m.set(d.id,toObj(d.id,o))});
+ return [...m.values()]}
+async function fbGetData(){
+ const t0=Date.now();
+ const warm=window.FBSINCE&&(S.products.length||S.customers.length)?window.FBSINCE:0;
+ const [products,customers,bsnap,cnt,set]=await Promise.all([
+  fbDelta('products',S.products,warm,mkProd),fbDelta('customers',S.customers,warm,mkCust),
+  fcol('bills').orderBy('ts','desc').limit(BILLS_WINDOW).get(),
+  fdb.doc('meta/counter').get(),fdb.doc('meta/settings').get()]);
+ window.FBSINCE=t0;
+ products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);customers.sort((a,b)=>(b.last||0)-(a.last||0));
+ const bills=[];bsnap.forEach(d=>{const o=d.data();if(!o.deleted)bills.push({...o,id:d.id,inv:d.id})});
+ const c=set.exists?set.data():{};
+ return{products,customers,bills,nextNo:cnt.exists?cnt.data().next:Math.max(INV_START,bills.reduce((m,b)=>Math.max(m,b.no||0),0)+1),
+  cfg:{name:String(c.name||'Choppers Mens Wear'),addr:String(c.addr||''),phone:String(c.phone||''),gst:String(c.gst||''),paper:numV(c.paper)||80,note:String(c.note||'')}}}
+async function fbFindBill(no){const n=Math.round(+no);if(!n||n<1)return null;
+ for(const id of [INV_PREFIX+n,'CMW-'+String(n).padStart(5,'0')]){const d=await fcol('bills').doc(id).get();if(d.exists)return{...d.data(),id,inv:id}}return null}
+function fbAddCustomer(phone,name){return serial(async()=>{
+ const p=digitsOf(phone),n=String(name||'').trim();
+ if(p.length!==10)throw new Error('Mobile number must be 10 digits');if(!n)throw new Error('Name is required');
+ const ref=fcol('customers').doc(p),d=await ref.get();
+ if(d.exists&&!d.data().deleted)return{...mkCust(p,d.data()),existed:true};
+ const c={phone:p,name:n,visits:0,spent:0,balance:0,last:Date.now(),points:0};await ref.set({...c,u:Date.now()});
+ return{...mkCust(p,c),existed:false}})}
+const readPrices=async(tx,skus)=>(await Promise.all(skus.map(k=>tx.get(fcol('products').doc(skuId(k)))))).filter(d=>d.exists&&!d.data().deleted).map(d=>d.data());
+function fbSaveBill(b){return serial(async()=>{
+ const mode=String(b.mode||'Cash'),phone=digitsOf(b.phone);
+ if(mode==='Credit'&&!phone)throw new Error('Mobile number needed for credit bills');
  const skus=[...new Set((b.items||[]).map(it=>String(it.sku)))];
- const pc=skus.map(sku=>S._bySku.get(sku.trim().toLowerCase()));
- const cc=phone?S._custById.get(phone):null;
- if(skus.length&&pc.every(p=>p&&p.row>=2)&&(!phone||(cc&&cc.row>=2))){
-  const ranges=pc.map(p=>`Products!A${p.row}:G${p.row}`);
-  if(phone)ranges.push(`Customers!A${cc.row}:G${cc.row}`);
-  ranges.push('Bills!A:B');
-  const got=await batchGetV(ranges);
-  const pv=pc.map((p,i)=>(got[i]||[])[0]||[]);
-  const cv=phone?((got[skus.length]||[])[0]||[]):[];
-  const sameSku=pv.every((v,i)=>String(v[0]||'').trim().replace(/^'/,'').toLowerCase()===skus[i].trim().toLowerCase());
-  const sameCust=!phone||digitsOf(cv[0])===phone;
-  if(sameSku&&sameCust)return{products:pv.map((v,i)=>({...mapProdRows([v])[0],row:pc[i].row})),custs:phone?[{...mapCustRows([cv])[0],row:cc.row}]:[],ab:got[got.length-1]};
- }
- const [pRows,cRows,ab]=await batchGetV(['Products!A2:G','Customers!A2:G','Bills!A:B']);
- return{products:mapProdRows(pRows),custs:mapCustRows(cRows),ab};
-}
-function saveBill(b){return serial(async()=>{
- const mode=String(b.mode||'Cash');const phone=digitsOf(b.phone);
+ return fdb.runTransaction(async tx=>{
+  const cref=fdb.doc('meta/counter'),cs=await tx.get(cref);
+  const products=await readPrices(tx,skus);
+  const custRef=phone?fcol('customers').doc(phone):null,cd=custRef?await tx.get(custRef):null;
+  const cust=cd&&cd.exists?mkCust(phone,cd.data()):null;
+  const priced=await priceBill(b,products);
+  const want=Math.max(0,Math.floor(+b.redeem||0));
+  if(want>0&&!cust)throw new Error('Select a customer to redeem points');
+  checkRedeem(want,cust?cust.points:0,priced.sub-priced.d0);
+  const ex=Math.max(0,+b.exchange||0);checkExchange(ex,priced.sub-priced.d0-want);
+  const t=totalsOf(priced,want,ex),paid=paidOf(mode,b.paidIn,t.grand),due=t.grand-paid;
+  const name=String(b.cust||'').trim(),cashier=String(b.cashier||''),ts=Date.now(),earned=phone?Math.floor(t.grand/10):0;
+  const no=cs.exists?cs.data().next:INV_START,inv=INV_PREFIX+no,items=itemsOf(priced);
+  const bill=billObj({inv,no,ts,cashier,name,phone,mode,paid,due,priced,t,items,want,earned,exch:ex});
+  tx.set(fcol('bills').doc(inv),{...bill,date:fmtDate(ts),deleted:false,u:ts});tx.set(cref,{next:no+1});
+  let customer=null;
+  if(phone){customer=cust?{id:phone,row:1,phone,name:name||cust.name,visits:cust.visits+1,spent:cust.spent+t.grand,balance:cust.balance+due,last:ts,points:cust.points-want+earned}
+   :{id:phone,row:1,phone,name,visits:1,spent:t.grand,balance:due,last:ts,points:earned};tx.set(custRef,custDoc(customer))}
+  return{pointsEarned:earned,bill,customer,customers:customer?[customer]:[]}})})}
+function fbUpdateBill(inv,b){return serial(async()=>{
+ const mode=String(b.mode||'Cash'),phone=digitsOf(b.phone);
  if(mode==='Credit'&&!phone)throw new Error('Mobile number needed for credit bills');
- const {products,custs,ab}=await saleReads(b,phone);
- const priced=await priceBill(b,products);
- const cust=phone?(custs.find(x=>x.phone===phone)||null):null;
- const want=Math.max(0,Math.floor(+b.redeem||0));
- if(want>0&&!cust)throw new Error('Select a customer to redeem points');
- checkRedeem(want,cust?cust.points:0,priced.sub-priced.d0);
- const ex=Math.max(0,+b.exchange||0);checkExchange(ex,priced.sub-priced.d0-want);
- const t=totalsOf(priced,want,ex);
- const paid=paidOf(mode,b.paidIn,t.grand);const due=t.grand-paid;
- const name=String(b.cust||'').trim();const cashier=String(b.cashier||'');const ts=Date.now();
- const earned=phone?Math.floor(t.grand/10):0;
- const no=nextNoFromRows(ab);const inv=INV_PREFIX+no;
- const items=itemsOf(priced);
- const writes=[addV('Bills!A1',[billRow({inv,no,date:fmtDate(ts),ts,cashier,name,phone,mode,priced,t,paid,due,items,want,earned,exch:ex})])];
- let customer=null;
- if(phone){
-  if(cust&&cust.row){customer={id:phone,row:cust.row,phone,name:name||cust.name,visits:cust.visits+1,spent:cust.spent+t.grand,balance:cust.balance+due,last:ts,points:cust.points-want+earned};writes.push(writeCust(cust.row,customer))}
-  else{const newRow=(custs.reduce((m,x)=>Math.max(m,x.row||1),1))+1;customer={id:phone,row:newRow,phone,name,visits:1,spent:t.grand,balance:due,last:ts,points:earned};writes.push(addV('Customers!A1',[["'"+phone,name,1,t.grand,due,ts,earned]]))}
- }
- await Promise.all(writes);
- return{pointsEarned:earned,bill:billObj({inv,no,ts,cashier,name,phone,mode,paid,due,priced,t,items,want,earned,exch:ex}),customer,customers:customer?[customer]:[]};
-})}
-function updateBill(inv,b){return serial(async()=>{
- const found=await findBillRow(String(inv));
- if(!found)throw new Error('Invoice '+inv+' not found');
- const old=billFromRow(found.values);
- const priced=await priceBill(b);
- const mode=String(b.mode||'Cash');const phone=digitsOf(b.phone);
- if(mode==='Credit'&&!phone)throw new Error('Mobile number needed for credit bills');
- const custs=await readCustomers();
- const same=!!phone&&phone===old.phone;
- const oldCust=old.phone?(custs.find(x=>x.phone===old.phone)||null):null;
- const newCust=phone?(custs.find(x=>x.phone===phone)||null):null;
- const oldAfter=oldCust?oldCust.points+old.redeem-old.earned:0;
- if(oldCust&&oldAfter<0)throw new Error('This bill cannot be changed: the customer has already used points earned on it');
- const want=Math.max(0,Math.floor(+b.redeem||0));
- if(want>0&&!phone)throw new Error('Select a customer to redeem points');
- checkRedeem(want,same?oldAfter:(newCust?newCust.points:0),priced.sub-priced.d0);
- const ex=Math.max(0,+b.exchange||0);checkExchange(ex,priced.sub-priced.d0-want);
- const t=totalsOf(priced,want,ex);
- const paid=paidOf(mode,b.paidIn,t.grand);const due=t.grand-paid;
- const name=String(b.cust||'').trim();const earned=phone?Math.floor(t.grand/10):0;const items=itemsOf(priced);
- await putV(`Bills!A${found.row}:T${found.row}`,[billRow({inv:old.inv,no:old.no,date:found.values[2],ts:old.ts,cashier:old.cashier,name,phone,mode,priced,t,paid,due,items,want,earned,exch:ex})]);
- const customers=[];
- if(oldCust&&!same){const oc={id:oldCust.phone,phone:oldCust.phone,name:oldCust.name,visits:Math.max(0,oldCust.visits-1),spent:oldCust.spent-old.total,balance:oldCust.balance-old.due,last:oldCust.last,points:oldAfter};await writeCust(oldCust.row,oc);customers.push(oc)}
- let customer=null;
- if(phone&&newCust){
-  customer=same
-   ?{id:phone,phone,name:name||newCust.name,visits:newCust.visits,spent:newCust.spent-old.total+t.grand,balance:newCust.balance-old.due+due,last:old.ts,points:oldAfter-want+earned}
-   :{id:phone,phone,name:name||newCust.name,visits:newCust.visits+1,spent:newCust.spent+t.grand,balance:newCust.balance+due,last:old.ts,points:newCust.points-want+earned};
-  await writeCust(newCust.row,customer);customers.push(customer)}
- else if(phone){customer={id:phone,phone,name,visits:1,spent:t.grand,balance:due,last:old.ts,points:earned};await addV('Customers!A1',[["'"+phone,name,1,t.grand,due,old.ts,earned]]);customers.push(customer)}
- return{pointsEarned:earned,bill:billObj({inv:old.inv,no:old.no,ts:old.ts,cashier:old.cashier,name,phone,mode,paid,due,priced,t,items,want,earned,exch:ex}),customer,customers};
-})}
-async function searchBills(opts){
- const q=String((opts&&opts.q)||'').trim();const from=+((opts&&opts.from)||0)||0;const to=+((opts&&opts.to)||0)||0;
- const numeric=/^\d+$/.test(q);const invLike=/^(cmw-?|s)\d*$/i.test(q);
- const qNo=parseInt(q.replace(/\D/g,''),10)||0;const qd=digitsOf(q);
- const nameQ=q.replace(/\d/g,'').trim().toLowerCase();
- const out={count:0,total:0,redeemed:0,earned:0,byMode:{},bills:[]};
+ const skus=[...new Set((b.items||[]).map(it=>String(it.sku)))];
+ return fdb.runTransaction(async tx=>{
+  const bref=fcol('bills').doc(String(inv)),bd=await tx.get(bref);
+  if(!bd.exists)throw new Error('Invoice '+inv+' not found');
+  const old={...bd.data(),inv:bd.id};
+  const products=await readPrices(tx,skus);
+  const same=!!phone&&phone===old.phone;
+  const oRef=old.phone?fcol('customers').doc(old.phone):null,od=oRef?await tx.get(oRef):null;
+  const nRef=phone?(same?oRef:fcol('customers').doc(phone)):null,nd=nRef?(same?od:await tx.get(nRef)):null;
+  const oldCust=od&&od.exists?mkCust(old.phone,od.data()):null,newCust=nd&&nd.exists?mkCust(phone,nd.data()):null;
+  const priced=await priceBill(b,products);
+  const oldAfter=oldCust?oldCust.points+(old.redeem||0)-(old.earned||0):0;
+  if(oldCust&&oldAfter<0)throw new Error('This bill cannot be changed: the customer has already used points earned on it');
+  const want=Math.max(0,Math.floor(+b.redeem||0));
+  if(want>0&&!phone)throw new Error('Select a customer to redeem points');
+  checkRedeem(want,same?oldAfter:(newCust?newCust.points:0),priced.sub-priced.d0);
+  const ex=Math.max(0,+b.exchange||0);checkExchange(ex,priced.sub-priced.d0-want);
+  const t=totalsOf(priced,want,ex),paid=paidOf(mode,b.paidIn,t.grand),due=t.grand-paid;
+  const name=String(b.cust||'').trim(),earned=phone?Math.floor(t.grand/10):0,items=itemsOf(priced);
+  const bill=billObj({inv:old.inv,no:old.no,ts:old.ts,cashier:old.cashier,name,phone,mode,paid,due,priced,t,items,want,earned,exch:ex});
+  tx.set(bref,{...bill,date:old.date||fmtDate(old.ts),deleted:false,u:Date.now()});
+  const customers=[];let customer=null;
+  if(oldCust&&!same){const oc={id:old.phone,row:1,phone:old.phone,name:oldCust.name,visits:Math.max(0,oldCust.visits-1),spent:oldCust.spent-old.total,balance:oldCust.balance-old.due,last:oldCust.last,points:oldAfter};tx.set(oRef,custDoc(oc));customers.push(oc)}
+  if(phone){customer=newCust
+   ?(same?{id:phone,row:1,phone,name:name||newCust.name,visits:newCust.visits,spent:newCust.spent-old.total+t.grand,balance:newCust.balance-old.due+due,last:old.ts,points:oldAfter-want+earned}
+    :{id:phone,row:1,phone,name:name||newCust.name,visits:newCust.visits+1,spent:newCust.spent+t.grand,balance:newCust.balance+due,last:old.ts,points:newCust.points-want+earned})
+   :{id:phone,row:1,phone,name,visits:1,spent:t.grand,balance:due,last:old.ts,points:earned};
+   tx.set(nRef,custDoc(customer));customers.push(customer)}
+  return{pointsEarned:earned,bill,customer,customers}})})}
+async function fbSearchBills(opts){
+ const q=String((opts&&opts.q)||'').trim(),from=+((opts&&opts.from)||0)||0,to=+((opts&&opts.to)||0)||0;
+ const numeric=/^\d+$/.test(q),invLike=/^(cmw-?|s)\d*$/i.test(q),qNo=parseInt(q.replace(/\D/g,''),10)||0,qd=digitsOf(q),nameQ=q.replace(/\d/g,'').trim().toLowerCase();
+ const out={count:0,total:0,redeemed:0,earned:0,byMode:{},bills:[]},seen=new Set();
  const matchBill=b=>{
-  if(!b.inv||b.deleted||b.ts<from||(to&&b.ts>to))return;
-  if(q){const hit=(qNo&&(numeric||invLike)&&b.no===qNo)||(invLike&&q.length>3&&b.inv.toLowerCase().indexOf(q.toLowerCase())>=0)||(!invLike&&nameQ.length>=2&&b.cust.toLowerCase().indexOf(nameQ)>=0)||(numeric&&qd.length>=3&&b.phone.indexOf(qd)>=0);if(!hit)return}
-  out.count++;out.total+=b.total;out.redeemed+=b.redeem||0;out.earned+=b.earned||0;out.byMode[b.mode]=(out.byMode[b.mode]||0)+b.total;out.bills.push(b)};
- // Fast path: if S.bills already covers the requested time window (and no search query requires older bills), compute immediately in memory
- const oldestLoaded=S.bills.length?S.bills[S.bills.length-1].ts:Infinity;
- if(!q&&from>0&&S.bills.length&&oldestLoaded<=from){
-  S.bills.forEach(matchBill);
-  out.total=r2(out.total);Object.keys(out.byMode).forEach(k=>{out.byMode[k]=r2(out.byMode[k])});
-  out.bills.sort((a,b)=>b.ts-a.ts);out.bills=out.bills.slice(0,200);
-  return out;
- }
- const colA=await getV('Bills!A:A');
- let end=colA.length;
- while(end>=2){
-  const ranges=[];let e=end;
-  for(let k=0;k<3&&e>=2;k++){const st=Math.max(2,e-399);ranges.push(`Bills!A${st}:T${e}`);e=st-1}
-  const blocks=await batchGetV(ranges);
-  let inPeriod=false;
-  blocks.forEach(rows=>rows.map(r=>billFromRow(r)).forEach(b=>{if(b.ts>=from)inPeriod=true;matchBill(b)}));
-  if(!inPeriod)break;
-  end=e;
- }
+  if(!b.inv||b.deleted||seen.has(b.inv)||b.ts<from||(to&&b.ts>to))return;
+  if(q){const hit=(qNo&&(numeric||invLike)&&b.no===qNo)||(invLike&&q.length>3&&b.inv.toLowerCase().indexOf(q.toLowerCase())>=0)||(!invLike&&nameQ.length>=2&&(b.cust||'').toLowerCase().indexOf(nameQ)>=0)||(numeric&&qd.length>=3&&(b.phone||'').indexOf(qd)>=0);if(!hit)return}
+  seen.add(b.inv);out.count++;out.total+=b.total;out.redeemed+=b.redeem||0;out.earned+=b.earned||0;out.byMode[b.mode]=(out.byMode[b.mode]||0)+b.total;out.bills.push(b)};
+ const oldest=S.bills.length?S.bills[S.bills.length-1].ts:Infinity;
+ if(!q&&from>0&&S.bills.length&&oldest<=from)S.bills.forEach(matchBill);
+ else{
+  if(q&&qNo&&(numeric||invLike)){const b=await fbFindBill(qNo);if(b)matchBill(b)}
+  let ref=fcol('bills');if(from)ref=ref.where('ts','>=',from);if(to)ref=ref.where('ts','<=',to);
+  (await ref.orderBy('ts','desc').limit(1500).get()).forEach(d=>matchBill({...d.data(),id:d.id,inv:d.id}))}
  out.total=r2(out.total);Object.keys(out.byMode).forEach(k=>{out.byMode[k]=r2(out.byMode[k])});
- out.bills.sort((a,b)=>b.ts-a.ts);out.bills=out.bills.slice(0,200);
- return out}
-function deleteBill(inv){return serial(async()=>{
- const found=await findBillRow(String(inv));
- if(!found)throw new Error('Invoice '+inv+' not found');
- const old=billFromRow(found.values);
- if(old.deleted)throw new Error('This invoice is already deleted');
+ out.bills.sort((a,b)=>b.ts-a.ts);out.bills=out.bills.slice(0,200);return out}
+function fbDeleteBill(inv){return serial(()=>fdb.runTransaction(async tx=>{
+ const bref=fcol('bills').doc(String(inv)),bd=await tx.get(bref);
+ if(!bd.exists)throw new Error('Invoice '+inv+' not found');
+ const old=bd.data();if(old.deleted)throw new Error('This invoice is already deleted');
+ const cref=old.phone?fcol('customers').doc(old.phone):null,cd=cref?await tx.get(cref):null;
  let customer=null,customers=[];
- if(old.phone){const c=(await readCustomers()).find(x=>x.phone===old.phone)||null;
-  if(c){const back=c.points+old.redeem-old.earned;
-   if(back<0)throw new Error('This invoice cannot be deleted: the customer has already used points earned on it');
-   customer={id:c.phone,phone:c.phone,name:c.name,visits:Math.max(0,c.visits-1),spent:c.spent-old.total,balance:c.balance-old.due,last:c.last,points:back};
-   await writeCust(c.row,customer);customers.push(customer)}}
- await putV(`Bills!T${found.row}`,[[fmtDate(Date.now())]]);
- return{inv:old.inv,customer,customers};
-})}
-function saveProduct(p,origSku){return serial(async()=>{
+ if(cd&&cd.exists){const c=mkCust(old.phone,cd.data()),back=c.points+(old.redeem||0)-(old.earned||0);
+  if(back<0)throw new Error('This invoice cannot be deleted: the customer has already used points earned on it');
+  customer={id:c.phone,row:1,phone:c.phone,name:c.name,visits:Math.max(0,c.visits-1),spent:c.spent-old.total,balance:c.balance-old.due,last:c.last,points:back};
+  tx.set(cref,custDoc(customer));customers.push(customer)}
+ tx.update(bref,{deleted:true,deletedAt:fmtDate(Date.now()),u:Date.now()});
+ return{inv:String(inv),customer,customers}}))}
+function fbSaveProduct(p,origSku){return serial(async()=>{
  const sku=String(p.sku||'').trim(),name=String(p.name||'').trim();
  if(!sku||!name)throw new Error('SKU and name are required');
- const products=origSku&&S.products.length?S.products:await readProducts();
- if(!origSku&&products.some(x=>x.sku===sku))throw new Error('SKU already exists. Edit it from the list.');
- const row=["'"+sku,name,String(p.size||''),String(p.cat||''),numV(p.cost),numV(p.price),numV(p.tax)];
- if(origSku){
-  let e=products.find(x=>x.sku===origSku);
-  if(!e||!e.row)e=(await readProducts()).find(x=>x.sku===origSku);
-  if(!e)throw new Error('This item is no longer in the sheet. Refresh and try again.');
-  await putV(`Products!A${e.row}:G${e.row}`,[row]);
-  return e.row;
- }else{
-  await addV('Products!A1',[row]);
-  return (products.reduce((m,x)=>Math.max(m,x.row||1),1))+1;
- }})}
-function deleteProduct(sku){return serial(async()=>{
- let e=S.products.find(x=>x.sku===String(sku));
- if(!e||!e.row)e=(await readProducts()).find(x=>x.sku===String(sku));
- if(e&&e.row)await clearV(`Products!A${e.row}:G${e.row}`);
- return true})}
-function receivePayment(phone,amount){return serial(async()=>{
- const ph=digitsOf(phone);
- let c=S.customers.find(x=>x.phone===ph);
- if(!c||!c.row)c=(await readCustomers()).find(x=>x.phone===ph);
- if(!c)throw new Error('Customer not found');
- const a=Math.min(Math.max(+amount||0,0),c.balance);
+ const doc={sku,name,size:String(p.size||''),cat:String(p.cat||''),cost:numV(p.cost),price:numV(p.price),tax:numV(p.tax),deleted:false,u:Date.now()};
+ const ref=fcol('products').doc(skuId(sku));
+ if(!origSku){const d=await ref.get();if(d.exists&&!d.data().deleted)throw new Error('SKU already exists. Edit it from the list.')}
+ else if(origSku!==sku){const d=await ref.get();if(d.exists&&!d.data().deleted)throw new Error('SKU already exists.');
+  await fcol('products').doc(skuId(origSku)).set({deleted:true,u:Date.now()},{merge:true})}
+ await ref.set(doc);return 1})}
+const fbDeleteProduct=sku=>serial(async()=>{await fcol('products').doc(skuId(sku)).set({deleted:true,u:Date.now()},{merge:true});return true});
+const fbReceivePayment=(phone,amount)=>serial(()=>fdb.runTransaction(async tx=>{
+ const ref=fcol('customers').doc(digitsOf(phone)),d=await tx.get(ref);
+ if(!d.exists)throw new Error('Customer not found');
+ const c=mkCust(ref.id,d.data()),a=Math.min(Math.max(+amount||0,0),c.balance);
  if(a<=0)throw new Error('Enter an amount greater than zero');
- await putV(`Customers!E${c.row}`,[[c.balance-a]]);
- return c.balance-a})}
-function saveSettings(d){return serial(async()=>{
- const keys=(await getV('Settings!A2:A')).map(r=>String((r||[])[0]||'').trim());
- const updates=[],appends=[];
- for(const k of ['name','addr','phone','gst','paper','note']){
-  let v=d[k]==null?'':d[k];if((k==='phone'||k==='gst')&&v!=='')v="'"+String(v);
-  const idx=keys.indexOf(k);
-  if(idx>=0)updates.push({range:`Settings!B${idx+2}`,majorDimension:'ROWS',values:[[v]]});
-  else appends.push([k,v]);
- }
- const ops=[];
- if(updates.length)ops.push(batchPutV(updates));
- if(appends.length)ops.push(addV('Settings!A1',appends));
- if(ops.length)await Promise.all(ops);
- return true})}
-const SERVER={getData,findBill,saveBill,updateBill,addCustomer,searchBills,deleteBill,saveProduct,deleteProduct,receivePayment,saveSettings};
-
-const rpc=(fn,...a)=>(TOK&&TOK.exp>Date.now())?SERVER[fn](...a):getToken(true).then(()=>SERVER[fn](...a));
+ tx.update(ref,{balance:c.balance-a,u:Date.now()});return c.balance-a}));
+const fbSaveSettings=d=>serial(async()=>{const o={};for(const k of ['name','addr','phone','gst','paper','note'])o[k]=d[k]==null?'':d[k];await fdb.doc('meta/settings').set(o,{merge:true});return true});
+const SERVER={getData:fbGetData,findBill:fbFindBill,saveBill:fbSaveBill,updateBill:fbUpdateBill,addCustomer:fbAddCustomer,searchBills:fbSearchBills,deleteBill:fbDeleteBill,saveProduct:fbSaveProduct,deleteProduct:fbDeleteProduct,receivePayment:fbReceivePayment,saveSettings:fbSaveSettings};
+const rpc=(fn,...a)=>Promise.resolve().then(()=>SERVER[fn](...a));
 let cacheT=null;
-function writeCache(){clearTimeout(cacheT);try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg}))}catch(e){}}
+function writeCache(){clearTimeout(cacheT);try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg,fbs:window.FBSINCE||0}))}catch(e){}}
 function saveCache(){clearTimeout(cacheT);cacheT=setTimeout(()=>{if(window.requestIdleCallback)requestIdleCallback(writeCache,{timeout:3000});else writeCache()},500)}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)writeCache()});
 addEventListener('pagehide',writeCache);
@@ -854,7 +676,7 @@ function rebuildIndexes(){
   S.products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);
   S.customers=d.customers||[];
   S.customers.sort((a,b)=>(b.last||0)-(a.last||0));
-  S.bills=d.bills||[];S.nextNo=d.nextNo||INV_START;Object.assign(S.cfg,d.cfg||{});cfgLoaded=true;rebuildIndexes();fillSet()}}catch(e){}
+  window.FBSINCE=d.fbs||0;S.bills=d.bills||[];S.nextNo=d.nextNo||INV_START;Object.assign(S.cfg,d.cfg||{});cfgLoaded=true;rebuildIndexes();fillSet()}}catch(e){}
 })();
 async function load(){
  const d=await rpc('getData');
@@ -863,59 +685,31 @@ async function load(){
  if(!cfgLoaded){cfgLoaded=true;fillSet()}
  $('st').textContent='';R()}
 function saveFile(name,data){const u=URL.createObjectURL(new Blob([data],{type:/\.html$/.test(name)?'text/html':'application/octet-stream'}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},2000);toast('Saved '+name)}
-$('rf').onclick=async()=>{updateSyncBadge('syncing');try{await drainSyncQueue();await getToken(true);await load();updateSyncBadge('synced');toast('Synced with Google Sheet')}catch(e){if(e.code==='needs_auth')showSignIn();updateSyncBadge('offline');toast('Sync notice: '+emsg(e))}};
+$('rf').onclick=async()=>{updateSyncBadge('syncing');try{await drainSyncQueue();await load();updateSyncBadge('synced');toast('Synced')}catch(e){updateSyncBadge('offline');toast('Sync notice: '+emsg(e))}};
 let lastFullSync=Date.now();
 document.addEventListener('visibilitychange',()=>{
  if(!document.hidden&&Date.now()-lastFullSync>300000&&!busy&&pendingSaves===0){
-  getToken(false).then(()=>{lastFullSync=Date.now();return load();}).catch(()=>{});
+  load().then(()=>{lastFullSync=Date.now()}).catch(()=>{});
  }
 });
 (async()=>{
- if(CLIENT_ID.startsWith('PASTE')){gateShow(emsg({code:'setup'}),false);return}
- const ready=await Promise.race([
-  new Promise(r=>{const t=setInterval(()=>{if(window.google&&google.accounts&&google.accounts.oauth2){clearInterval(t);r(true)}},100)}),
-  new Promise(r=>setTimeout(()=>r(false),10000))]);
- if(!ready){gateShow(emsg({code:'gis'}),false);return}
- tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPE,
-  callback:r=>{const p=pending;pending=null;
-   if(r.error){
-    if(!TOK||TOK.exp<=Date.now())saveTok(null);
-    if(p)p.rej(Object.assign(new Error(r.error),{code:'needs_auth'}));
-    return;
-   }
-   const newTok={t:r.access_token,exp:Date.now()+(r.expires_in-120)*1000};
-   saveTok(newTok);
-   scheduleTokenRefresh();
-   // Remember account identity for automatic silent renewal throughout the day
-   if(!lsGet('cmw-email')){
-    fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+r.access_token}})
-     .then(res=>res.json())
-     .then(info=>{if(info&&info.email)lsSet('cmw-email',info.email)})
-     .catch(()=>{});
-   }
-   if(p)p.res(TOK.t);
-  },
-  error_callback:e=>{const p=pending;pending=null;if(p)p.rej(Object.assign(new Error(e.type||'popup'),{code:e.type==='popup_failed_to_open'?'popup':'needs_auth'}))}});
- const s=loadTok();if(s&&s.exp>Date.now()){TOK=s;scheduleTokenRefresh()}
- const signedToday=lsGet('cmw-day')===today(),valid=!!(TOK&&TOK.exp>Date.now());
- if(!signedToday){gateShow(lsGet('cmw-email')?'New day. Sign in once to start billing.':'Sign in with your Google account to open the app.',true);return}
- if(!valid){
-  // signed in earlier today: renew automatically, no tap needed
-  if(!navigator.onLine){gateOpen();$('st').textContent='Offline: bills will sync when you are back online.';return}
-  gateShow('Renewing sign-in…',false);
-  try{await getToken(false);await load();gateOpen()}catch(e){gateShow('Tap to continue.',true)}
-  return}
- try{await getToken(false);await load();gateOpen()}catch(e){
-  if(e.code==='needs_auth'||e.code==='popup')gateShow('Sign in with your Google account to open the app.',true);
-  else if(lsGet('cmw-email')){gateOpen();$('st').textContent='Could not load shop data: '+e.message}
-  else gateShow('Could not connect: '+e.message+'. Check your internet and try again.',true)}
+ if(typeof firebase==='undefined'){gateShow('Could not load Firebase. Check your internet and reload.',false);return}
+ if(!FB_READY){gateShow('Setup needed: paste your Firebase config in index.html (FIREBASE_CONFIG).',false);return}
+ fauth.onAuthStateChanged(async u=>{
+  if(!u){gateShow('',true);return}
+  const nm=String(u.email||'').split('@')[0];S.cashier=nm.charAt(0).toUpperCase()+nm.slice(1);lsSet('cmw-cashier',S.cashier);
+  const zoom=manualLogin;manualLogin=false;
+  if(!navigator.onLine&&S.products.length){gateOpen();$('st').textContent='Offline: bills will sync when you are back online.';return}
+  try{await load();gateOpen(zoom);drainSyncQueue()}
+  catch(e){if(S.products.length){gateOpen();$('st').textContent='Could not refresh: '+fbErr(e)}else gateShow('Could not connect: '+fbErr(e),true)}
+ });
 })();
 /* one sign-in per day: when the date changes, ask for sign-in again, but never in the middle of a bill or with unsynced bills */
-function dayCheck(){
+function dayCheck(){return;
  if(!document.body.classList.contains('authed'))return;
  if(lsGet('cmw-day')===today())return;
  if(busy||pendingSaves>0||syncQueue.length||(S.cart&&S.cart.length))return;
- saveTok(null);gateShow('New day. Sign in once to start billing.',true)}
+ gateShow('New day. Sign in once to start billing.',true)}
 setInterval(dayCheck,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)dayCheck()});
 S.cashier=lsGet('cmw-cashier');
 
@@ -1137,7 +931,7 @@ async function submit(printIt){
  // Apply local records in memory & cache
  applyResult({bill:localBill,customer:updatedCust,customers:updatedCust?[updatedCust]:[]},!!edit);
 
- // Enqueue background sync to Google Sheets
+ // Enqueue background sync to Firebase
  enqueueSync({type:edit?'updateBill':'saveBill',inv,payload,ts,edit:!!edit});
 }
 function restoreBill(s){S.cart=s.cart;S.editBill=s.editBill;$('bd').value=s.bd;$('bdT').value=s.bdT;$('pRedeem').value=s.pr;$('exAmt').value=s.ex;$('paid').value=s.paid;setPay(s.pay);setCust(s.cPhone,s.cName);refreshInvNo();rCart()}
@@ -1444,7 +1238,7 @@ function rCust(){
  const q=$('cq').value.toLowerCase().trim();
  const cs=[];for(let i=0;i<S.customers.length;i++){const c=S.customers[i];if(!q||(c._nameL||c.name.toLowerCase()).includes(q)||c.id.includes(q))cs.push(c);if(cs.length>=100&&q)break}
  const view=cs.slice(0,100);
- $('cb').innerHTML=view.map(c=>`<tr tabindex="0" data-c="${c.id}" style="cursor:pointer"><td><b>${esc(c.name||'—')}</b><div class="mu">${c.id}</div></td><td>${c.visits||0}</td><td>${fm(c.spent||0)}</td><td>${c.points||0}</td><td style="color:${c.balance>0?'var(--bad)':'inherit'}">${c.balance>0?fm(c.balance):'—'}</td></tr>`).join('')+(cs.length>100?`<tr><td colspan="5" class="mu" style="text-align:center;padding:10px">Showing 100 customers. Type to search others.</td></tr>`:'')||'<tr><td colspan="5" class="mu">Customers are added automatically at checkout when a mobile number is entered (or type them into the sheet).</td></tr>'}
+ $('cb').innerHTML=view.map(c=>`<tr tabindex="0" data-c="${c.id}" style="cursor:pointer"><td><b>${esc(c.name||'—')}</b><div class="mu">${c.id}</div></td><td>${c.visits||0}</td><td>${fm(c.spent||0)}</td><td>${c.points||0}</td><td style="color:${c.balance>0?'var(--bad)':'inherit'}">${c.balance>0?fm(c.balance):'—'}</td></tr>`).join('')+(cs.length>100?`<tr><td colspan="5" class="mu" style="text-align:center;padding:10px">Showing 100 customers. Type to search others.</td></tr>`:'')||'<tr><td colspan="5" class="mu">Customers are added automatically at checkout when a mobile number is entered.</td></tr>'}
 let cqT=null;$('cq').oninput=()=>{clearTimeout(cqT);cqT=setTimeout(rCust,80)};
 $('cb').onclick=e=>{const tr=e.target.closest('tr[data-c]');if(!tr)return;const c=S.customers.find(x=>x.id===tr.dataset.c),bs=S.bills.filter(b=>b.phone===c.id);
  $('mbox').innerHTML=`<h2>${esc(c.name||c.id)}</h2><div class="mu">${c.id} · ${c.visits||0} visits · ${fm(c.spent||0)} spent</div>`+(c.balance>0?`<div class="row" style="margin-top:10px"><div><label>Ledger due ${fm(c.balance)}. Payment received</label><input id="rp" aria-label="Amount received" type="number" min="0"></div><div style="flex:0"><label>&nbsp;</label><button class="btn" id="rb">Receive</button></div></div>`:'')+
