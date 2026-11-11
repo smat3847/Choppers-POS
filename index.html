@@ -3,6 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Choppers Mens Wear · POS (Google Sheets)</title>
 <meta name="theme-color" content="#000000">
+<script>try{var _t=localStorage.getItem("choppers-theme");if(_t==="light"||_t==="dark")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -27,7 +28,6 @@ body:not(.authed) #gate,body.authed #gate.leaving{position:fixed;inset:0;z-index
  -webkit-mask-image:radial-gradient(ellipse 46% 40% at 50% 50%,transparent 0,transparent 42%,rgba(0,0,0,.8) 100%),linear-gradient(transparent,#000 18%,#000 82%,transparent);mask-image:radial-gradient(ellipse 46% 40% at 50% 50%,transparent 0,transparent 42%,rgba(0,0,0,.8) 100%),linear-gradient(transparent,#000 18%,#000 82%,transparent);-webkit-mask-composite:source-in;mask-composite:intersect}
 #gate .gc{display:flex;flex-direction:column;align-items:center;height:max-content;will-change:transform;animation:gUp var(--d,120s) linear infinite;animation-direction:var(--r,normal)}
 #gate .gc span{padding:15px 0;font:500 12px/1 var(--sans);letter-spacing:.38em;padding-left:.38em;text-transform:uppercase;white-space:nowrap;color:var(--g-col);opacity:.85}
-#gate .gc:nth-child(2n) span{font:italic 500 22px/1 var(--serif);letter-spacing:.06em;text-transform:none;opacity:.95}
 @keyframes gUp{from{transform:translate3d(0,0,0)}to{transform:translate3d(0,-50%,0)}}
 @media (max-width:760px){#gate .gc:nth-child(n+4){display:none}}
 /* shop name in the spotlight */
@@ -60,6 +60,17 @@ body.entering main{animation:gZin .9s cubic-bezier(.2,.7,.2,1) .6s both}
 @keyframes gFade{from{opacity:0}to{opacity:1}}
 @keyframes gZin{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){#gate .gc,#gate .gspot,#gate .gname span,#gate .gsub{animation:none!important}}
+
+/* theme toggle */
+.themeBtn{background:none;border:1px solid var(--bd);color:var(--tx);border-radius:999px;width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;line-height:1}
+.themeBtn:hover{border-color:var(--tx)}
+#gateTheme{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:3;color:var(--g-ink);border-color:var(--g-line)}
+body.authed #gateTheme{display:none}
+body.authed #gate.saver #gateTheme{display:none}
+/* screen saver: reuses the login screen, no sign-in controls */
+body.authed #gate.saver{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;padding:clamp(22px,5vh,44px) 24px clamp(22px,5vh,40px);color:var(--g-ink);background:radial-gradient(ellipse 80% 70% at 50% 46%,transparent 35%,var(--g-vig) 130%),var(--g-bg);text-align:center;cursor:none;animation:gFade .6s ease both}
+body.authed #gate.saver .gbot{visibility:hidden}
+body.authed #gate.saver.waking{animation:gOut .35s ease forwards;pointer-events:none}
 /* ===== UI polish pass ===== */
 :root{--ok:#15803d;--bad:#b91c1c;--warn:#b45309;--card:#fff}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#0e0e0e;--ok:#4ade80;--bad:#f87171;--warn:#fbbf24}}
@@ -148,7 +159,7 @@ nav button .ic{display:none}
 }
 </style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
-<header><div class="top"><span id="clock"></span><div style="display:flex;align-items:center;gap:12px"><span id="syncBadge" class="mu" style="font-size:11px;display:inline-flex;align-items:center;gap:5px"><span style="color:var(--ok);font-size:9px">●</span> Synced</span><button class="lnk" id="installBtn" style="display:none;color:#000;background:var(--card);padding:2px 8px;border-radius:4px;border:1px solid var(--bd);text-transform:none;letter-spacing:0.04em">Install App</button><button class="lnk" id="rf">Sync</button><button class="lnk" id="so">Sign out</button></div></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
+<header><div class="top"><span id="clock"></span><div style="display:flex;align-items:center;gap:12px"><span id="syncBadge" class="mu" style="font-size:11px;display:inline-flex;align-items:center;gap:5px"><span style="color:var(--ok);font-size:9px">●</span> Synced</span><button class="lnk" id="installBtn" style="display:none;color:#000;background:var(--card);padding:2px 8px;border-radius:4px;border:1px solid var(--bd);text-transform:none;letter-spacing:0.04em">Install App</button><button class="themeBtn" id="themeBtn" type="button" aria-label="Toggle light / dark mode" title="Light / dark mode"></button><button class="lnk" id="rf">Sync</button><button class="lnk" id="so">Sign out</button></div></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
 <nav id="nav" aria-label="Main sections"></nav>
 <main id="main-area" tabindex="-1">
 <section class="pg on" id="p-bill">
@@ -250,7 +261,7 @@ nav button .ic{display:none}
 </main>
 <div id="mbar"><div class="mb-t"><span>Total</span><b id="mbTot">₹0</b></div><button class="btn" id="mbGo" type="button">Save &amp; print</button></div>
 <div id="modal" role="dialog" aria-modal="true" aria-label="Dialog"><div id="mbox"></div></div><div id="toast" role="status" aria-live="polite"></div><div id="printArea"></div>
-<div id="gate" role="dialog" aria-modal="true" aria-label="Sign in"><div class="gwall" id="gwall" aria-hidden="true"></div><div class="gmid"><div class="gspot" aria-hidden="true"></div><h1 class="gname" aria-label="Choppers"><span style="--i:0">C</span><span style="--i:1">H</span><span style="--i:2">O</span><span style="--i:3">P</span><span style="--i:4">P</span><span style="--i:5">E</span><span style="--i:6">R</span><span style="--i:7">S</span></h1><div class="gsub">MENS WEAR</div><div class="gbot"><p id="gateMsg">Checking sign-in…</p><button class="btn" id="gateBtn" style="display:none">Sign in with Google</button></div></div></div>
+<div id="gate" role="dialog" aria-modal="true" aria-label="Sign in"><button class="themeBtn" id="gateTheme" type="button" aria-label="Toggle light / dark mode"></button><div class="gwall" id="gwall" aria-hidden="true"></div><div class="gmid"><div class="gspot" aria-hidden="true"></div><h1 class="gname" aria-label="Choppers"><span style="--i:0">C</span><span style="--i:1">H</span><span style="--i:2">O</span><span style="--i:3">P</span><span style="--i:4">P</span><span style="--i:5">E</span><span style="--i:6">R</span><span style="--i:7">S</span></h1><div class="gsub">MENS WEAR</div><div class="gbot"><p id="gateMsg">Checking sign-in…</p><button class="btn" id="gateBtn" style="display:none">Sign in with Google</button></div></div></div>
 <script>
 // Instant font stack ready
 const S={products:[],customers:[],bills:[],cart:[],cfg:{name:'Choppers Mens Wear',addr:'',gst:'',phone:'',paper:80,note:'Thank you! Visit again. Exchange within 7 days with bill.',beep:true}};
@@ -1683,5 +1694,46 @@ if(bar&&go&&cart&&tots){
 (function(){function warm(){if(!document.body.classList.contains('authed'))return;document.removeEventListener('pointerdown',warm,true);document.removeEventListener('keydown',warm,true);try{if(!audioCtx&&(window.AudioContext||window.webkitAudioContext))audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume()}catch(e){}}
 document.addEventListener('pointerdown',warm,true);document.addEventListener('keydown',warm,true)})();
 document.addEventListener('focusin',function(e){var t=e.target;if(t&&t.tagName==='INPUT'&&t.type==='number'&&!t.getAttribute('inputmode'))t.setAttribute('inputmode','decimal')});
+})();</script>
+<script>(function(){
+/* ---- light / dark toggle ---- */
+var root=document.documentElement,meta=document.querySelector('meta[name="theme-color"]');
+var mq=window.matchMedia?matchMedia('(prefers-color-scheme:dark)'):null;
+function cur(){var t=root.getAttribute('data-theme');return t||(mq&&mq.matches?'dark':'light')}
+function paint(){var t=cur();
+ ['themeBtn','gateTheme'].forEach(function(id){var b=document.getElementById(id);if(b){b.textContent=t==='dark'?'\u2600':'\u263E';b.title=t==='dark'?'Switch to light mode':'Switch to dark mode'}});
+ if(meta)meta.setAttribute('content',t==='dark'?'#000000':'#ffffff')}
+function setTheme(t){root.setAttribute('data-theme',t);try{localStorage.setItem('choppers-theme',t)}catch(e){}paint()}
+['themeBtn','gateTheme'].forEach(function(id){var b=document.getElementById(id);if(b)b.addEventListener('click',function(e){e.stopPropagation();setTheme(cur()==='dark'?'light':'dark')})});
+if(mq&&mq.addEventListener)mq.addEventListener('change',paint);
+paint();
+
+/* ---- idle screen saver (2 min) ---- */
+var IDLE=2*60*1000,g=document.getElementById('gate'),timer=null,on=false,shownAt=0;
+function authed(){return document.body.classList.contains('authed')}
+function start(){
+ if(on||!authed()||!g)return;
+ var m=document.getElementById('modal');if(m&&getComputedStyle(m).display!=='none'){arm();return}
+ on=true;shownAt=Date.now();
+ if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+ g.classList.remove('waking');g.classList.add('saver');g.setAttribute('aria-label','Screen saver');
+ /* restart the intro animation */
+ g.querySelectorAll('.gname span').forEach(function(s){s.style.animation='none';void s.offsetWidth;s.style.animation=''})}
+function wake(e){
+ if(!on)return;
+ if(Date.now()-shownAt<700)return; /* ignore the jitter right after it starts */
+ if(e&&e.cancelable&&e.type!=='mousemove'&&e.type!=='pointermove')e.preventDefault();
+ if(e&&e.type!=='mousemove'&&e.type!=='pointermove')e.stopPropagation();
+ on=false;g.classList.add('waking');
+ setTimeout(function(){g.classList.remove('saver','waking');g.setAttribute('aria-label','Sign in')},350);
+ arm()}
+function arm(){clearTimeout(timer);timer=setTimeout(start,IDLE)}
+function activity(e){if(on){wake(e);return}arm()}
+['mousemove','pointermove'].forEach(function(t){document.addEventListener(t,activity,{passive:true,capture:true})});
+['mousedown','pointerdown','keydown','touchstart','wheel','click'].forEach(function(t){document.addEventListener(t,activity,{capture:true,passive:false})});
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&!on)arm()});
+arm();
+/* handy for testing: type  window.choppersSaver()  in the console */
+window.choppersSaver=start;
 })();</script>
 </body></html>
