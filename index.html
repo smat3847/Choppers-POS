@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Choppers Mens Wear · POS</title>
+<title>Choppers Mens Wear · POS (Google Sheets)</title>
 <meta name="theme-color" content="#000000">
 <script>try{var _t=localStorage.getItem("choppers-theme");if(_t==="light"||_t==="dark")document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>
 <meta name="mobile-web-app-capable" content="yes">
@@ -46,7 +46,6 @@ body:not(.authed) #gate,body.authed #gate.leaving{position:fixed;inset:0;z-index
 #gate #gateMsg:empty{display:none}
 #gate.busy #gateMsg::after{content:"";display:inline-block;width:1ch;overflow:hidden;vertical-align:bottom;animation:gDots 1s steps(4) infinite}
 #gate #gateBtn{width:100%;min-height:50px;margin:0;background:transparent;color:var(--g-ink);border:1px solid var(--g-ink);border-radius:999px;font:600 11px var(--sans);letter-spacing:.24em;transition:background .25s,color .25s}
-#gate #gateForm{display:flex;flex-direction:column;gap:10px}#gate #gateForm input{width:100%;min-height:50px;box-sizing:border-box;background:transparent;color:var(--g-ink);border:1px solid var(--g-line);border-radius:999px;padding:0 22px;text-align:center;font:500 12px var(--sans);letter-spacing:.24em;outline:none}#gate #gateForm input:focus{border-color:var(--g-ink)}#gate #gateForm input::placeholder{color:var(--g-dim)}
 #gate #gateBtn:hover{background:var(--g-ink);color:var(--g-bg);opacity:1}
 @keyframes gDots{from{width:0}to{width:3ch}}
 /* after sign-in: zoom into the shop name, then reveal the app */
@@ -160,10 +159,7 @@ nav button .ic{display:none}
  #p-cust table td:nth-child(5)::before{content:"Due ";letter-spacing:.04em}
  #p-inv table td:nth-child(3){text-align:right}
 }
-</style><script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script></head><body data-tab="bill">
+</style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
 <header><div class="top"><span id="clock"></span><div style="display:flex;align-items:center;gap:12px"><span id="syncBadge" class="mu" style="font-size:11px;display:inline-flex;align-items:center;gap:5px"><span style="color:var(--ok);font-size:9px">●</span> Synced</span><button class="lnk" id="installBtn" style="display:none;color:#000;background:var(--card);padding:2px 8px;border-radius:4px;border:1px solid var(--bd);text-transform:none;letter-spacing:0.04em">Install App</button><button class="lnk" id="rf">Sync</button></div></div><div class="brand"><h1>CHOPPERS</h1><div class="sub">MENS WEAR</div></div><div class="stt" id="st" role="status" aria-live="polite"></div></header>
 <nav id="nav" aria-label="Main sections"></nav>
@@ -232,7 +228,7 @@ nav button .ic{display:none}
  <div style="flex:1 1 200px"><label>&nbsp;</label><div id="silentPrintStatus" class="mu" style="font-size:12px;line-height:1.4">Standard print dialog active. Pair USB above or launch Chrome with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">--kiosk-printing</code> for 100% silent printing.</div></div>
 </div>
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
- <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button> <button class="btn g" id="impBtn" type="button" style="margin-top:8px">Import old data from Google Sheet (one-time)</button></div>
+ <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div>
 
 <div class="card"><h2>App Permanence &amp; Offline Speed</h2>
 <div class="stat" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
@@ -251,12 +247,12 @@ nav button .ic{display:none}
   <button class="btn g" id="installBtnSettings" style="min-height:44px">Install Permanent App</button>
  </div>
 </div>
-<div class="mu" style="margin-top:10px"><b>Staying signed in:</b> your login is remembered on this device. Billing keeps working offline and syncs when the internet is back.</div>
+<div class="mu" style="margin-top:10px"><b>All-Day Sign-in Active:</b> Google authentication now silently auto-renews in the background so you only sign in once for the entire day. The register functions 100% offline even if internet drops.</div>
 </div>
 
 <div class="card"><h2>Appearance &amp; Account</h2>
 <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px"><div><b>Theme</b><div class="mu">Switch the whole app between light and dark mode.</div></div><button class="btn g" id="themeBtn" type="button" style="min-height:44px">Dark mode</button></div>
-<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between"><div><b>Account</b><div class="mu">Sign out of this device.</div></div><button class="btn g" id="so" type="button" style="min-height:44px">Sign out</button></div>
+<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between"><div><b>Account</b><div class="mu">Sign out of Google on this device.</div></div><button class="btn g" id="so" type="button" style="min-height:44px">Sign out</button></div>
 </div>
 
 <div class="card"><h2>Disaster Recovery &amp; Data Backup</h2>
@@ -272,7 +268,7 @@ nav button .ic{display:none}
 </main>
 <div id="mbar"><div class="mb-t"><span>Total</span><b id="mbTot">₹0</b></div><button class="btn" id="mbGo" type="button">Save &amp; print</button></div>
 <div id="modal" role="dialog" aria-modal="true" aria-label="Dialog"><div id="mbox"></div></div><div id="toast" role="status" aria-live="polite"></div><div id="printArea"></div>
-<div id="gate" role="dialog" aria-modal="true" aria-label="Sign in"><div class="gwall" id="gwall" aria-hidden="true"></div><div class="gmid"><div class="gspot" aria-hidden="true"></div><h1 class="gname" aria-label="Choppers"><span style="--i:0">C</span><span style="--i:1">H</span><span style="--i:2">O</span><span style="--i:3">P</span><span style="--i:4">P</span><span style="--i:5">E</span><span style="--i:6">R</span><span style="--i:7">S</span></h1><div class="gsub">MENS WEAR</div><div class="gbot"><p id="gateMsg">Checking sign-in…</p><form id="gateForm" autocomplete="on" style="display:none"><input id="gUser" type="text" name="username" placeholder="USERNAME" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"><input id="gPass" type="password" name="password" placeholder="PASSWORD" autocomplete="current-password"><button class="btn" id="gateBtn" type="submit">SIGN IN</button></form></div></div></div>
+<div id="gate" role="dialog" aria-modal="true" aria-label="Sign in"><div class="gwall" id="gwall" aria-hidden="true"></div><div class="gmid"><div class="gspot" aria-hidden="true"></div><h1 class="gname" aria-label="Choppers"><span style="--i:0">C</span><span style="--i:1">H</span><span style="--i:2">O</span><span style="--i:3">P</span><span style="--i:4">P</span><span style="--i:5">E</span><span style="--i:6">R</span><span style="--i:7">S</span></h1><div class="gsub">MENS WEAR</div><div class="gbot"><p id="gateMsg">Checking sign-in…</p><button class="btn" id="gateBtn" style="display:none">Sign in with Google</button></div></div></div>
 <script>
 // Instant font stack ready
 const S={products:[],customers:[],bills:[],cart:[],cfg:{name:'Choppers Mens Wear',addr:'',gst:'',phone:'',paper:80,note:'Thank you! Visit again. Exchange within 7 days with bill.',beep:true}};
@@ -474,7 +470,7 @@ const BILLS_WINDOW=300;
 let busy=false,TOK=null,tokenClient=null,pending=null,inflight=null,REFRESH_T=null;
 const enc=encodeURIComponent;
 const emsg=e=>({needs_auth:'Sign-in needed. Tap "Sign in with Google".',gis:'Google sign-in did not load. Check your internet and reload.',popup:'Sign-in window was blocked. Allow pop-ups for this site, then tap Sign in again.',setup:'Setup needed: add your Google Client ID at the top of index.html.'})[e.code]||(e.message||String(e));
-function showSignIn(msg){gateShow(msg||'Please sign in again.',true)}
+function showSignIn(msg){$('st').innerHTML=esc(msg||'Sign in with your Google account to load the shop data.')+' <button class="lnk" id="si">Sign in with Google</button>'}
 $('st').onclick=e=>{if(e.target.id==='si')signIn()};
 function scheduleTokenRefresh(){
  clearTimeout(REFRESH_T);
@@ -511,7 +507,7 @@ function getToken(interactive){
  return inflight;
 }
 const today=()=>new Date().toLocaleDateString('en-CA');
-const gateShow=(msg,btn)=>{document.body.classList.remove('authed');$('gateMsg').textContent=msg||'';$('gateForm').style.display=btn?'flex':'none';$('gateBtn').disabled=false};
+const gateShow=(msg,btn)=>{document.body.classList.remove('authed');$('gateMsg').textContent=msg||'';$('gateBtn').style.display=btn?'':'none';$('gateBtn').disabled=false};
 const gateOpen=zoom=>{
  const g=$('gate'),b=document.body;
  if(zoom&&g&&!b.classList.contains('authed')&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)){
@@ -519,12 +515,12 @@ const gateOpen=zoom=>{
   setTimeout(()=>{g.classList.remove('leaving');b.classList.remove('entering')},1700);
  }else b.classList.add('authed');
  window.dispatchEvent(new Event('resize'))};
-let manualLogin=false;
-$('gateForm').onsubmit=async e=>{e.preventDefault();const b=$('gateBtn');b.disabled=true;manualLogin=true;$('gateMsg').textContent='Signing in…';
- try{await fauth.signInWithEmailAndPassword(uEmail($('gUser').value),$('gPass').value)}catch(err){manualLogin=false;gateShow(fbErr(err),true);$('gPass').value=''}};
+$('gateBtn').onclick=async()=>{const b=$('gateBtn');b.disabled=true;$('gateMsg').textContent='Signing in…';
+ try{await getToken(true);lsSet('cmw-day',today());await load();gateOpen(true);toast('Signed in')}catch(e){gateShow(emsg(e),true)}};
 $('so').onclick=()=>{
  if(syncQueue.length&&!confirm(syncQueue.length+' bill(s) are not synced yet. Signing out may lose them. Sign out anyway?'))return;
- fauth.signOut().then(()=>{lsSet('cmw-cashier','');S.cashier='';$('gPass').value='';gateShow('You have been signed out.',true)})};
+ try{if(TOK&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(TOK.t,()=>{})}catch(e){}
+ saveTok(null);lsSet('cmw-email','');lsSet('cmw-day','');gateShow('You have been signed out. Sign in to continue.',true)};
 async function signIn(){try{await getToken(true);lsSet('cmw-day',today());await load();toast('Signed in')}catch(e){showSignIn(emsg(e))}}
 // The connection to the Google Sheet (Sheets API). Supports batchGet and batchUpdate for fewer round-trips.
 async function callT(tool,input){
@@ -626,7 +622,7 @@ async function priceBill(b,products){
  if(!b||!b.items||!b.items.length)throw new Error('Bill is empty');
  const byId={};(products||await readProducts()).forEach(p=>{byId[p.sku]=p});
  let sub=0;
- const lines=b.items.map(it=>{const p=byId[String(it.sku)];if(!p)throw new Error('Item not found: '+it.sku);const qty=Math.max(1,Math.round(+it.qty||0));const disc=Math.min(100,Math.max(0,+it.disc||0));const net=p.price*qty*(1-disc/100);sub+=net;return{p,qty,disc,net}});
+ const lines=b.items.map(it=>{const p=byId[String(it.sku)];if(!p)throw new Error('Item not found in the sheet: '+it.sku);const qty=Math.max(1,Math.round(+it.qty||0));const disc=Math.min(100,Math.max(0,+it.disc||0));const net=p.price*qty*(1-disc/100);sub+=net;return{p,qty,disc,net}});
  let d0=b.discType==='%'?sub*(+b.discVal||0)/100:(+b.discVal||0);
  d0=Math.min(Math.max(d0,0),sub);
  return{lines,sub,d0}}
@@ -826,182 +822,11 @@ function saveSettings(d){return serial(async()=>{
  if(appends.length)ops.push(addV('Settings!A1',appends));
  if(ops.length)await Promise.all(ops);
  return true})}
-const SHEETS={getData,findBill,saveBill,updateBill,addCustomer,searchBills,deleteBill,saveProduct,deleteProduct,receivePayment,saveSettings};
-/* ===== Firebase version: Firestore data + username/password login ===== */
-const FIREBASE_CONFIG={apiKey:'AIzaSyBgyU9JDBa7ByerRfdR7UNziC45IZIheL8',authDomain:'choppersclothing.firebaseapp.com',projectId:'choppersclothing',storageBucket:'choppersclothing.firebasestorage.app',messagingSenderId:'1048542849848',appId:'1:1048542849848:web:f35dbaf5d02f7e639b6fcd'};
-const FB_READY=typeof firebase!=='undefined'&&!String(FIREBASE_CONFIG.apiKey).startsWith('PASTE');
-let fdb=null,fauth=null;
-if(FB_READY){firebase.initializeApp(FIREBASE_CONFIG);fauth=firebase.auth();fdb=firebase.firestore();fdb.enablePersistence({synchronizeTabs:true}).catch(()=>{})}
-window.FBSINCE=0;
-const fcol=n=>fdb.collection(n);
-const uEmail=u=>{u=String(u||'').trim().toLowerCase();return u.includes('@')?u:u.replace(/[^a-z0-9._-]/g,'')+'@choppers.app'};
-const fbErr=e=>({'auth/invalid-credential':'Wrong username or password.','auth/wrong-password':'Wrong username or password.','auth/user-not-found':'Wrong username or password.','auth/invalid-email':'Enter your username.','auth/too-many-requests':'Too many attempts. Wait a minute and try again.','auth/network-request-failed':'No internet. Check your connection.','permission-denied':'Not allowed. Check the Firestore rules.'})[e.code]||e.message||String(e);
-const mkProd=(id,o)=>indexProd({row:1,sku:o.sku,name:o.name||'',size:o.size||'',cat:o.cat||'',cost:+o.cost||0,price:+o.price||0,tax:+o.tax||0});
-const mkCust=(id,o)=>({id,row:1,phone:id,name:o.name||'',visits:+o.visits||0,spent:+o.spent||0,balance:+o.balance||0,last:+o.last||0,points:+o.points||0,_nameL:String(o.name||'').toLowerCase()});
-const custDoc=c=>({phone:c.phone,name:c.name,visits:c.visits,spent:c.spent,balance:c.balance,last:c.last,points:c.points,u:Date.now()});
-async function fbDelta(col,cur,since,toObj){
- let q=fcol(col);if(since)q=q.where('u','>',since-120000);
- const snap=await q.get();const m=new Map(since?cur.map(x=>[x.id,x]):[]);
- snap.forEach(d=>{const o=d.data();if(o.deleted)m.delete(d.id);else m.set(d.id,toObj(d.id,o))});
- return [...m.values()]}
-async function fbGetData(){
- const t0=Date.now();
- const warm=window.FBSINCE&&(S.products.length||S.customers.length)?window.FBSINCE:0;
- const [products,customers,bsnap,cnt,set]=await Promise.all([
-  fbDelta('products',S.products,warm,mkProd),fbDelta('customers',S.customers,warm,mkCust),
-  fcol('bills').orderBy('ts','desc').limit(BILLS_WINDOW).get(),
-  fdb.doc('meta/counter').get(),fdb.doc('meta/settings').get()]);
- window.FBSINCE=t0;
- products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);customers.sort((a,b)=>(b.last||0)-(a.last||0));
- const bills=[];bsnap.forEach(d=>{const o=d.data();if(!o.deleted)bills.push({...o,id:d.id,inv:d.id})});
- const c=set.exists?set.data():{};
- return{products,customers,bills,nextNo:cnt.exists?cnt.data().next:Math.max(INV_START,bills.reduce((m,b)=>Math.max(m,b.no||0),0)+1),
-  cfg:{name:String(c.name||'Choppers Mens Wear'),addr:String(c.addr||''),phone:String(c.phone||''),gst:String(c.gst||''),paper:numV(c.paper)||80,note:String(c.note||'')}}}
-async function fbFindBill(no){const n=Math.round(+no);if(!n||n<1)return null;
- for(const id of [INV_PREFIX+n,'CMW-'+String(n).padStart(5,'0')]){const d=await fcol('bills').doc(id).get();if(d.exists)return{...d.data(),id,inv:id}}return null}
-function fbAddCustomer(phone,name){return serial(async()=>{
- const p=digitsOf(phone),n=String(name||'').trim();
- if(p.length!==10)throw new Error('Mobile number must be 10 digits');if(!n)throw new Error('Name is required');
- const ref=fcol('customers').doc(p),d=await ref.get();
- if(d.exists&&!d.data().deleted)return{...mkCust(p,d.data()),existed:true};
- const c={phone:p,name:n,visits:0,spent:0,balance:0,last:Date.now(),points:0};await ref.set({...c,u:Date.now()});
- return{...mkCust(p,c),existed:false}})}
-const readPrices=async(tx,skus)=>(await Promise.all(skus.map(k=>tx.get(fcol('products').doc(skuId(k)))))).filter(d=>d.exists&&!d.data().deleted).map(d=>d.data());
-function fbSaveBill(b){return serial(async()=>{
- const mode=String(b.mode||'Cash'),phone=digitsOf(b.phone);
- if(mode==='Credit'&&!phone)throw new Error('Mobile number needed for credit bills');
- const skus=[...new Set((b.items||[]).map(it=>String(it.sku)))];
- return fdb.runTransaction(async tx=>{
-  const cref=fdb.doc('meta/counter'),cs=await tx.get(cref);
-  const products=await readPrices(tx,skus);
-  const custRef=phone?fcol('customers').doc(phone):null,cd=custRef?await tx.get(custRef):null;
-  const cust=cd&&cd.exists?mkCust(phone,cd.data()):null;
-  const priced=await priceBill(b,products);
-  const want=Math.max(0,Math.floor(+b.redeem||0));
-  if(want>0&&!cust)throw new Error('Select a customer to redeem points');
-  checkRedeem(want,cust?cust.points:0,priced.sub-priced.d0);
-  const ex=Math.max(0,+b.exchange||0);checkExchange(ex,priced.sub-priced.d0-want);
-  const t=totalsOf(priced,want,ex),paid=paidOf(mode,b.paidIn,t.grand),due=t.grand-paid;
-  const name=String(b.cust||'').trim(),cashier=String(b.cashier||''),ts=Date.now(),earned=phone?Math.floor(t.grand/10):0;
-  const no=cs.exists?cs.data().next:INV_START,inv=INV_PREFIX+no,items=itemsOf(priced);
-  const bill=billObj({inv,no,ts,cashier,name,phone,mode,paid,due,priced,t,items,want,earned,exch:ex});
-  tx.set(fcol('bills').doc(inv),{...bill,date:fmtDate(ts),deleted:false,u:ts});tx.set(cref,{next:no+1});
-  let customer=null;
-  if(phone){customer=cust?{id:phone,row:1,phone,name:name||cust.name,visits:cust.visits+1,spent:cust.spent+t.grand,balance:cust.balance+due,last:ts,points:cust.points-want+earned}
-   :{id:phone,row:1,phone,name,visits:1,spent:t.grand,balance:due,last:ts,points:earned};tx.set(custRef,custDoc(customer))}
-  return{pointsEarned:earned,bill,customer,customers:customer?[customer]:[]}})})}
-function fbUpdateBill(inv,b){return serial(async()=>{
- const mode=String(b.mode||'Cash'),phone=digitsOf(b.phone);
- if(mode==='Credit'&&!phone)throw new Error('Mobile number needed for credit bills');
- const skus=[...new Set((b.items||[]).map(it=>String(it.sku)))];
- return fdb.runTransaction(async tx=>{
-  const bref=fcol('bills').doc(String(inv)),bd=await tx.get(bref);
-  if(!bd.exists)throw new Error('Invoice '+inv+' not found');
-  const old={...bd.data(),inv:bd.id};
-  const products=await readPrices(tx,skus);
-  const same=!!phone&&phone===old.phone;
-  const oRef=old.phone?fcol('customers').doc(old.phone):null,od=oRef?await tx.get(oRef):null;
-  const nRef=phone?(same?oRef:fcol('customers').doc(phone)):null,nd=nRef?(same?od:await tx.get(nRef)):null;
-  const oldCust=od&&od.exists?mkCust(old.phone,od.data()):null,newCust=nd&&nd.exists?mkCust(phone,nd.data()):null;
-  const priced=await priceBill(b,products);
-  const oldAfter=oldCust?oldCust.points+(old.redeem||0)-(old.earned||0):0;
-  if(oldCust&&oldAfter<0)throw new Error('This bill cannot be changed: the customer has already used points earned on it');
-  const want=Math.max(0,Math.floor(+b.redeem||0));
-  if(want>0&&!phone)throw new Error('Select a customer to redeem points');
-  checkRedeem(want,same?oldAfter:(newCust?newCust.points:0),priced.sub-priced.d0);
-  const ex=Math.max(0,+b.exchange||0);checkExchange(ex,priced.sub-priced.d0-want);
-  const t=totalsOf(priced,want,ex),paid=paidOf(mode,b.paidIn,t.grand),due=t.grand-paid;
-  const name=String(b.cust||'').trim(),earned=phone?Math.floor(t.grand/10):0,items=itemsOf(priced);
-  const bill=billObj({inv:old.inv,no:old.no,ts:old.ts,cashier:old.cashier,name,phone,mode,paid,due,priced,t,items,want,earned,exch:ex});
-  tx.set(bref,{...bill,date:old.date||fmtDate(old.ts),deleted:false,u:Date.now()});
-  const customers=[];let customer=null;
-  if(oldCust&&!same){const oc={id:old.phone,row:1,phone:old.phone,name:oldCust.name,visits:Math.max(0,oldCust.visits-1),spent:oldCust.spent-old.total,balance:oldCust.balance-old.due,last:oldCust.last,points:oldAfter};tx.set(oRef,custDoc(oc));customers.push(oc)}
-  if(phone){customer=newCust
-   ?(same?{id:phone,row:1,phone,name:name||newCust.name,visits:newCust.visits,spent:newCust.spent-old.total+t.grand,balance:newCust.balance-old.due+due,last:old.ts,points:oldAfter-want+earned}
-    :{id:phone,row:1,phone,name:name||newCust.name,visits:newCust.visits+1,spent:newCust.spent+t.grand,balance:newCust.balance+due,last:old.ts,points:newCust.points-want+earned})
-   :{id:phone,row:1,phone,name,visits:1,spent:t.grand,balance:due,last:old.ts,points:earned};
-   tx.set(nRef,custDoc(customer));customers.push(customer)}
-  return{pointsEarned:earned,bill,customer,customers}})})}
-async function fbSearchBills(opts){
- const q=String((opts&&opts.q)||'').trim(),from=+((opts&&opts.from)||0)||0,to=+((opts&&opts.to)||0)||0;
- const numeric=/^\d+$/.test(q),invLike=/^(cmw-?|s)\d*$/i.test(q),qNo=parseInt(q.replace(/\D/g,''),10)||0,qd=digitsOf(q),nameQ=q.replace(/\d/g,'').trim().toLowerCase();
- const out={count:0,total:0,redeemed:0,earned:0,byMode:{},bills:[]},seen=new Set();
- const matchBill=b=>{
-  if(!b.inv||b.deleted||seen.has(b.inv)||b.ts<from||(to&&b.ts>to))return;
-  if(q){const hit=(qNo&&(numeric||invLike)&&b.no===qNo)||(invLike&&q.length>3&&b.inv.toLowerCase().indexOf(q.toLowerCase())>=0)||(!invLike&&nameQ.length>=2&&(b.cust||'').toLowerCase().indexOf(nameQ)>=0)||(numeric&&qd.length>=3&&(b.phone||'').indexOf(qd)>=0);if(!hit)return}
-  seen.add(b.inv);out.count++;out.total+=b.total;out.redeemed+=b.redeem||0;out.earned+=b.earned||0;out.byMode[b.mode]=(out.byMode[b.mode]||0)+b.total;out.bills.push(b)};
- const oldest=S.bills.length?S.bills[S.bills.length-1].ts:Infinity;
- if(!q&&from>0&&S.bills.length&&oldest<=from)S.bills.forEach(matchBill);
- else{
-  if(q&&qNo&&(numeric||invLike)){const b=await fbFindBill(qNo);if(b)matchBill(b)}
-  let ref=fcol('bills');if(from)ref=ref.where('ts','>=',from);if(to)ref=ref.where('ts','<=',to);
-  (await ref.orderBy('ts','desc').limit(1500).get()).forEach(d=>matchBill({...d.data(),id:d.id,inv:d.id}))}
- out.total=r2(out.total);Object.keys(out.byMode).forEach(k=>{out.byMode[k]=r2(out.byMode[k])});
- out.bills.sort((a,b)=>b.ts-a.ts);out.bills=out.bills.slice(0,200);return out}
-function fbDeleteBill(inv){return serial(()=>fdb.runTransaction(async tx=>{
- const bref=fcol('bills').doc(String(inv)),bd=await tx.get(bref);
- if(!bd.exists)throw new Error('Invoice '+inv+' not found');
- const old=bd.data();if(old.deleted)throw new Error('This invoice is already deleted');
- const cref=old.phone?fcol('customers').doc(old.phone):null,cd=cref?await tx.get(cref):null;
- let customer=null,customers=[];
- if(cd&&cd.exists){const c=mkCust(old.phone,cd.data()),back=c.points+(old.redeem||0)-(old.earned||0);
-  if(back<0)throw new Error('This invoice cannot be deleted: the customer has already used points earned on it');
-  customer={id:c.phone,row:1,phone:c.phone,name:c.name,visits:Math.max(0,c.visits-1),spent:c.spent-old.total,balance:c.balance-old.due,last:c.last,points:back};
-  tx.set(cref,custDoc(customer));customers.push(customer)}
- tx.update(bref,{deleted:true,deletedAt:fmtDate(Date.now()),u:Date.now()});
- return{inv:String(inv),customer,customers}}))}
-function fbSaveProduct(p,origSku){return serial(async()=>{
- const sku=String(p.sku||'').trim(),name=String(p.name||'').trim();
- if(!sku||!name)throw new Error('SKU and name are required');
- const doc={sku,name,size:String(p.size||''),cat:String(p.cat||''),cost:numV(p.cost),price:numV(p.price),tax:numV(p.tax),deleted:false,u:Date.now()};
- const ref=fcol('products').doc(skuId(sku));
- if(!origSku){const d=await ref.get();if(d.exists&&!d.data().deleted)throw new Error('SKU already exists. Edit it from the list.')}
- else if(origSku!==sku){const d=await ref.get();if(d.exists&&!d.data().deleted)throw new Error('SKU already exists.');
-  await fcol('products').doc(skuId(origSku)).set({deleted:true,u:Date.now()},{merge:true})}
- await ref.set(doc);return 1})}
-const fbDeleteProduct=sku=>serial(async()=>{await fcol('products').doc(skuId(sku)).set({deleted:true,u:Date.now()},{merge:true});return true});
-const fbReceivePayment=(phone,amount)=>serial(()=>fdb.runTransaction(async tx=>{
- const ref=fcol('customers').doc(digitsOf(phone)),d=await tx.get(ref);
- if(!d.exists)throw new Error('Customer not found');
- const c=mkCust(ref.id,d.data()),a=Math.min(Math.max(+amount||0,0),c.balance);
- if(a<=0)throw new Error('Enter an amount greater than zero');
- tx.update(ref,{balance:c.balance-a,u:Date.now()});return c.balance-a}));
-const fbSaveSettings=d=>serial(async()=>{const o={};for(const k of ['name','addr','phone','gst','paper','note'])o[k]=d[k]==null?'':d[k];await fdb.doc('meta/settings').set(o,{merge:true});return true});
-const SERVER=FB_READY?{getData:fbGetData,findBill:fbFindBill,saveBill:fbSaveBill,updateBill:fbUpdateBill,addCustomer:fbAddCustomer,searchBills:fbSearchBills,deleteBill:fbDeleteBill,saveProduct:fbSaveProduct,deleteProduct:fbDeleteProduct,receivePayment:fbReceivePayment,saveSettings:fbSaveSettings}:SHEETS;
-/* one-time import from the old Google Sheet */
-function initGis(){
- if(tokenClient)return;
- tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPE,
-  callback:r=>{const p=pending;pending=null;if(r.error){if(p)p.rej(Object.assign(new Error(r.error),{code:'needs_auth'}));return}saveTok({t:r.access_token,exp:Date.now()+(r.expires_in-120)*1000});if(p)p.res(TOK.t)},
-  error_callback:e=>{const p=pending;pending=null;if(p)p.rej(Object.assign(new Error(e.type||'popup'),{code:'popup'}))}})}
-async function importFromSheet(){
- if(!FB_READY)throw new Error('Firebase is not set up yet');
- if(!window.google||!google.accounts)throw new Error('Google sign-in did not load. Check internet.');
- initGis();await getToken(true);
- const [pr,cr,sr]=await batchGetV(['Products!A2:G','Customers!A2:G','Settings!A2:B']);
- const br=await getV('Bills!A2:T');
- const u=Date.now(),ops=[];
- mapProdRows(pr).forEach(p=>ops.push([fcol('products').doc(skuId(p.sku)),{sku:p.sku,name:p.name,size:p.size,cat:p.cat,cost:p.cost,price:p.price,tax:p.tax,deleted:false,u}]));
- mapCustRows(cr).forEach(c=>ops.push([fcol('customers').doc(c.phone),{phone:c.phone,name:c.name,visits:c.visits,spent:c.spent,balance:c.balance,last:c.last,points:c.points,u}]));
- let maxNo=0;
- br.forEach(r=>{const b=billFromRow(r);if(!b.inv)return;maxNo=Math.max(maxNo,b.no||0);const{id,...rest}=b;ops.push([fcol('bills').doc(b.inv),{...rest,date:String(r[2]||''),u}])});
- const cfg={};sr.forEach(r=>{if(r[0])cfg[String(r[0]).trim()]=String(r[1]==null?'':r[1]).replace(/^'/,'')});
- ops.push([fdb.doc('meta/settings'),cfg]);
- ops.push([fdb.doc('meta/counter'),{next:Math.max(INV_START,maxNo+1)}]);
- for(let i=0;i<ops.length;i+=400){
-  const b=fdb.batch();ops.slice(i,i+400).forEach(([ref,d])=>b.set(ref,d));await b.commit();
-  toast('Importing… '+Math.min(i+400,ops.length)+' / '+ops.length)}
- window.FBSINCE=0;await load();return ops.length}
-$('impBtn').onclick=async()=>{
- if(!confirm('Copy products, customers, bills and settings from the old Google Sheet into Firebase? Records with the same ID are overwritten. Do this only once.'))return;
- const b=$('impBtn');b.disabled=true;
- try{const n=await importFromSheet();toast('Imported '+n+' records ✓')}catch(e){toast('Import failed: '+emsg(e))}
- b.disabled=false};
+const SERVER={getData,findBill,saveBill,updateBill,addCustomer,searchBills,deleteBill,saveProduct,deleteProduct,receivePayment,saveSettings};
 
-
-const rpc=(fn,...a)=>Promise.resolve().then(()=>SERVER[fn](...a));
+const rpc=(fn,...a)=>(TOK&&TOK.exp>Date.now())?SERVER[fn](...a):getToken(true).then(()=>SERVER[fn](...a));
 let cacheT=null;
-function writeCache(){clearTimeout(cacheT);try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg,fbs:window.FBSINCE||0}))}catch(e){}}
+function writeCache(){clearTimeout(cacheT);try{lsSet('cmw-cache',JSON.stringify({products:S.products,customers:S.customers,bills:S.bills,nextNo:S.nextNo,cfg:S.cfg}))}catch(e){}}
 function saveCache(){clearTimeout(cacheT);cacheT=setTimeout(()=>{if(window.requestIdleCallback)requestIdleCallback(writeCache,{timeout:3000});else writeCache()},500)}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)writeCache()});
 addEventListener('pagehide',writeCache);
@@ -1029,7 +854,7 @@ function rebuildIndexes(){
   S.products.sort((a,b)=>a.name<b.name?-1:a.name>b.name?1:0);
   S.customers=d.customers||[];
   S.customers.sort((a,b)=>(b.last||0)-(a.last||0));
-  window.FBSINCE=d.fbs||0;S.bills=d.bills||[];S.nextNo=d.nextNo||INV_START;Object.assign(S.cfg,d.cfg||{});cfgLoaded=true;rebuildIndexes();fillSet()}}catch(e){}
+  S.bills=d.bills||[];S.nextNo=d.nextNo||INV_START;Object.assign(S.cfg,d.cfg||{});cfgLoaded=true;rebuildIndexes();fillSet()}}catch(e){}
 })();
 async function load(){
  const d=await rpc('getData');
@@ -1038,27 +863,55 @@ async function load(){
  if(!cfgLoaded){cfgLoaded=true;fillSet()}
  $('st').textContent='';R()}
 function saveFile(name,data){const u=URL.createObjectURL(new Blob([data],{type:/\.html$/.test(name)?'text/html':'application/octet-stream'}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(u);a.remove()},2000);toast('Saved '+name)}
-$('rf').onclick=async()=>{updateSyncBadge('syncing');try{await drainSyncQueue();await load();updateSyncBadge('synced');toast('Synced')}catch(e){updateSyncBadge('offline');toast('Sync notice: '+emsg(e))}};
+$('rf').onclick=async()=>{updateSyncBadge('syncing');try{await drainSyncQueue();await getToken(true);await load();updateSyncBadge('synced');toast('Synced with Google Sheet')}catch(e){if(e.code==='needs_auth')showSignIn();updateSyncBadge('offline');toast('Sync notice: '+emsg(e))}};
 let lastFullSync=Date.now();
 document.addEventListener('visibilitychange',()=>{
  if(!document.hidden&&Date.now()-lastFullSync>300000&&!busy&&pendingSaves===0){
-  load().then(()=>{lastFullSync=Date.now()}).catch(()=>{});
+  getToken(false).then(()=>{lastFullSync=Date.now();return load();}).catch(()=>{});
  }
 });
 (async()=>{
- if(typeof firebase==='undefined'){gateShow('Could not load Firebase. Check your internet and reload.',false);return}
- if(!FB_READY){gateShow('Setup needed: paste your Firebase config in index.html (FIREBASE_CONFIG).',false);return}
- fauth.onAuthStateChanged(async u=>{
-  if(!u){gateShow('',true);return}
-  const nm=String(u.email||'').split('@')[0];S.cashier=nm.charAt(0).toUpperCase()+nm.slice(1);lsSet('cmw-cashier',S.cashier);
-  const zoom=manualLogin;manualLogin=false;
-  if(!navigator.onLine&&S.products.length){gateOpen();$('st').textContent='Offline: bills will sync when you are back online.';return}
-  try{await load();gateOpen(zoom);drainSyncQueue()}
-  catch(e){if(S.products.length){gateOpen();$('st').textContent='Could not refresh: '+fbErr(e)}else gateShow('Could not connect: '+fbErr(e),true)}
- });
+ if(CLIENT_ID.startsWith('PASTE')){gateShow(emsg({code:'setup'}),false);return}
+ const ready=await Promise.race([
+  new Promise(r=>{const t=setInterval(()=>{if(window.google&&google.accounts&&google.accounts.oauth2){clearInterval(t);r(true)}},100)}),
+  new Promise(r=>setTimeout(()=>r(false),10000))]);
+ if(!ready){gateShow(emsg({code:'gis'}),false);return}
+ tokenClient=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:SCOPE,
+  callback:r=>{const p=pending;pending=null;
+   if(r.error){
+    if(!TOK||TOK.exp<=Date.now())saveTok(null);
+    if(p)p.rej(Object.assign(new Error(r.error),{code:'needs_auth'}));
+    return;
+   }
+   const newTok={t:r.access_token,exp:Date.now()+(r.expires_in-120)*1000};
+   saveTok(newTok);
+   scheduleTokenRefresh();
+   // Remember account identity for automatic silent renewal throughout the day
+   if(!lsGet('cmw-email')){
+    fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+r.access_token}})
+     .then(res=>res.json())
+     .then(info=>{if(info&&info.email)lsSet('cmw-email',info.email)})
+     .catch(()=>{});
+   }
+   if(p)p.res(TOK.t);
+  },
+  error_callback:e=>{const p=pending;pending=null;if(p)p.rej(Object.assign(new Error(e.type||'popup'),{code:e.type==='popup_failed_to_open'?'popup':'needs_auth'}))}});
+ const s=loadTok();if(s&&s.exp>Date.now()){TOK=s;scheduleTokenRefresh()}
+ const signedToday=lsGet('cmw-day')===today(),valid=!!(TOK&&TOK.exp>Date.now());
+ if(!signedToday){gateShow(lsGet('cmw-email')?'New day. Sign in once to start billing.':'Sign in with your Google account to open the app.',true);return}
+ if(!valid){
+  // signed in earlier today: renew automatically, no tap needed
+  if(!navigator.onLine){gateOpen();$('st').textContent='Offline: bills will sync when you are back online.';return}
+  gateShow('Renewing sign-in…',false);
+  try{await getToken(false);await load();gateOpen()}catch(e){gateShow('Tap to continue.',true)}
+  return}
+ try{await getToken(false);await load();gateOpen()}catch(e){
+  if(e.code==='needs_auth'||e.code==='popup')gateShow('Sign in with your Google account to open the app.',true);
+  else if(lsGet('cmw-email')){gateOpen();$('st').textContent='Could not load shop data: '+e.message}
+  else gateShow('Could not connect: '+e.message+'. Check your internet and try again.',true)}
 })();
 /* one sign-in per day: when the date changes, ask for sign-in again, but never in the middle of a bill or with unsynced bills */
-function dayCheck(){return;
+function dayCheck(){
  if(!document.body.classList.contains('authed'))return;
  if(lsGet('cmw-day')===today())return;
  if(busy||pendingSaves>0||syncQueue.length||(S.cart&&S.cart.length))return;
