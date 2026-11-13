@@ -64,7 +64,7 @@ body.entering main{animation:gZin .9s cubic-bezier(.2,.7,.2,1) .6s both}
 /* theme toggle */
 .themeBtn{background:none;border:1px solid var(--bd);color:var(--tx);border-radius:999px;width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;line-height:1}
 .themeBtn:hover{border-color:var(--tx)}
-body.authed body.authed #gate.saver /* screen saver: reuses the login screen, no sign-in controls */
+/* screen saver: reuses the login screen, no sign-in controls */
 body.authed #gate.saver{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;padding:clamp(22px,5vh,44px) 24px clamp(22px,5vh,40px);color:var(--g-ink);background:radial-gradient(ellipse 80% 70% at 50% 46%,transparent 35%,var(--g-vig) 130%),var(--g-bg);text-align:center;cursor:none;animation:gFade .6s ease both}
 body.authed #gate.saver .gbot{visibility:hidden}
 body.authed #gate.saver.waking{animation:gOut .35s ease forwards;pointer-events:none}
@@ -158,6 +158,16 @@ nav button .ic{display:none}
  #p-cust table td:nth-child(4)::before{content:"Points ";letter-spacing:.04em}
  #p-cust table td:nth-child(5)::before{content:"Due ";letter-spacing:.04em}
  #p-inv table td:nth-child(3){text-align:right}
+}
+
+/* ===== mobile bottom bar: fill the whole screen, respect the iPhone home-indicator area ===== */
+@media screen and (max-width:700px){
+ html{height:100%;background:var(--bg)}
+ body{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:auto!important;min-height:0}
+ nav{align-items:stretch;padding-bottom:env(safe-area-inset-bottom,0px);min-height:calc(58px + env(safe-area-inset-bottom,0px));box-sizing:border-box;background:var(--bg)}
+ nav button{border-radius:0;align-self:stretch;min-height:56px}
+ nav button.on{border-top-color:var(--tx)}
+ #toast{bottom:calc(132px + env(safe-area-inset-bottom,0px))}
 }
 </style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
