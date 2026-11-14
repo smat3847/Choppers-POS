@@ -240,6 +240,18 @@ nav button .ic{display:none}
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
  <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div>
 
+<div class="card" id="waCard"><h2>Daily customer invitation (WhatsApp)</h2>
+<div class="mu" id="waSum" style="margin-bottom:10px"></div>
+<button class="btn big" id="waNext" type="button">Send today's invitations</button>
+<div class="mu" id="waAutoMsg" style="margin-top:8px;min-height:18px"></div>
+<button class="btn g big" id="waStop" type="button" style="display:none;margin-top:8px">Stop</button>
+<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:10px"><input type="checkbox" id="waAuto" style="width:20px;height:20px;min-height:0"><span>Auto-open the next customer every few seconds (you only press Send in WhatsApp)</span></label>
+<div id="waList" style="margin-top:10px"></div>
+<details style="margin-top:12px"><summary class="mu" style="cursor:pointer">Message &amp; reminder settings</summary>
+<div class="row" style="margin-top:10px"><div style="flex:1 1 100%"><label for="waMsg">Message ({name}, {shop}, {link} work)</label><textarea id="waMsg" rows="8" style="width:100%;font:inherit;color:var(--tx);background:var(--card);border:1px solid #8c8c8c;border-radius:8px;padding:10px 12px"></textarea></div></div>
+<div class="row"><div><label for="waLink">Community link</label><input id="waLink" autocomplete="off"></div><div style="flex:0 1 140px"><label for="waGap">Seconds between chats</label><input id="waGap" type="number" min="8" max="120"></div><div style="flex:0 1 140px"><label for="waHr">Remind me after (hour, 0-23)</label><input id="waHr" type="number" min="0" max="23"></div></div>
+<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer"><input type="checkbox" id="waSkip" style="width:20px;height:20px;min-height:0"><span>Don't invite customers who were already invited on an earlier day</span></label>
+</details></div>
 <div class="card"><h2>App Permanence &amp; Offline Speed</h2>
 <div class="stat" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
  <div>STORAGE PERSISTENCE<b id="persistStatus" style="font-size:16px;margin-top:4px">Permanent</b></div>
@@ -1753,5 +1765,55 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden&&!on
 arm();
 /* handy for testing: type  window.choppersSaver()  in the console */
 window.choppersSaver=start;
+})();</script>
+<script>(function(){
+var DEF='Hi {name}, thank you for shopping at {shop} today! \uD83D\uDE4F\n\n\uD83C\uDF89 Join our WhatsApp community to get:\n\u2705 New arrivals before anyone else\n\u2705 Festive offers & exclusive member-only discounts\n\u2705 Early access to sales\n\nTap to join: {link}\n\nSee you again soon!';
+var timer=null,tick=null;
+function g(k,d){var v=lsGet(k);return v===''||v==null?d:v}
+function $$(i){return document.getElementById(i)}
+function sentMap(){try{return JSON.parse(lsGet('cmw-wa-sent')||'{}')||{}}catch(e){return{}}}
+function num(p){var d=digitsOf(p);if(d.length===10)return'91'+d;if(d.length===12&&d.indexOf('91')===0)return d;return''}
+function todays(){var s=new Date();s.setHours(0,0,0,0);var t0=s.getTime(),m={},out=[];
+ (S.bills||[]).forEach(function(b){if(b.deleted||!b.phone||b.ts<t0)return;var n=num(b.phone);if(!n||m[n])return;m[n]=1;out.push({num:n,name:String(b.cust||'')})});return out}
+function status(n,sent){var td=today(),skip=g('cmw-wa-skip','1')!=='0';if(sent[n]===td)return'today';if(sent[n]&&skip)return'earlier';return''}
+function pending(){var s=sentMap();return todays().filter(function(x){return!status(x.num,s)})}
+function link(){return g('cmw-wa-link',typeof WA_URL!=='undefined'?WA_URL:'')}
+function render(){if(!$$('waCard'))return;
+ var list=todays(),sent=sentMap(),pend=pending();
+ var done=list.filter(function(x){return status(x.num,sent)==='today'}).length;
+ $$('waSum').textContent=list.length?(list.length+' customer'+(list.length>1?'s':'')+' today · '+done+' invited · '+pend.length+' pending'):'No customers with a mobile number yet today.';
+ var b=$$('waNext');b.disabled=!pend.length||!!timer;b.textContent=pend.length?'Send today\'s invitations ('+pend.length+' left)':'All invitations sent';
+ $$('waList').innerHTML=list.map(function(x){var st=status(x.num,sent);
+  return '<div class="res" style="cursor:default"><div><b>'+esc(x.name||'Customer')+'</b><div class="mu">+'+x.num+'</div></div>'+
+  (st==='earlier'?'<span class="mu">Invited earlier</span>':'<button class="btn s '+(st?'g':'')+'" type="button" data-n="'+x.num+'">'+(st==='today'?'Sent ✓ · resend':'Send')+'</button>')+'</div>'}).join('');
+ var f=function(id,v){var e=$$(id);if(e&&document.activeElement!==e)e.value=v};
+ f('waMsg',g('cmw-wa-msg',DEF));f('waLink',link());f('waHr',g('cmw-wa-hr','20'));f('waGap',g('cmw-wa-gap','20'));
+ $$('waSkip').checked=g('cmw-wa-skip','1')!=='0';$$('waAuto').checked=g('cmw-wa-auto','1')!=='0'}
+function open1(n){var x=todays().filter(function(y){return y.num===n})[0];if(!x)return false;
+ var first=x.name.trim().split(/\s+/)[0]||'there';
+ var msg=g('cmw-wa-msg',DEF).replace(/\{name\}/g,first).replace(/\{shop\}/g,S.cfg.name||'our store').replace(/\{link\}/g,link());
+ var s=sentMap();s[n]=today();lsSet('cmw-wa-sent',JSON.stringify(s));
+ var w=window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank');return !!w}
+function stop(m){clearInterval(timer);clearInterval(tick);timer=tick=null;$$('waStop').style.display='none';$$('waAutoMsg').textContent=m||'';render()}
+function countdown(){var gap=Math.max(8,+g('cmw-wa-gap','20')||20),left=gap;$$('waAutoMsg').textContent='Next customer opens in '+left+'s…';
+ clearInterval(tick);tick=setInterval(function(){left--;if(left>0)$$('waAutoMsg').textContent='Next customer opens in '+left+'s…'},1000)}
+function step(){var p=pending();if(!p.length){stop('All done ✓');return}
+ var ok=open1(p[0].num);
+ if(!ok){stop('Your phone blocked the automatic open. Tap "Send" next to each customer instead.');return}
+ if(!pending().length){stop('Last invitation opened. All done ✓');return}
+ render();countdown()}
+function startAuto(){var gap=Math.max(8,+g('cmw-wa-gap','20')||20);$$('waStop').style.display='';timer=setInterval(step,gap*1000);step();if(!timer)return;render()}
+$$('waNext').addEventListener('click',function(){if(!pending().length)return;
+ if(g('cmw-wa-auto','1')!=='0')startAuto();else{open1(pending()[0].num);render()}});
+$$('waStop').addEventListener('click',function(){stop('Stopped. Press the button to continue where you left off.')});
+$$('waList').addEventListener('click',function(e){var b=e.target.closest('button[data-n]');if(b){open1(b.dataset.n);render()}});
+$$('waAuto').addEventListener('change',function(){lsSet('cmw-wa-auto',this.checked?'1':'0')});
+$$('waSkip').addEventListener('change',function(){lsSet('cmw-wa-skip',this.checked?'1':'0');render()});
+[['waMsg','cmw-wa-msg'],['waLink','cmw-wa-link'],['waHr','cmw-wa-hr'],['waGap','cmw-wa-gap']].forEach(function(a){$$(a[0]).addEventListener('input',function(){lsSet(a[1],this.value)})});
+$$('nav').addEventListener('click',function(){setTimeout(render,60)});
+setInterval(function(){if(document.body.dataset.tab==='set'&&!timer)render()},15000);
+setInterval(function(){try{var hr=+g('cmw-wa-hr','20'),now=new Date();if(now.getHours()<hr||lsGet('cmw-wa-nudge')===today())return;
+ var p=pending();if(p.length){lsSet('cmw-wa-nudge',today());toast(p.length+' customers waiting for a WhatsApp invitation. Open Settings.')}}catch(e){}},60000);
+render();
 })();</script>
 </body></html>
