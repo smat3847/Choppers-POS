@@ -1843,22 +1843,27 @@ function errText(data,code){
 }
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
 
-/* ---- Zero-dependency Vector Invoice PDF Generator (PDF 1.4, returns raw base64) ---- */
-function pdfClean(s){
+/* ---- Zero-dependency Vector Invoice PDF Generator (exact 1:1 replica of thermalBody receipt, returns raw base64) ---- */
+var HELV_W=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
+var HELVB_W=[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584];
+function pdfRaw(s){
  return String(s==null?'':s)
   .replace(/₹/g,'Rs. ')
   .replace(/[–—]/g,'-')
   .replace(/[•·]/g,' - ')
-  .replace(/[^\x20-\x7e]/g,'')
-  .replace(/\\/g,'\\\\')
-  .replace(/\(/g,'\\(')
-  .replace(/\)/g,'\\)');
+  .replace(/[^\x20-\x7e]/g,'');
 }
-function pdfWrap(text,maxChars){
- var words=String(text||'').trim().split(/\s+/).filter(Boolean),lines=[],cur='';
+function pdfEsc(s){return pdfRaw(s).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)')}
+function pdfWidth(str,size,font,tc){
+ var s=pdfRaw(str),tbl=font==='F2'?HELVB_W:HELV_W,sum=0;
+ for(var i=0;i<s.length;i++){var c=s.charCodeAt(i)-32;sum+=(c>=0&&c<tbl.length)?tbl[c]:556}
+ return sum*size/1000+(tc&&s.length>1?(s.length-1)*tc:0);
+}
+function pdfWrapPx(text,maxWidth,size,font,tc){
+ var words=pdfRaw(text).trim().split(/\s+/).filter(Boolean),lines=[],cur='';
  words.forEach(function(w){
-  if(!cur)cur=w;
-  else if((cur+' '+w).length<=maxChars)cur+=' '+w;
+  if(!cur){cur=w;return}
+  if(pdfWidth(cur+' '+w,size,font,tc)<=maxWidth)cur+=' '+w;
   else{lines.push(cur);cur=w}
  });
  if(cur)lines.push(cur);
@@ -1866,107 +1871,159 @@ function pdfWrap(text,maxChars){
 }
 function buildInvoicePdfBase64(b){
  var m=billModel(b);
- var W=360,M=24,y=0;
- var cmds=[];
- function txt(x,yy,size,font,str){
-  cmds.push('BT /'+font+' '+size+' Tf 1 0 0 1 '+x.toFixed(1)+' '+yy.toFixed(1)+' Tm ('+pdfClean(str)+') Tj ET');
+ // 80mm thermal receipt proportions in PDF points (226.8pt = 80mm, scaled neatly to 260pt width for crisp mobile reading)
+ var W=260,M=18,CW=W-2*M,y=0;
+ var ops=[];
+ function txt(x,yy,size,font,str,tc){ops.push({t:'txt',x:x,y:yy,s:size,f:font,v:pdfEsc(str),tc:tc||0})}
+ function txtR(xRight,yy,size,font,str,tc){
+  var w=pdfWidth(str,size,font,tc);
+  txt(Math.max(M,xRight-w),yy,size,font,str,tc);
  }
- function txtR(xRight,yy,size,font,str){
-  var s=String(str==null?'':str).replace(/₹/g,'Rs. ').replace(/[^\x20-\x7e]/g,'');
-  var estW=s.length*size*(font==='F2'?0.56:0.52);
-  txt(Math.max(M,xRight-estW),yy,size,font,s);
+ function txtC(yy,size,font,str,tc){
+  var w=pdfWidth(str,size,font,tc);
+  txt(Math.max(M,(W-w)/2),yy,size,font,str,tc);
  }
- function txtC(yy,size,font,str){
-  var s=String(str==null?'':str).replace(/₹/g,'Rs. ').replace(/[^\x20-\x7e]/g,'');
-  var estW=s.length*size*(font==='F2'?0.56:0.52);
-  txt(Math.max(M,(W-estW)/2),yy,size,font,s);
+ function hline(yy,lw,dashed,gray){ops.push({t:'line',y:yy,lw:lw||0.55,dash:!!dashed,g:gray==null?0.15:gray})}
+ function rrect(x,yy,rw,rh,r,gray){ops.push({t:'rrect',x:x,y:yy,w:rw,h:rh,r:r||3,g:gray==null?0.06:gray})}
+ function txtWhiteC(yy,size,font,str){
+  var w=pdfWidth(str,size,font,0);
+  ops.push({t:'wtxt',x:Math.max(M,(W-w)/2),y:yy,s:size,f:font,v:pdfEsc(str)});
  }
- function hline(yy,w,gray){
-  cmds.push((gray||0)+' G '+(w||0.6)+' w '+M+' '+yy.toFixed(1)+' m '+(W-M)+' '+yy.toFixed(1)+' l S 0 G');
- }
- // Compute dynamic page height so every item fits cleanly on one invoice page
- var estLines=18+(m.addr.length)+(m.meta.length)+(m.items.length*2.3)+(m.totals.length)+(m.paid.length)+(m.loyalty.length?2:0)+(m.note?2:0);
- var H=Math.max(460,Math.ceil(estLines*16+110));
- y=H-34;
 
- // Header
- txtC(y,18,'F2',m.name||'CHOPPERS MENS WEAR');y-=16;
+ // Split brand into CHOPPERS + MENS WEAR just like thermalBody()
+ var rawBrand=String(m.name||'CHOPPERS MENS WEAR').trim();
+ var bTitle=rawBrand,bSub='';
+ var bm=rawBrand.match(/^(.*?)\s+(MEN'?S\s*WEAR)$/i);
+ if(bm){bTitle=bm[1].toUpperCase();bSub=bm[2].toUpperCase()}
+
+ // 1. Brand header
+ y=0;
+ txtC(y,20,'F2',bTitle,2.4);y-=16;
+ if(bSub){txtC(y,9.2,'F1',bSub,3.4);y-=16}else{y-=4}
  m.addr.forEach(function(line){
-  pdfWrap(line,52).forEach(function(wl){txtC(y,9,'F1',wl);y-=12});
+  pdfWrapPx(line,CW-8,8.5,'F1').forEach(function(wl){txtC(y,8.5,'F1',wl);y-=11.5});
  });
- y-=4;
- hline(y,0.8,0);y-=14;
- txtC(y,10,'F2','TAX INVOICE');y-=8;
- hline(y,0.8,0);y-=16;
+ y-=5;
 
- // Invoice metadata
+ // 2. TAX INVOICE banner between thin solid lines
+ hline(y,0.6,false,0.1);y-=12;
+ txtC(y,8.8,'F1','TAX INVOICE',1.8);y-=6;
+ hline(y,0.6,false,0.1);y-=14;
+
+ // 3. Invoice metadata (uppercase left labels, right-aligned values, no colons)
  m.meta.forEach(function(kv){
-  txt(M,y,9.5,'F2',kv[0]+':');
-  txtR(W-M,y,9.5,'F1',kv[1]);
+  txt(M,y,8.5,'F1',String(kv[0]).toUpperCase(),0.5);
+  txtR(W-M,y,8.5,'F1',kv[1]);
+  y-=12.5;
+ });
+ y-=3;
+ hline(y,0.55,true,0.2);y-=14;
+
+ // 4. Items section (ITEMS ... X pcs, then item name + amount, qty x rate below)
+ txt(M,y,8.5,'F1','ITEMS',1.0);
+ txtR(W-M,y,8.5,'F1',m.pcs+' pcs');
+ y-=15;
+ m.items.forEach(function(it){
+  var amtW=pdfWidth(it.amt,9.5,'F1')+12;
+  var nameLines=pdfWrapPx(it.name,CW-amtW,9.5,'F1');
+  nameLines.forEach(function(nl,idx){
+   txt(M,y,9.5,'F1',nl);
+   if(idx===0)txtR(W-M,y,9.5,'F1',it.amt);
+   y-=12;
+  });
+  txt(M,y,8.2,'F1',it.detail);
   y-=14;
  });
- y-=4;hline(y,0.5,0.6);y-=15;
+ y-=1;
+ hline(y,0.55,true,0.2);y-=14;
 
- // Table header
- txt(M,y,9,'F2','ITEM');
- txtR(W-M-82,y,9,'F2','QTY x RATE');
- txtR(W-M,y,9,'F2','AMOUNT');
- y-=6;hline(y,0.5,0.6);y-=14;
-
- // Items
- m.items.forEach(function(it){
-  var nameLines=pdfWrap(it.name,34);
-  nameLines.forEach(function(nl,idx){
-   txt(M,y,9.5,'F2',nl);
-   if(idx===0){
-    txtR(W-M-82,y,8.5,'F1',it.detail);
-    txtR(W-M,y,9.5,'F2','Rs. '+it.amt);
-   }
-   y-=13;
-  });
-  y-=3;
- });
- hline(y,0.5,0.6);y-=15;
-
- // Totals
+ // 5. Totals
  m.totals.forEach(function(kv){
   txt(M,y,9.5,'F1',kv[0]);
-  txtR(W-M,y,9.5,'F1','Rs. '+kv[1]);
-  y-=14;
+  txtR(W-M,y,9.5,'F1',kv[1]);
+  y-=13.5;
  });
- y-=2;hline(y,1.0,0);y-=18;
- txt(M,y,14,'F2','TOTAL');
- txtR(W-M,y,14,'F2','Rs. '+m.total);
- y-=10;hline(y,0.5,0.6);y-=15;
-
- // Payment
- m.paid.forEach(function(kv){
-  txt(M,y,9.5,'F1',kv[0]);
-  txtR(W-M,y,9.5,'F2','Rs. '+kv[1]);
-  y-=14;
- });
-
- // Loyalty points highlight bar
- if(m.loyalty.length){
-  y-=4;
-  cmds.push('0.1 g '+M+' '+(y-6).toFixed(1)+' '+(W-2*M)+' 20 re f 1 g');
-  var loyStr=m.loyalty.map(function(kv){return kv[0]+': '+kv[1]}).join('   |   ');
-  txtC(y,9.5,'F2',loyStr);
-  cmds.push('0 g');
-  y-=22;
- }
-
- // Footer
  y-=8;
+ txt(M,y,17.5,'F1','Total');
+ txtR(W-M,y,17.5,'F1',m.total);
+ y-=17;
+
+ // 6. Paid by line
+ txt(M,y,9.5,'F1',m.paid.map(function(kv){return kv[0]+' '+kv[1]}).join(' - '));
+ y-=12;
+
+ // 7. Rounded black loyalty points pill bar
+ if(m.loyalty.length){
+  var barH=18;
+  rrect(M,y-barH+2,CW,barH,3,0.06);
+  var loyStr=m.loyalty.map(function(kv){return kv[0]+': '+kv[1]}).join('  |  ');
+  txtWhiteC(y-barH+8,8.5,'F1',loyStr);
+  y-=barH+14;
+ }else{
+  y-=8;
+ }
+
+ // 8. WhatsApp Community QR code on left + invitation copy on right (exact WA_QR_PATH)
+ var qrSize=80;
+ var qrTopY=y;
+ ops.push({t:'qr',x:M,y:qrTopY-qrSize,size:qrSize});
+ var rx=M+qrSize+10,rw=W-M-rx,ry=qrTopY-10;
+ var joinLines=[
+  String(m.join[0]||'JOIN OUR WHATSAPP COMMUNITY').replace(/\*/g,'').trim(),
+  String(m.join[1]||''),
+  String(m.join[2]||'')
+ ];
+ joinLines.forEach(function(jl){
+  if(!jl)return;
+  pdfWrapPx(jl,rw,8.2,'F1').forEach(function(wl){txt(rx,ry,8.2,'F1',wl);ry-=10.5});
+ });
+ y=Math.min(qrTopY-qrSize,ry)-14;
+
+ // 9. Footer note & closing line
  if(m.note){
-  pdfWrap(m.note,54).forEach(function(wl){txtC(y,8.5,'F1',wl);y-=12});
+  pdfWrapPx(m.note,CW-6,8.2,'F1').forEach(function(wl){txtC(y,8.2,'F1',wl);y-=11});
+  y-=6;
  }
- y-=4;
- txtC(y,9.5,'F2','Thank you for shopping with us!');
- y-=13;
- if(link()){
-  txtC(y,8,'F1','Join our WhatsApp Community: '+link());
- }
+ txtC(y,8.5,'F1','Thank you for shopping with us');
+ y-=6;
+
+ // Fit page height cleanly around content
+ var topPad=28,botPad=20;
+ var H=Math.ceil(-y+topPad+botPad);
+ var shift=H-topPad;
+
+ var cmds=[];
+ ops.forEach(function(o){
+  var yy=o.y+shift;
+  if(o.t==='txt'){
+   cmds.push('0.08 g BT /'+o.f+' '+o.s+' Tf '+(o.tc?o.tc.toFixed(2)+' Tc ':'0 Tc ')+'1 0 0 1 '+o.x.toFixed(2)+' '+yy.toFixed(2)+' Tm ('+o.v+') Tj 0 Tc ET');
+  }else if(o.t==='wtxt'){
+   cmds.push('1 g BT /'+o.f+' '+o.s+' Tf 0 Tc 1 0 0 1 '+o.x.toFixed(2)+' '+yy.toFixed(2)+' Tm ('+o.v+') Tj ET 0 g');
+  }else if(o.t==='line'){
+   cmds.push('q '+o.g+' G '+o.lw+' w '+(o.dash?'[2 2] 0 d ':'[] 0 d ')+M+' '+yy.toFixed(2)+' m '+(W-M)+' '+yy.toFixed(2)+' l S Q');
+  }else if(o.t==='rrect'){
+   var x=o.x,yb=yy,w=o.w,h=o.h,r=o.r,k=r*0.5523;
+   cmds.push('q '+o.g+' g '
+    +(x+r).toFixed(2)+' '+yb.toFixed(2)+' m '
+    +(x+w-r).toFixed(2)+' '+yb.toFixed(2)+' l '
+    +(x+w-r+k).toFixed(2)+' '+yb.toFixed(2)+' '+(x+w).toFixed(2)+' '+(yb+r-k).toFixed(2)+' '+(x+w).toFixed(2)+' '+(yb+r).toFixed(2)+' c '
+    +(x+w).toFixed(2)+' '+(yb+h-r).toFixed(2)+' l '
+    +(x+w).toFixed(2)+' '+(yb+h-r+k).toFixed(2)+' '+(x+w-r+k).toFixed(2)+' '+(yb+h).toFixed(2)+' '+(x+w-r).toFixed(2)+' '+(yb+h).toFixed(2)+' c '
+    +(x+r).toFixed(2)+' '+(yb+h).toFixed(2)+' l '
+    +(x+r-k).toFixed(2)+' '+(yb+h).toFixed(2)+' '+x.toFixed(2)+' '+(yb+h-r+k).toFixed(2)+' '+x.toFixed(2)+' '+(yb+h-r).toFixed(2)+' c '
+    +x.toFixed(2)+' '+(yb+r).toFixed(2)+' l '
+    +x.toFixed(2)+' '+(yb+r-k).toFixed(2)+' '+(x+r-k).toFixed(2)+' '+yb.toFixed(2)+' '+(x+r).toFixed(2)+' '+yb.toFixed(2)+' c f Q');
+  }else if(o.t==='qr'&&typeof WA_QR_PATH==='string'){
+   var cell=o.size/33,qcmds=['q 0.05 g'];
+   WA_QR_PATH.replace(/M(\d+)\s+(\d+)h(\d+)v(\d+)/g,function(_,qx,qy,qw,qh){
+    var rx0=o.x+(+qx)*cell;
+    var ry0=yy+o.size-((+qy)+(+qh))*cell;
+    qcmds.push(rx0.toFixed(2)+' '+ry0.toFixed(2)+' '+((+qw)*cell+0.08).toFixed(2)+' '+((+qh)*cell+0.08).toFixed(2)+' re');
+   });
+   qcmds.push('f Q');
+   cmds.push(qcmds.join(' '));
+  }
+ });
 
  var stream=cmds.join('\n');
  var objs=[
