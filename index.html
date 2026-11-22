@@ -1817,6 +1817,37 @@ function errText(data,code){
  if(data&&data.error)return String(data.error);
  return'HTTP '+code;
 }
+var lastSessionState='';
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+async function getSessionState(c){
+ var res=await fetch(c.base+'/sessions/'+encodeURIComponent(c.sessionId),{headers:{'X-API-Key':c.apiKey}});
+ var data=await res.json().catch(function(){return{}});
+ if(!res.ok){var e=new Error(errText(data,res.status));e.status=res.status;throw e}
+ var st=String(data.status||data.state||'').toLowerCase();
+ lastSessionState=st;return st;
+}
+async function ensureSessionReady(c,silent){
+ var st=await getSessionState(c);
+ if(st==='ready')return'ready';
+ if(st==='qr_ready')throw new Error('WhatsApp QR scan needed once in OpenWA Dashboard');
+ if(st!=='initializing'&&st!=='authenticating'){
+  var sr=await fetch(c.base+'/sessions/'+encodeURIComponent(c.sessionId)+'/start',{method:'POST',headers:{'X-API-Key':c.apiKey}});
+  if(!sr.ok&&sr.status!==400&&sr.status!==409){
+   var sd=await sr.json().catch(function(){return{}});
+   throw new Error(errText(sd,sr.status));
+  }
+  lastSessionState='initializing';if(!silent)render();
+ }
+ for(var k=0;k<15;k++){
+  await sleep(2000);
+  st=await getSessionState(c);
+  if(!silent)render();
+  if(st==='ready')return'ready';
+  if(st==='qr_ready')throw new Error('WhatsApp QR scan needed once in OpenWA Dashboard');
+  if(st==='failed')throw new Error('OpenWA session failed to start');
+ }
+ throw new Error('OpenWA session is still starting ('+st+')');
+}
 async function sendViaOpenWA(n,name,opts){
  var c=apiCfg();
  if(!c.base||!c.sessionId||!c.apiKey)throw new Error('OpenWA URL, Session ID, and API Key are required');
@@ -1824,21 +1855,34 @@ async function sendViaOpenWA(n,name,opts){
  if(g('cmw-wa-link-preview','1')!=='0')payload.linkPreview=true;
  var headers={'Content-Type':'application/json','X-API-Key':c.apiKey};
  if(opts&&opts.idempotencyKey)headers['Idempotency-Key']=opts.idempotencyKey;
- var res;
- try{
-  res=await fetch(c.base+'/sessions/'+encodeURIComponent(c.sessionId)+'/messages/send-text',{method:'POST',headers:headers,body:JSON.stringify(payload)});
- }catch(e){
-  var err=new Error('Cannot reach OpenWA at '+c.base+' (check server is running & CORS)');
-  err.fatal=true;throw err;
+ var url=c.base+'/sessions/'+encodeURIComponent(c.sessionId)+'/messages/send-text';
+ async function postOnce(){
+  var res;
+  try{
+   res=await fetch(url,{method:'POST',headers:headers,body:JSON.stringify(payload)});
+  }catch(e){
+   var err=new Error('Cannot reach OpenWA at '+c.base+' (check server is running & CORS)');
+   err.fatal=true;throw err;
+  }
+  var data=await res.json().catch(function(){return{}});
+  return{res:res,data:data};
  }
- var data=await res.json().catch(function(){return{}});
- if(!res.ok){
-  var err2=new Error(errText(data,res.status));
-  err2.status=res.status;
-  if(res.status===401||res.status===403)err2.fatal=true;
+ var out=await postOnce();
+ if(!out.res.ok&&(out.res.status===400||out.res.status===409)){
+  var msgL=errText(out.data,out.res.status).toLowerCase();
+  if(msgL.indexOf('not active')>=0||msgL.indexOf('not ready')>=0||msgL.indexOf('disconnected')>=0||msgL.indexOf('start the session')>=0){
+   await ensureSessionReady(c,false);
+   out=await postOnce();
+  }
+ }
+ if(!out.res.ok){
+  var err2=new Error(errText(out.data,out.res.status));
+  err2.status=out.res.status;
+  if(out.res.status===401||out.res.status===403)err2.fatal=true;
   throw err2;
  }
- return data;
+ lastSessionState='ready';
+ return out.data;
 }
 async function sendOne(n,name,isResend){
  if(inFlight[n])return{ok:false,error:'Already sending to +'+n};
@@ -1865,7 +1909,11 @@ function render(){
  var badge=$$('waApiBadge');
  if(badge){
   badge.innerHTML=okCfg
-   ?'<span style="color:var(--ok);font-weight:600">&#9679; OpenWA API connected</span> &middot; Automatic sending ready'
+   ?(lastSessionState==='qr_ready'
+     ?'<span style="color:var(--bad);font-weight:600">&#9679; OpenWA needs QR scan</span> &middot; Open OpenWA Dashboard once to re-link'
+     :(lastSessionState==='initializing'||lastSessionState==='authenticating'
+       ?'<span style="color:var(--warn);font-weight:600">&#9679; OpenWA session starting\u2026</span>'
+       :'<span style="color:var(--ok);font-weight:600">&#9679; OpenWA API connected</span> &middot; '+(lastSessionState==='ready'?'Session ready':'Auto-start enabled')))
    :'<span style="color:var(--warn);font-weight:600">&#9679; OpenWA API not configured</span> &middot; Enter your API URL, Session ID, and API Key below';
  }
  var det=$$('waApiDetails');
@@ -1978,12 +2026,10 @@ if($$('waTestBtn'))$$('waTestBtn').addEventListener('click',async function(){
    toast('Test WhatsApp invitation sent \u2713');
   }else{
    var c=apiCfg();
-   var res=await fetch(c.base+'/sessions/'+encodeURIComponent(c.sessionId),{headers:{'X-API-Key':c.apiKey}});
-   var data=await res.json().catch(function(){return{}});
-   if(!res.ok)throw new Error(errText(data,res.status));
-   var state=data.status||data.state||'connected';
-   if(st)st.innerHTML='<span style="color:var(--ok);font-weight:600">\u2713 OpenWA reachable</span> (session: '+esc(state)+')';
-   toast('OpenWA connected ('+state+')');
+   if(st)st.textContent='Checking & waking OpenWA session\u2026';
+   var state=await ensureSessionReady(c,false);
+   if(st)st.innerHTML='<span style="color:var(--ok);font-weight:600">\u2713 OpenWA active</span> (session: '+esc(state)+')';
+   toast('OpenWA session active ('+state+')');
   }
  }catch(e){
   if(st)st.innerHTML='<span style="color:var(--bad)">Failed: '+esc(e.message||String(e))+'</span>';
@@ -2014,5 +2060,8 @@ window.choppersWaOnSale=function(bill){
  }catch(e){}
 };
 render();
+setTimeout(function(){
+ if(isConfigured()){ensureSessionReady(apiCfg(),true).then(function(){render()}).catch(function(){render()})}
+},2500);
 })();</script>
 </body></html>
