@@ -240,17 +240,35 @@ nav button .ic{display:none}
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
  <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div>
 
-<div class="card" id="waCard"><h2>Daily customer invitation (WhatsApp)</h2>
+<div class="card" id="waCard"><h2>Daily customer invitation (WhatsApp · OpenWA)</h2>
+<div id="waApiBadge" class="mu" style="margin-bottom:8px;font-size:12px"></div>
 <div class="mu" id="waSum" style="margin-bottom:10px"></div>
 <button class="btn big" id="waNext" type="button">Send today's invitations</button>
-<div class="mu" id="waAutoMsg" style="margin-top:8px;min-height:18px"></div>
+<div class="mu" id="waAutoMsg" style="margin-top:8px;min-height:18px" aria-live="polite"></div>
 <button class="btn g big" id="waStop" type="button" style="display:none;margin-top:8px">Stop</button>
-<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:10px"><input type="checkbox" id="waAuto" style="width:20px;height:20px;min-height:0"><span>Auto-open the next customer every few seconds (you only press Send in WhatsApp)</span></label>
+<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:10px"><input type="checkbox" id="waAutoCheckout" style="width:20px;height:20px;min-height:0"><span>Auto-send invitation via OpenWA immediately when a new bill is saved</span></label>
+<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:8px"><input type="checkbox" id="waAuto" style="width:20px;height:20px;min-height:0"><span>Auto-send all pending customers in sequence when clicking Send</span></label>
 <div id="waList" style="margin-top:10px"></div>
+<details id="waApiDetails" style="margin-top:12px"><summary class="mu" style="cursor:pointer">OpenWA API settings</summary>
+<div class="row" style="margin-top:10px">
+ <div><label for="waApiUrl">OpenWA API URL</label><input id="waApiUrl" autocomplete="off" placeholder="http://127.0.0.1:2785/api"></div>
+ <div><label for="waSessionId">Session ID</label><input id="waSessionId" autocomplete="off" placeholder="Ready OpenWA session UUID"></div>
+</div>
+<div class="row">
+ <div><label for="waApiKey">API Key (X-API-Key)</label><div style="display:flex;gap:8px"><input id="waApiKey" type="password" autocomplete="off" placeholder="OpenWA API key" style="flex:1"><button class="btn g s" id="waKeyToggle" type="button" style="flex:0 0 auto">Show</button></div></div>
+ <div><label for="waTestPhone">Test mobile (optional)</label><input id="waTestPhone" inputmode="numeric" autocomplete="off" placeholder="10-digit number for test send"></div>
+</div>
+<div class="row" style="align-items:center">
+ <div style="flex:0 0 auto"><button class="btn g" id="waTestBtn" type="button">Test OpenWA connection</button></div>
+ <div class="mu" id="waTestStatus" aria-live="polite" style="font-size:12px"></div>
+</div>
+<div class="mu">Saved locally on this device. Uses <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">POST /sessions/{sessionId}/messages/send-text</code> with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">X-API-Key</code>.</div>
+</details>
 <details style="margin-top:12px"><summary class="mu" style="cursor:pointer">Message &amp; reminder settings</summary>
 <div class="row" style="margin-top:10px"><div style="flex:1 1 100%"><label for="waMsg">Message ({name}, {shop}, {link} work)</label><textarea id="waMsg" rows="8" style="width:100%;font:inherit;color:var(--tx);background:var(--card);border:1px solid #8c8c8c;border-radius:8px;padding:10px 12px"></textarea></div></div>
-<div class="row"><div><label for="waLink">Community link</label><input id="waLink" autocomplete="off"></div><div style="flex:0 1 140px"><label for="waGap">Seconds between chats</label><input id="waGap" type="number" min="8" max="120"></div><div style="flex:0 1 140px"><label for="waHr">Remind me after (hour, 0-23)</label><input id="waHr" type="number" min="0" max="23"></div></div>
-<div class="mu">Customers are removed from the queue once their chat is opened, and are never invited again on later days.</div>
+<div class="row"><div><label for="waLink">Community link</label><input id="waLink" autocomplete="off"></div><div style="flex:0 1 140px"><label for="waGap">Delay (seconds)</label><input id="waGap" type="number" min="3" max="120"></div><div style="flex:0 1 140px"><label for="waHr">Remind me after (hour, 0-23)</label><input id="waHr" type="number" min="0" max="23"></div></div>
+<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:4px;margin-bottom:8px"><input type="checkbox" id="waLinkPreview" style="width:20px;height:20px;min-height:0"><span>Attach WhatsApp link preview card for the community link</span></label>
+<div class="mu">Customers are marked as invited only after OpenWA confirms delivery, and are never invited again on later days unless you click Resend.</div>
 </details></div>
 <div class="card"><h2>App Permanence &amp; Offline Speed</h2>
 <div class="stat" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
@@ -1161,6 +1179,8 @@ async function submit(printIt){
 
  // Enqueue background sync to Google Sheets
  enqueueSync({type:edit?'updateBill':'saveBill',inv,payload,ts,edit:!!edit});
+ // Auto-send WhatsApp community invitation via OpenWA for new bills
+ if(!edit&&typeof window.choppersWaOnSale==='function')window.choppersWaOnSale(localBill);
 }
 function restoreBill(s){S.cart=s.cart;S.editBill=s.editBill;$('bd').value=s.bd;$('bdT').value=s.bdT;$('pRedeem').value=s.pr;$('exAmt').value=s.ex;$('paid').value=s.paid;setPay(s.pay);setCust(s.cPhone,s.cName);refreshInvNo();rCart()}
 $('go').onclick=()=>submit(true);
@@ -1768,8 +1788,8 @@ window.choppersSaver=start;
 })();</script>
 <script>(function(){
 var DEF='Hi {name}, thank you for choosing {shop}! \uD83D\uDECD\uFE0F\nJoin our WhatsApp community to get updates on new collections and fresh stock as soon as they arrive:\n{link}';
-
-var timer=null,tick=null;
+var DEF_API='http://127.0.0.1:2785/api';
+var running=false,stopFlag=false,waitTimer=null,waitRes=null,tick=null,inFlight={};
 try{if((lsGet('cmw-wa-msg')||'').indexOf('member-only')>=0)lsSet('cmw-wa-msg','')}catch(e){}
 function g(k,d){var v=lsGet(k);return v===''||v==null?d:v}
 function $$(i){return document.getElementById(i)}
@@ -1780,41 +1800,219 @@ function todays(){var s=new Date();s.setHours(0,0,0,0);var t0=s.getTime(),m={},o
 function status(n,sent){if(sent[n]===today())return'today';if(sent[n])return'earlier';return''}
 function pending(){var s=sentMap();return todays().filter(function(x){return!status(x.num,s)})}
 function link(){return g('cmw-wa-link',typeof WA_URL!=='undefined'?WA_URL:'')}
-function render(){if(!$$('waCard'))return;
+function apiBase(){
+ var u=g('cmw-wa-api-url',DEF_API).trim().replace(/\/+$/,'');
+ if(!u)return'';
+ if(!/\/api$/i.test(u))u+='/api';
+ return u;
+}
+function apiCfg(){return{base:apiBase(),sessionId:g('cmw-wa-session-id','').trim(),apiKey:g('cmw-wa-api-key','').trim()}}
+function isConfigured(){var c=apiCfg();return !!(c.base&&c.sessionId&&c.apiKey)}
+function buildMsg(name){
+ var first=String(name||'').trim().split(/\s+/)[0]||'there';
+ return g('cmw-wa-msg',DEF).replace(/\{name\}/g,first).replace(/\{shop\}/g,S.cfg.name||'our store').replace(/\{link\}/g,link());
+}
+function errText(data,code){
+ if(data&&data.message){return Array.isArray(data.message)?data.message.join('; '):String(data.message)}
+ if(data&&data.error)return String(data.error);
+ return'HTTP '+code;
+}
+async function sendViaOpenWA(n,name,opts){
+ var c=apiCfg();
+ if(!c.base||!c.sessionId||!c.apiKey)throw new Error('OpenWA URL, Session ID, and API Key are required');
+ var payload={chatId:n+'@c.us',text:buildMsg(name)};
+ if(g('cmw-wa-link-preview','1')!=='0')payload.linkPreview=true;
+ var headers={'Content-Type':'application/json','X-API-Key':c.apiKey};
+ if(opts&&opts.idempotencyKey)headers['Idempotency-Key']=opts.idempotencyKey;
+ var res;
+ try{
+  res=await fetch(c.base+'/sessions/'+encodeURIComponent(c.sessionId)+'/messages/send-text',{method:'POST',headers:headers,body:JSON.stringify(payload)});
+ }catch(e){
+  var err=new Error('Cannot reach OpenWA at '+c.base+' (check server is running & CORS)');
+  err.fatal=true;throw err;
+ }
+ var data=await res.json().catch(function(){return{}});
+ if(!res.ok){
+  var err2=new Error(errText(data,res.status));
+  err2.status=res.status;
+  if(res.status===401||res.status===403)err2.fatal=true;
+  throw err2;
+ }
+ return data;
+}
+async function sendOne(n,name,isResend){
+ if(inFlight[n])return{ok:false,error:'Already sending to +'+n};
+ if(!isConfigured()){
+  var det=$$('waApiDetails');if(det)det.open=true;
+  toast('Enter OpenWA URL, Session ID, and API Key in OpenWA API settings');
+  return{ok:false,error:'OpenWA not configured',fatal:true};
+ }
+ inFlight[n]=true;render();
+ try{
+  var key=isResend?('cmw-resend-'+n+'-'+Date.now()):('cmw-invite-'+today()+'-'+n);
+  await sendViaOpenWA(n,name,{idempotencyKey:key});
+  var s=sentMap();s[n]=today();lsSet('cmw-wa-sent',JSON.stringify(s));
+  return{ok:true};
+ }catch(e){
+  return{ok:false,error:e.message||String(e),fatal:!!e.fatal};
+ }finally{
+  delete inFlight[n];render();
+ }
+}
+function render(){
+ if(!$$('waCard'))return;
+ var okCfg=isConfigured();
+ var badge=$$('waApiBadge');
+ if(badge){
+  badge.innerHTML=okCfg
+   ?'<span style="color:var(--ok);font-weight:600">&#9679; OpenWA API connected</span> &middot; Automatic sending ready'
+   :'<span style="color:var(--warn);font-weight:600">&#9679; OpenWA API not configured</span> &middot; Enter your API URL, Session ID, and API Key below';
+ }
+ var det=$$('waApiDetails');
+ if(det&&!det.dataset.init){det.dataset.init='1';if(!okCfg)det.open=true}
  var list=todays(),sent=sentMap(),pend=pending();
  var done=list.filter(function(x){return status(x.num,sent)==='today'}).length;
- $$('waSum').textContent=list.length?(list.length+' customer'+(list.length>1?'s':'')+' today · '+done+' invited · '+pend.length+' pending'):'No customers with a mobile number yet today.';
- var b=$$('waNext');b.disabled=!pend.length||!!timer;b.textContent=pend.length?'Send today\'s invitations ('+pend.length+' left)':'All invitations sent';
- var row=function(x,label,cls){return '<div class="res" style="cursor:default"><div><b>'+esc(x.name||'Customer')+'</b><div class="mu">+'+x.num+'</div></div><button class="btn s '+cls+'" type="button" data-n="'+x.num+'">'+label+'</button></div>'};
+ $$('waSum').textContent=list.length?(list.length+' customer'+(list.length>1?'s':'')+' today \u00B7 '+done+' invited \u00B7 '+pend.length+' pending'):'No customers with a mobile number yet today.';
+ var b=$$('waNext');b.disabled=!pend.length||running;
+ b.textContent=running?'Sending via OpenWA\u2026':(pend.length?'Send today\'s invitations ('+pend.length+' left)':'All invitations sent');
+ var row=function(x,label,cls,resend){
+  var busyNow=!!inFlight[x.num];
+  return '<div class="res" style="cursor:default"><div><b>'+esc(x.name||'Customer')+'</b><div class="mu">+'+x.num+'</div></div><button class="btn s '+cls+(busyNow?' loading':'')+'" type="button" data-n="'+x.num+'" data-name="'+esc(x.name||'')+'" data-r="'+(resend?'1':'0')+'"'+(busyNow?' disabled':'')+'>'+label+'</button></div>';
+ };
  var inv=list.filter(function(x){return status(x.num,sent)});
- $$('waList').innerHTML=pend.map(function(x){return row(x,'Send','')}).join('')+(inv.length?'<details style="margin-top:8px"><summary class="mu" style="cursor:pointer">Already invited ('+inv.length+')</summary>'+inv.map(function(x){return row(x,status(x.num,sent)==='today'?'Sent today · resend':'Invited before · resend','g')}).join('')+'</details>':'');
+ $$('waList').innerHTML=pend.map(function(x){return row(x,'Send','',false)}).join('')+(inv.length?'<details style="margin-top:8px"><summary class="mu" style="cursor:pointer">Already invited ('+inv.length+')</summary>'+inv.map(function(x){return row(x,status(x.num,sent)==='today'?'Sent today \u00B7 resend':'Invited before \u00B7 resend','g',true)}).join('')+'</details>':'');
  var f=function(id,v){var e=$$(id);if(e&&document.activeElement!==e)e.value=v};
- f('waMsg',g('cmw-wa-msg',DEF));f('waLink',link());f('waHr',g('cmw-wa-hr','20'));f('waGap',g('cmw-wa-gap','20'));
- $$('waAuto').checked=g('cmw-wa-auto','1')!=='0'}
-function open1(n){var x=todays().filter(function(y){return y.num===n})[0];if(!x)return false;
- var first=x.name.trim().split(/\s+/)[0]||'there';
- var msg=g('cmw-wa-msg',DEF).replace(/\{name\}/g,first).replace(/\{shop\}/g,S.cfg.name||'our store').replace(/\{link\}/g,link());
- var s=sentMap();s[n]=today();lsSet('cmw-wa-sent',JSON.stringify(s));
- var w=window.open('https://wa.me/'+n+'?text='+encodeURIComponent(msg),'_blank');return !!w}
-function stop(m){clearInterval(timer);clearInterval(tick);timer=tick=null;$$('waStop').style.display='none';$$('waAutoMsg').textContent=m||'';render()}
-function countdown(){var gap=Math.max(8,+g('cmw-wa-gap','20')||20),left=gap;$$('waAutoMsg').textContent='Next customer opens in '+left+'s…';
- clearInterval(tick);tick=setInterval(function(){left--;if(left>0)$$('waAutoMsg').textContent='Next customer opens in '+left+'s…'},1000)}
-function step(){var p=pending();if(!p.length){stop('All done ✓');return}
- var ok=open1(p[0].num);
- if(!ok){stop('Your phone blocked the automatic open. Tap "Send" next to each customer instead.');return}
- if(!pending().length){stop('Last invitation opened. All done ✓');return}
- render();countdown()}
-function startAuto(){var gap=Math.max(8,+g('cmw-wa-gap','20')||20);$$('waStop').style.display='';timer=setInterval(step,gap*1000);step();if(!timer)return;render()}
-$$('waNext').addEventListener('click',function(){if(!pending().length)return;
- if(g('cmw-wa-auto','1')!=='0')startAuto();else{open1(pending()[0].num);render()}});
+ f('waApiUrl',g('cmw-wa-api-url',DEF_API));
+ f('waSessionId',g('cmw-wa-session-id',''));
+ f('waApiKey',g('cmw-wa-api-key',''));
+ f('waMsg',g('cmw-wa-msg',DEF));
+ f('waLink',link());
+ f('waHr',g('cmw-wa-hr','20'));
+ f('waGap',g('cmw-wa-gap','10'));
+ if($$('waAutoCheckout'))$$('waAutoCheckout').checked=g('cmw-wa-auto-checkout','1')!=='0';
+ if($$('waAuto'))$$('waAuto').checked=g('cmw-wa-auto','1')!=='0';
+ if($$('waLinkPreview'))$$('waLinkPreview').checked=g('cmw-wa-link-preview','1')!=='0';
+}
+function clearWait(){clearTimeout(waitTimer);clearInterval(tick);waitTimer=null;tick=null;if(waitRes){var r=waitRes;waitRes=null;r()}}
+function waitGap(sec,prefix){
+ return new Promise(function(resolve){
+  waitRes=resolve;
+  var left=sec;
+  $$('waAutoMsg').textContent=prefix+'Next send in '+left+'s\u2026';
+  tick=setInterval(function(){
+   left--;
+   if(left>0)$$('waAutoMsg').textContent=prefix+'Next send in '+left+'s\u2026';
+  },1000);
+  waitTimer=setTimeout(function(){clearInterval(tick);tick=null;waitTimer=null;waitRes=null;resolve()},sec*1000);
+ });
+}
+function stop(m){
+ stopFlag=true;running=false;clearWait();
+ $$('waStop').style.display='none';
+ if(m!==undefined)$$('waAutoMsg').textContent=m;
+ render();
+}
+async function startAuto(){
+ if(running)return;
+ if(!isConfigured()){
+  var det=$$('waApiDetails');if(det)det.open=true;
+  toast('Enter OpenWA URL, Session ID, and API Key first');
+  return;
+ }
+ var queue=pending().slice();
+ if(!queue.length)return;
+ running=true;stopFlag=false;
+ $$('waStop').style.display='';
+ render();
+ var sentOk=0,failed=0,gap=Math.max(3,+g('cmw-wa-gap','10')||10);
+ for(var i=0;i<queue.length;i++){
+  if(stopFlag)break;
+  var x=queue[i];
+  $$('waAutoMsg').textContent='Sending '+(i+1)+'/'+queue.length+' to '+(x.name||'+'+x.num)+'\u2026';
+  var r=await sendOne(x.num,x.name,false);
+  if(r.ok){sentOk++}
+  else{
+   failed++;
+   if(r.fatal){stop('Stopped: '+r.error);toast('OpenWA error: '+r.error);return}
+   toast('Skipped '+(x.name||'+'+x.num)+': '+r.error);
+  }
+  if(stopFlag)break;
+  if(i<queue.length-1){
+   var jitter=Math.floor(Math.random()*3);
+   await waitGap(gap+jitter,'Sent '+sentOk+(failed?' ('+failed+' failed)':'')+' \u00B7 ');
+  }
+ }
+ if(!stopFlag){
+  stop('Done \u2713 '+sentOk+' sent'+(failed?' \u00B7 '+failed+' failed':''));
+  toast('WhatsApp invitations: '+sentOk+' sent'+(failed?', '+failed+' failed':''));
+ }
+}
+$$('waNext').addEventListener('click',async function(){
+ var p=pending();if(!p.length)return;
+ if(g('cmw-wa-auto','1')!=='0'){startAuto();return}
+ $$('waAutoMsg').textContent='Sending to '+(p[0].name||'+'+p[0].num)+'\u2026';
+ var r=await sendOne(p[0].num,p[0].name,false);
+ $$('waAutoMsg').textContent=r.ok?('Sent to '+(p[0].name||'+'+p[0].num)+' \u2713'):('Failed: '+r.error);
+ toast(r.ok?'Invitation sent \u2713':'Not sent: '+r.error);
+});
 $$('waStop').addEventListener('click',function(){stop('Stopped. Press the button to continue where you left off.')});
-$$('waList').addEventListener('click',function(e){var b=e.target.closest('button[data-n]');if(b){open1(b.dataset.n);render()}});
-$$('waAuto').addEventListener('change',function(){lsSet('cmw-wa-auto',this.checked?'1':'0')});
-[['waMsg','cmw-wa-msg'],['waLink','cmw-wa-link'],['waHr','cmw-wa-hr'],['waGap','cmw-wa-gap']].forEach(function(a){$$(a[0]).addEventListener('input',function(){lsSet(a[1],this.value)})});
+$$('waList').addEventListener('click',async function(e){
+ var b=e.target.closest('button[data-n]');if(!b)return;
+ var n=b.dataset.n,nm=b.dataset.name||'',resend=b.dataset.r==='1';
+ var r=await sendOne(n,nm,resend);
+ toast(r.ok?('Invitation sent to '+(nm||'+'+n)+' \u2713'):('Not sent: '+r.error));
+});
+if($$('waKeyToggle'))$$('waKeyToggle').addEventListener('click',function(){
+ var inp=$$('waApiKey');if(!inp)return;
+ var show=inp.type==='password';inp.type=show?'text':'password';this.textContent=show?'Hide':'Show';
+});
+if($$('waTestBtn'))$$('waTestBtn').addEventListener('click',async function(){
+ var st=$$('waTestStatus'),btn=this;
+ if(!isConfigured()){if(st)st.textContent='Enter API URL, Session ID, and API Key first.';return}
+ btn.disabled=true;btn.classList.add('loading');if(st)st.textContent='Testing OpenWA\u2026';
+ try{
+  var tp=num(($$('waTestPhone')&&$$('waTestPhone').value)||'');
+  if(tp){
+   await sendViaOpenWA(tp,'Customer',{idempotencyKey:'cmw-test-'+Date.now()});
+   if(st)st.innerHTML='<span style="color:var(--ok);font-weight:600">\u2713 Test invitation sent to +'+tp+'</span>';
+   toast('Test WhatsApp invitation sent \u2713');
+  }else{
+   var c=apiCfg();
+   var res=await fetch(c.base+'/sessions/'+encodeURIComponent(c.sessionId),{headers:{'X-API-Key':c.apiKey}});
+   var data=await res.json().catch(function(){return{}});
+   if(!res.ok)throw new Error(errText(data,res.status));
+   var state=data.status||data.state||'connected';
+   if(st)st.innerHTML='<span style="color:var(--ok);font-weight:600">\u2713 OpenWA reachable</span> (session: '+esc(state)+')';
+   toast('OpenWA connected ('+state+')');
+  }
+ }catch(e){
+  if(st)st.innerHTML='<span style="color:var(--bad)">Failed: '+esc(e.message||String(e))+'</span>';
+  toast('OpenWA test failed: '+(e.message||String(e)));
+ }finally{btn.disabled=false;btn.classList.remove('loading')}
+});
+if($$('waAutoCheckout'))$$('waAutoCheckout').addEventListener('change',function(){lsSet('cmw-wa-auto-checkout',this.checked?'1':'0')});
+if($$('waAuto'))$$('waAuto').addEventListener('change',function(){lsSet('cmw-wa-auto',this.checked?'1':'0')});
+if($$('waLinkPreview'))$$('waLinkPreview').addEventListener('change',function(){lsSet('cmw-wa-link-preview',this.checked?'1':'0')});
+[['waApiUrl','cmw-wa-api-url'],['waSessionId','cmw-wa-session-id'],['waApiKey','cmw-wa-api-key'],['waMsg','cmw-wa-msg'],['waLink','cmw-wa-link'],['waHr','cmw-wa-hr'],['waGap','cmw-wa-gap']].forEach(function(a){
+ var el=$$(a[0]);if(el)el.addEventListener('input',function(){lsSet(a[1],this.value);if(a[0]==='waApiUrl'||a[0]==='waSessionId'||a[0]==='waApiKey')render()});
+});
 $$('nav').addEventListener('click',function(){setTimeout(render,60)});
-setInterval(function(){if(document.body.dataset.tab==='set'&&!timer)render()},15000);
+setInterval(function(){if(document.body.dataset.tab==='set'&&!running)render()},15000);
 setInterval(function(){try{var hr=+g('cmw-wa-hr','20'),now=new Date();if(now.getHours()<hr||lsGet('cmw-wa-nudge')===today())return;
  var p=pending();if(p.length){lsSet('cmw-wa-nudge',today());toast(p.length+' customers waiting for a WhatsApp invitation. Open Settings.')}}catch(e){}},60000);
+window.choppersWaOnSale=function(bill){
+ try{
+  if(!bill||bill.deleted||!bill.phone)return;
+  if(g('cmw-wa-auto-checkout','1')==='0')return;
+  if(!isConfigured())return;
+  var n=num(bill.phone);if(!n)return;
+  var s=sentMap();if(s[n])return;
+  sendOne(n,bill.cust||'',false).then(function(r){
+   if(r.ok)toast('WhatsApp community invite sent to '+(bill.cust||'+'+n)+' \u2713');
+   else toast('WhatsApp invite queued in Settings: '+r.error);
+  });
+ }catch(e){}
+};
 render();
 })();</script>
 </body></html>
