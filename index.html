@@ -1788,7 +1788,7 @@ window.choppersSaver=start;
 })();</script>
 <script>(function(){
 var DEF='Hi {name}, thank you for choosing {shop}! \uD83D\uDECD\uFE0F\nJoin our WhatsApp community to get updates on new collections and fresh stock as soon as they arrive:\n{link}';
-var DEF_API='http://127.0.0.1:2785/api';
+var DEF_API='http://127.0.0.1:2785/api',DEF_SID='ab4faf10-dd97-47d5-8392-ea628ceeb237',DEF_KEY='owa_k1_39aa763882783d7221e783b2455b4886be6d48c3aa210b5d7a45c1f13b9b1b5f';
 var running=false,stopFlag=false,waitTimer=null,waitRes=null,tick=null,inFlight={};
 try{if((lsGet('cmw-wa-msg')||'').indexOf('member-only')>=0)lsSet('cmw-wa-msg','')}catch(e){}
 function g(k,d){var v=lsGet(k);return v===''||v==null?d:v}
@@ -1806,7 +1806,7 @@ function apiBase(){
  if(!/\/api$/i.test(u))u+='/api';
  return u;
 }
-function apiCfg(){return{base:apiBase(),sessionId:g('cmw-wa-session-id','').trim(),apiKey:g('cmw-wa-api-key','').trim()}}
+function apiCfg(){return{base:apiBase(),sessionId:g('cmw-wa-session-id',DEF_SID).trim(),apiKey:g('cmw-wa-api-key',DEF_KEY).trim()}}
 function isConfigured(){var c=apiCfg();return !!(c.base&&c.sessionId&&c.apiKey)}
 function buildMsg(name){
  var first=String(name||'').trim().split(/\s+/)[0]||'there';
@@ -1883,8 +1883,8 @@ function render(){
  $$('waList').innerHTML=pend.map(function(x){return row(x,'Send','',false)}).join('')+(inv.length?'<details style="margin-top:8px"><summary class="mu" style="cursor:pointer">Already invited ('+inv.length+')</summary>'+inv.map(function(x){return row(x,status(x.num,sent)==='today'?'Sent today \u00B7 resend':'Invited before \u00B7 resend','g',true)}).join('')+'</details>':'');
  var f=function(id,v){var e=$$(id);if(e&&document.activeElement!==e)e.value=v};
  f('waApiUrl',g('cmw-wa-api-url',DEF_API));
- f('waSessionId',g('cmw-wa-session-id',''));
- f('waApiKey',g('cmw-wa-api-key',''));
+ f('waSessionId',g('cmw-wa-session-id',DEF_SID));
+ f('waApiKey',g('cmw-wa-api-key',DEF_KEY));
  f('waMsg',g('cmw-wa-msg',DEF));
  f('waLink',link());
  f('waHr',g('cmw-wa-hr','20'));
