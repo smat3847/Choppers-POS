@@ -181,21 +181,23 @@ nav button .ic{display:none}
 .sw[aria-checked="true"]{background:var(--tx);border-color:var(--tx)}
 .sw[aria-checked="true"] .sw-k{transform:translateX(20px);background:var(--bg)}
 
-/* UI polish: customer strip, desktop shortcut keycaps, cart row polish */
+/* UI polish: customer strip with prominent points pill, clean cart row alignment */
 .cust-strip{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--bd);background:color-mix(in srgb,var(--tx) 4%,transparent)}
 .cust-strip .cs-main{min-width:0;line-height:1.3}
-.cust-strip .cs-meta{font-size:11.5px;color:var(--mu);margin-top:2px}
+.cust-strip .cs-right{display:inline-flex;align-items:center;gap:8px;flex:none}
+.pts-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:999px;background:var(--tx);color:var(--bg);font:700 12px/1.1 var(--sans);letter-spacing:.04em;white-space:nowrap}
+.due-pill{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;border:1px solid var(--bad);color:var(--bad);font:600 11px/1.1 var(--sans);white-space:nowrap}
 .cust-strip .cs-btn{flex:none;min-height:32px;padding:4px 10px;font-size:11px;border-radius:6px}
-.kbd{display:none}
-@media (min-width:901px){
- .kbd{display:inline-block;margin-left:7px;padding:1px 5px;border-radius:4px;font:600 9.5px/1.3 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.03em;border:1px solid currentColor;opacity:.55;vertical-align:middle}
-}
-#cart .ci{border-radius:8px;padding:9px 8px;margin:0 -8px;transition:background .15s}
+#p-bill #itemsCard #cart{overflow-x:hidden!important;width:100%}
+#cart .ci{border-radius:8px;padding:8px 4px;margin:0;width:100%;box-sizing:border-box;transition:background .15s}
 #cart .ci:hover{background:color-mix(in srgb,var(--tx) 3.5%,transparent)}
-#cart .qty{gap:6px}
-#cart .qty button{width:34px;height:34px;font-size:16px}
-#cart .qty input{width:54px;min-height:34px;padding:4px 8px;font-size:14px}
-#cart .rm-btn{min-height:34px;width:34px;padding:0;font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+body[data-tab="bill"] #p-bill #itemsCard .ci{gap:10px!important;grid-template-columns:minmax(0,1fr) auto auto auto!important}
+body[data-tab="bill"] #p-bill #itemsCard .ci>div:nth-child(2){min-width:60px!important}
+body[data-tab="bill"] #p-bill #itemsCard .ci>div:nth-child(4){min-width:auto!important}
+#cart .qty{gap:5px}
+#cart .qty button{width:32px;height:32px;font-size:16px}
+#cart .qty input{width:48px;min-height:32px;padding:4px 6px;font-size:13.5px}
+#cart .rm-btn{min-height:32px;width:32px;padding:0;font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
 #cart .empty-cart{text-align:center;padding:34px 16px;color:var(--mu);font-size:13px;border:1px dashed var(--bd);border-radius:10px;margin-top:6px}
 </style><script src="https://accounts.google.com/gsi/client" async defer></script></head><body data-tab="bill">
 <a class="skip" href="#main-area">Skip to main content</a>
@@ -203,7 +205,7 @@ nav button .ic{display:none}
 <nav id="nav" aria-label="Main sections"></nav>
 <main id="main-area" tabindex="-1">
 <section class="pg on" id="p-bill">
-<div class="card" id="invBar"><div class="invrow"><div><label id="invLabel">Invoice (new bill)</label><input id="invNo" aria-label="Invoice number. Type number and press Enter to search" value="S83527" autocomplete="off" spellcheck="false"></div><button class="btn g" id="fNew" data-label="New bill">New bill<span class="kbd">F1</span></button></div></div>
+<div class="card" id="invBar"><div class="invrow"><div><label id="invLabel">Invoice (new bill)</label><input id="invNo" aria-label="Invoice number. Type number and press Enter to search" value="S83527" autocomplete="off" spellcheck="false"></div><button class="btn g" id="fNew" data-label="New bill">New bill</button></div></div>
 <div id="invView" style="display:none"></div>
 <div class="grid two" id="billGrid">
   <div class="card" id="custCard"><h2>1 · Customer (optional)</h2>
@@ -221,7 +223,7 @@ nav button .ic{display:none}
    </div><div class="row"><div style="flex-basis:100%"><label class="payLbl">Payment</label><select id="pay" style="display:none"><option>Cash</option><option>UPI</option><option>Card</option></select><div class="seg" id="paySeg" role="group" aria-label="Payment mode"><button class="on" data-v="Cash">Cash</button><button data-v="UPI">UPI</button><button data-v="Card">Card</button></div></div></div>
   <div class="row" id="paidRow" style="display:none"><div><label>Amount paid now (rest goes to ledger)</label><input id="paid" aria-label="Amount paid now" type="number" min="0" value="0"></div></div>
   <div id="tots" aria-live="polite"></div>
-  <div class="row saveRow" style="margin-top:10px"><button class="btn g" id="gs" style="flex:1">Save<span class="kbd">F11</span></button><button class="btn" id="go" style="flex:1">Save &amp; print<span class="kbd">F12</span></button><button class="btn g" id="clr" data-label="Reset invoice">Reset invoice</button></div></div>
+  <div class="row saveRow" style="margin-top:10px"><button class="btn g" id="gs" style="flex:1">Save</button><button class="btn" id="go" style="flex:1">Save &amp; print</button><button class="btn g" id="clr" data-label="Reset invoice">Reset invoice</button></div></div>
 </div></section>
 
 <section class="pg" id="p-inv">
@@ -261,9 +263,32 @@ nav button .ic{display:none}
  <div class="row"><div><label>Address</label><input id="sAddr" aria-label="Shop address"></div><div><label>GST number</label><input id="sGst" aria-label="GST number"></div></div>
  <div class="row"><div><label>Thermal paper</label><select id="sPaper" aria-label="Receipt paper width"><option value="58">58 mm</option><option value="80">80 mm</option></select></div>
  <div><label>Cashier name (this device)</label><input id="sCash" aria-label="Cashier name"></div></div>
-<div class="row" style="align-items:center;margin-top:6px">
- <div><label>Silent Printing (No Dialog)</label><button class="btn g" id="btnSilentUsb" type="button" style="min-height:42px;width:100%">Pair USB for Silent Print</button></div>
- <div style="flex:1 1 200px"><label>&nbsp;</label><div id="silentPrintStatus" class="mu" style="font-size:12px;line-height:1.4">Standard print dialog active. Pair USB above or launch Chrome with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">--kiosk-printing</code> for 100% silent printing.</div></div>
+<div style="margin:10px 0 14px;padding:12px;border:1px solid var(--bd);border-radius:8px;background:color-mix(in srgb,var(--tx) 2.5%,transparent)">
+ <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap">
+  <b style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu)">Silent One-Tap Printers (No Dialog)</b>
+  <button class="btn g s" id="btnRefreshPrinters" type="button">Scan connected printers</button>
+ </div>
+ <div class="row" style="align-items:flex-end;margin-bottom:10px">
+  <div style="flex:1 1 220px">
+   <label for="selReceiptPrinter">Thermal receipt printer (ESC/POS)</label>
+   <select id="selReceiptPrinter" aria-label="Select thermal receipt printer"><option value="">Browser print dialog (not paired)</option></select>
+  </div>
+  <div style="flex:0 0 auto;display:flex;gap:6px">
+   <button class="btn g" id="btnSilentUsb" type="button" style="min-height:44px">Pair receipt printer</button>
+   <button class="btn g" id="btnTestReceipt" type="button" style="min-height:44px">Test</button>
+  </div>
+ </div>
+ <div class="row" style="align-items:flex-end;margin-bottom:8px">
+  <div style="flex:1 1 220px">
+   <label for="selBarcodePrinter">Barcode label printer (TSPL)</label>
+   <select id="selBarcodePrinter" aria-label="Select barcode label printer"><option value="">Browser print dialog (not paired)</option></select>
+  </div>
+  <div style="flex:0 0 auto;display:flex;gap:6px">
+   <button class="btn g" id="btnPairBarcode" type="button" style="min-height:44px">Pair barcode printer</button>
+   <button class="btn g" id="btnTestBarcode" type="button" style="min-height:44px">Test</button>
+  </div>
+ </div>
+ <div id="silentPrintStatus" class="mu" style="font-size:12px;line-height:1.4">Connect &amp; pair your USB printers once — both choices are saved automatically for one-tap silent printing.</div>
 </div>
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
  <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div>
@@ -1101,9 +1126,9 @@ function renderCust(){
  $('cPick').style.display=chosen?'none':'';
  if(!chosen){$('cInfo').innerHTML='';return}
  const c=phone?cust(phone):null;
- $('cInfo').innerHTML=`<div class="cust-strip"><div class="cs-main"><div><b style="color:var(--tx)">${esc(name||(c&&c.name)||'Customer')}</b> <span class="mu">· ${esc(phone||'no mobile')}</span></div>`
-  +(c?`<div class="cs-meta">${c.visits||0} visits · spent ${fm(c.spent||0)} · <b style="color:var(--tx)">${c.points||0} pts</b>${c.balance>0?' · <span style="color:var(--bad)">due '+fm(c.balance)+'</span>':''}</div>`:(phone?'<div class="cs-meta">New customer</div>':''))
-  +`</div><button class="btn g cs-btn" id="cChange" type="button">Change</button></div>`;
+ $('cInfo').innerHTML=`<div class="cust-strip"><div class="cs-main"><b style="color:var(--tx);font-size:14px">${esc(name||(c&&c.name)||'Customer')}</b><div class="mu" style="font-size:12px">${esc(phone||'no mobile')}</div></div><div class="cs-right">`
+  +(c?`<span class="pts-pill">${c.points||0} PTS</span>${c.balance>0?'<span class="due-pill">Due '+fm(c.balance)+'</span>':''}`:(phone?'<span class="pts-pill">NEW · 0 PTS</span>':''))
+  +`<button class="btn g cs-btn" id="cChange" type="button">Change</button></div></div>`;
  $('cChange').onclick=()=>{setCust('','');$('cSearch').value='';$('cSearch').focus()};
 }
 function custHits(){
@@ -1137,8 +1162,8 @@ function refreshInvNo(){
  const cur=e?e.inv:'S'+(S.nextNo||83527);
  if($('invNo'))$('invNo').value=cur;
  $('invLabel').textContent=e?'Editing invoice':'Invoice (new bill)';
- $('gs').innerHTML=(e?'Update':'Save')+'<span class="kbd">F11</span>';
- $('go').innerHTML=(e?'Update &amp; print':'Save &amp; print')+'<span class="kbd">F12</span>';
+ $('gs').textContent=e?'Update':'Save';
+ $('go').textContent=e?'Update & print':'Save & print';
 }
 function setPay(v){if(v==='Credit')v='Cash';$('pay').value=v;$('pay').onchange();[...$('paySeg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
 function setBusy(on){busy=on;$('go').disabled=on;$('gs').disabled=on;$('go').classList.toggle('loading',on);$('gs').classList.toggle('loading',on)}
@@ -1157,10 +1182,10 @@ function askReset(btn){
  if(!S.cart.length&&!S.editBill){resetInvoice();return}
  if(btn.dataset.s!=='1'){
   btn.dataset.s='1';btn.textContent='Sure? Discard this bill';
-  clearTimeout(btn._t);btn._t=setTimeout(()=>{btn.dataset.s='';btn.innerHTML=btn.dataset.label+(btn.id==='fNew'?'<span class="kbd">F1</span>':'')},3000);
+  clearTimeout(btn._t);btn._t=setTimeout(()=>{btn.dataset.s='';btn.textContent=btn.dataset.label},3000);
   return;
  }
- clearTimeout(btn._t);btn.dataset.s='';btn.innerHTML=btn.dataset.label+(btn.id==='fNew'?'<span class="kbd">F1</span>':'');
+ clearTimeout(btn._t);btn.dataset.s='';btn.textContent=btn.dataset.label;
  resetInvoice();
 }
 function applyResult(res,wasEdit){
@@ -1251,81 +1276,159 @@ function loadBill(b){
 }
 function invoiceText(b){const m=billModel(b);return [...headerLines(m),...billLines(m).map(x=>x[0])].join('\n')}
 
-// --- Silent Hardware Printing Engine (Zero Dialog) ---
-let silentUsbPort=null;
-async function writeSilentUsb(b){
- if(!silentUsbPort)return false;
+// --- Dual Silent Hardware Printing Engine (Thermal Receipt ESC/POS + Barcode Label TSPL) ---
+let connectedPrinters=[];
+function printerIdOf(port,idx){
+ const info=port&&port.getInfo?port.getInfo():{};
+ const v=info.usbVendorId?info.usbVendorId.toString(16).toUpperCase().padStart(4,'0'):'0000';
+ const p=info.usbProductId?info.usbProductId.toString(16).toUpperCase().padStart(4,'0'):'0000';
+ return `usb:${v}:${p}:${idx}`;
+}
+function printerLabelOf(port,idx){
+ const info=port&&port.getInfo?port.getInfo():{};
+ if(info.usbVendorId||info.usbProductId){
+  const v=(info.usbVendorId||0).toString(16).toUpperCase().padStart(4,'0');
+  const p=(info.usbProductId||0).toString(16).toUpperCase().padStart(4,'0');
+  return `USB Printer #${idx+1} (VID ${v} · PID ${p})`;
+ }
+ return `Serial Printer #${idx+1}`;
+}
+function getSavedPrinterPort(role){
+ const key=role==='barcode'?'cmw-printer-barcode':'cmw-printer-receipt';
+ const saved=lsGet(key);
+ if(!saved)return null;
+ const hit=connectedPrinters.find(x=>x.id===saved);
+ return hit?hit.port:null;
+}
+async function writeBytesToPort(port,bytes){
+ if(!port)return false;
  try{
-  if(!silentUsbPort.writable)await silentUsbPort.open({baudRate:9600});
-  const writer=silentUsbPort.writable.getWriter();
-  await writer.write(escpos(b));
+  if(!port.writable)await port.open({baudRate:9600});
+  const writer=port.writable.getWriter();
+  await writer.write(bytes);
   writer.releaseLock();
-  toast('Printed silently via USB ⚡');
   return true;
  }catch(e){
-  console.warn('Silent USB error:',e);
+  console.warn('Silent printer write error:',e);
   return false;
  }
 }
-async function pairSilentUsb(){
- if(!('serial' in navigator))return toast('Web Serial is supported on Desktop Chrome/Edge.');
- if(silentUsbPort&&silentUsbPort.writable){
+async function refreshConnectedPrinters(showToast){
+ if(!('serial' in navigator)){
   updateSilentUsbStatus();
-  toast('USB Thermal Printer is already paired and active!');
+  if(showToast)toast('USB silent printing requires Desktop Chrome or Edge');
   return;
  }
  try{
-  const port=await navigator.serial.requestPort();
-  if(!port.writable)await port.open({baudRate:9600});
-  silentUsbPort=port;
-  lsSet('cmw-silent-usb','1');
-  updateSilentUsbStatus();
-  toast('USB Printer paired for silent printing!');
- }catch(e){
-  if(e.name==='InvalidStateError'||(e.message&&e.message.toLowerCase().includes('already open'))){
-   updateSilentUsbStatus();
-   toast('USB Printer is already active and ready!');
-   return;
+  const ports=await navigator.serial.getPorts();
+  const seen={};
+  connectedPrinters=ports.map(port=>{
+   const info=port.getInfo?port.getInfo():{};
+   const base=`${info.usbVendorId||0}:${info.usbProductId||0}`;
+   const idx=seen[base]||0;seen[base]=idx+1;
+   return{id:printerIdOf(port,idx),label:printerLabelOf(port,idx),port};
+  });
+  // Migrate legacy single-printer flag if present
+  if(!lsGet('cmw-printer-receipt')&&lsGet('cmw-silent-usb')==='1'&&connectedPrinters.length){
+   lsSet('cmw-printer-receipt',connectedPrinters[0].id);
   }
-  if(e.name!=='NotFoundError')toast('Printer notice: '+e.message);
+  renderPrinterSelectors();
+  updateSilentUsbStatus();
+  if(showToast)toast(connectedPrinters.length?`Found ${connectedPrinters.length} connected printer${connectedPrinters.length>1?'s':''}`:'No paired printers yet — click Pair to choose one');
+ }catch(e){
+  updateSilentUsbStatus();
+ }
+}
+function renderPrinterSelectors(){
+ const opts='<option value="">Browser print dialog (off)</option>'+connectedPrinters.map(x=>`<option value="${esc(x.id)}">${esc(x.label)}</option>`).join('');
+ const rSel=$('selReceiptPrinter'),bSel=$('selBarcodePrinter');
+ if(rSel){
+  rSel.innerHTML=opts;
+  const rv=lsGet('cmw-printer-receipt');
+  if(rv&&connectedPrinters.some(x=>x.id===rv))rSel.value=rv;
+ }
+ if(bSel){
+  bSel.innerHTML=opts;
+  const bv=lsGet('cmw-printer-barcode');
+  if(bv&&connectedPrinters.some(x=>x.id===bv))bSel.value=bv;
+ }
+}
+async function pairPrinterFor(role){
+ if(!('serial' in navigator))return toast('Web Serial is supported on Desktop Chrome/Edge.');
+ try{
+  const port=await navigator.serial.requestPort();
+  try{if(!port.writable)await port.open({baudRate:9600})}catch(oe){if(oe.name!=='InvalidStateError')throw oe}
+  await refreshConnectedPrinters(false);
+  const hit=connectedPrinters.find(x=>x.port===port)||connectedPrinters[connectedPrinters.length-1];
+  if(hit){
+   lsSet(role==='barcode'?'cmw-printer-barcode':'cmw-printer-receipt',hit.id);
+   renderPrinterSelectors();
+   updateSilentUsbStatus();
+   toast((role==='barcode'?'Barcode':'Thermal receipt')+' printer saved: '+hit.label);
+  }
+ }catch(e){
+  if(e.name!=='NotFoundError')toast('Printer notice: '+(e.message||e));
  }
 }
 function updateSilentUsbStatus(){
- const el=$('silentPrintStatus'),btn=$('btnSilentUsb');
- const active=silentUsbPort&&silentUsbPort.writable;
- if(el){
-  el.innerHTML=active?
-   '<span style="color:var(--ok);font-weight:600">✓ Silent USB Active (No Dialog)</span> — Receipts print directly to the printer head in 10ms.':
-   'Standard print dialog active. Pair USB above or launch Chrome with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">--kiosk-printing</code> for 100% silent printing.';
+ const el=$('silentPrintStatus');
+ if(!el)return;
+ if(!('serial' in navigator)){
+  el.textContent='Standard browser print dialog active (use Desktop Chrome or Edge for USB one-tap silent printing).';
+  return;
  }
- if(btn){
-  btn.textContent=active?'Silent USB Active ✓':'Pair USB for Silent Print';
-  if(active)btn.classList.remove('g');else btn.classList.add('g');
- }
+ const rPort=getSavedPrinterPort('receipt'),bPort=getSavedPrinterPort('barcode');
+ const parts=[];
+ parts.push(rPort?'<span style="color:var(--ok);font-weight:600">✓ Receipt: One-tap ready</span>':'Receipt: Browser dialog');
+ parts.push(bPort?'<span style="color:var(--ok);font-weight:600">✓ Barcode: One-tap ready</span>':'Barcode: Browser dialog');
+ el.innerHTML=parts.join(' &nbsp;·&nbsp; ');
 }
-if('serial' in navigator){
- navigator.serial.getPorts().then(ports=>{
-  if(ports.length>0&&lsGet('cmw-silent-usb')==='1'){
-   silentUsbPort=ports[0];
-   if(!silentUsbPort.writable){
-    silentUsbPort.open({baudRate:9600}).then(()=>updateSilentUsbStatus()).catch(()=>updateSilentUsbStatus());
-   }else{
-    updateSilentUsbStatus();
-   }
+/* TSPL2 command generator for silent one-tap barcode label printing (2-up rolls) */
+function tsplEsc(t){return String(t||'').replace(/[^ -~]/g,'').replace(/"/g,"'")}
+function tsplLabels(items,sizeKey){
+ const [w,h]=SZ[sizeKey]||[50,25];
+ const per=2,gap=LGAP,pageW=per*w+gap,dpm=8;
+ const shop=tsplEsc((S.cfg.name||'CHOPPERS MENS WEAR').toUpperCase()).slice(0,18);
+ const out=[`SIZE ${pageW} mm, ${h} mm`,`GAP 3 mm, 0 mm`,'DIRECTION 1','REFERENCE 0,0'];
+ for(let i=0;i<items.length;i+=per){
+  out.push('CLS');
+  for(let col=0;col<per&&i+col<items.length;col++){
+   const p=items[i+col];
+   const x0=Math.round((col*(w+gap)+2)*dpm);
+   const yPrice=Math.round(1.6*dpm);
+   const yName=Math.round(5.6*dpm);
+   const yBc=Math.round(9.2*dpm);
+   const bcH=Math.max(48,Math.round((h-14.5)*dpm));
+   const priceStr='Rs.'+Math.round(p.price||0);
+   const nameStr=tsplEsc(p.name).slice(0,22);
+   const skuStr=tsplEsc(p.sku);
+   out.push(`TEXT ${x0},${yPrice},"2",0,1,1,"${priceStr}  ${shop}"`);
+   out.push(`TEXT ${x0},${yName},"1",0,1,1,"${nameStr}"`);
+   out.push(`BARCODE ${x0},${yBc},"128",${bcH},1,0,2,2,"${skuStr}"`);
   }
- }).catch(()=>{});
+  out.push('PRINT 1,1');
+ }
+ return new TextEncoder().encode(out.join('\r\n')+'\r\n');
 }
-
 async function printInvoice(b){
  S.lastBillPrinted=b;
  const pa=$('printArea');
  if(pa)pa.innerHTML=thermalBody(b);
- if(silentUsbPort){
-  const ok=await writeSilentUsb(b);
-  if(ok)return;
+ const rPort=getSavedPrinterPort('receipt');
+ if(rPort){
+  const ok=await writeBytesToPort(rPort,escpos(b));
+  if(ok){toast('Receipt printed silently ⚡');return}
  }
  try{window.print()}catch(e){toast('Print error: '+(e.message||e))}
 }
+async function printSilentLabels(items,sizeKey){
+ const bPort=getSavedPrinterPort('barcode');
+ if(!bPort||sizeKey==='a4')return false;
+ const ok=await writeBytesToPort(bPort,tsplLabels(items,sizeKey));
+ if(ok)toast(`Printed ${items.length} barcode label${items.length>1?'s':''} silently ⚡`);
+ return ok;
+}
+refreshConnectedPrinters(false);
 function downloadInvoice(b){saveFile(b.inv+'.html','<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+b.inv+'</title><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet"></head><body style="margin:0">'+thermalBody(b)+'<script>onload=function(){setTimeout(function(){print()},400)}<\/script></body></html>')}
 /* new customer: ask for the mobile number and name */
 function openNewCustomer(phone0,name0){
@@ -1630,8 +1733,23 @@ function fillSet(){
  $('sCash').value=S.cashier||'';
  if($('sBeep'))$('sBeep').checked=S.cfg.beep!==false;
  updatePermanenceDisplay();
+ refreshConnectedPrinters(false);
  }
-if($('btnSilentUsb'))$('btnSilentUsb').onclick=()=>pairSilentUsb();
+if($('btnSilentUsb'))$('btnSilentUsb').onclick=()=>pairPrinterFor('receipt');
+if($('btnPairBarcode'))$('btnPairBarcode').onclick=()=>pairPrinterFor('barcode');
+if($('btnRefreshPrinters'))$('btnRefreshPrinters').onclick=()=>refreshConnectedPrinters(true);
+if($('selReceiptPrinter'))$('selReceiptPrinter').onchange=function(){lsSet('cmw-printer-receipt',this.value);updateSilentUsbStatus();toast(this.value?'Thermal receipt printer saved':'Receipt set to browser print dialog')};
+if($('selBarcodePrinter'))$('selBarcodePrinter').onchange=function(){lsSet('cmw-printer-barcode',this.value);updateSilentUsbStatus();toast(this.value?'Barcode label printer saved':'Barcode set to browser print dialog')};
+if($('btnTestReceipt'))$('btnTestReceipt').onclick=async()=>{
+ const p=getSavedPrinterPort('receipt');if(!p)return toast('Pair or select a thermal receipt printer first');
+ const ok=await writeBytesToPort(p,new TextEncoder().encode('\x1b@\x1ba\x01CHOPPERS MENS WEAR\nReceipt Printer Test OK\n\n\n\x1dVB\x00'));
+ toast(ok?'Test receipt printed ✓':'Could not print to receipt printer');
+};
+if($('btnTestBarcode'))$('btnTestBarcode').onclick=async()=>{
+ const p=getSavedPrinterPort('barcode');if(!p)return toast('Pair or select a barcode label printer first');
+ const ok=await writeBytesToPort(p,tsplLabels([{name:'Test Shirt',sku:'TEST1234',price:999}],$('lSize')&&$('lSize').value!=='a4'?$('lSize').value:'50x25'));
+ toast(ok?'Test barcode label printed ✓':'Could not print to barcode printer');
+};
 $('sSave').onclick=async()=>{
  const d={};for(const k in sm)d[sm[k]]=$(k).value.trim();d.paper=+d.paper||80;S.cashier=$('sCash').value.trim();lsSet('cmw-cashier',S.cashier);
  if($('sBeep'))S.cfg.beep=$('sBeep').checked;
@@ -1777,6 +1895,10 @@ const doLabels=dl=>{
  LAST={body,roll:!a4,name:'barcode-labels.html'};
  if(dl)return dlDoc();
  $('printArea').innerHTML=body;
+ if(!a4&&getSavedPrinterPort('barcode')){
+  printSilentLabels(items,k).then(ok=>{if(!ok)try{window.print()}catch(e){toast('Print error: '+(e.message||e))}});
+  return;
+ }
  try{
   window.print();
  }catch(e){
