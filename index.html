@@ -240,14 +240,14 @@ nav button .ic{display:none}
  <div class="row"><div><label>Receipt footer / return policy</label><input id="sNote" aria-label="Receipt footer message"></div></div>
  <div class="mu" style="margin-bottom:12px"><a href="https://docs.google.com/spreadsheets/d/1-DwoI6W0R1mpZ4Gj-EHzWiTouH3GtiO7x74Hf44Mf5g" target="_blank" rel="noopener" style="color:inherit">Open Google Sheet</a></div><button class="btn" id="sSave">Save settings</button></div>
 
-<div class="card" id="waCard"><h2>Daily customer invitation (WhatsApp · OpenWA)</h2>
+<div class="card" id="waCard"><h2>WhatsApp Purchase Greeting &amp; Invoice PDF (OpenWA)</h2>
 <div id="waApiBadge" class="mu" style="margin-bottom:8px;font-size:12px"></div>
 <div class="mu" id="waSum" style="margin-bottom:10px"></div>
-<button class="btn big" id="waNext" type="button">Send today's invitations</button>
+<button class="btn big" id="waNext" type="button">Send today's invoices</button>
 <div class="mu" id="waAutoMsg" style="margin-top:8px;min-height:18px" aria-live="polite"></div>
 <button class="btn g big" id="waStop" type="button" style="display:none;margin-top:8px">Stop</button>
-<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:10px"><input type="checkbox" id="waAutoCheckout" style="width:20px;height:20px;min-height:0"><span>Auto-send invitation via OpenWA immediately when a new bill is saved</span></label>
-<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:8px"><input type="checkbox" id="waAuto" style="width:20px;height:20px;min-height:0"><span>Auto-send all pending customers in sequence when clicking Send</span></label>
+<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:10px"><input type="checkbox" id="waAutoCheckout" style="width:20px;height:20px;min-height:0"><span>Auto-send purchase greeting + Invoice PDF via OpenWA immediately on checkout</span></label>
+<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:8px"><input type="checkbox" id="waAuto" style="width:20px;height:20px;min-height:0"><span>Auto-send all pending invoices in sequence when clicking Send</span></label>
 <div id="waList" style="margin-top:10px"></div>
 <details id="waApiDetails" style="margin-top:12px"><summary class="mu" style="cursor:pointer">OpenWA API settings</summary>
 <div class="row" style="margin-top:10px">
@@ -256,19 +256,18 @@ nav button .ic{display:none}
 </div>
 <div class="row">
  <div><label for="waApiKey">API Key (X-API-Key)</label><div style="display:flex;gap:8px"><input id="waApiKey" type="password" autocomplete="off" placeholder="OpenWA API key" style="flex:1"><button class="btn g s" id="waKeyToggle" type="button" style="flex:0 0 auto">Show</button></div></div>
- <div><label for="waTestPhone">Test mobile (optional)</label><input id="waTestPhone" inputmode="numeric" autocomplete="off" placeholder="10-digit number for test send"></div>
+ <div><label for="waTestPhone">Test mobile (optional)</label><input id="waTestPhone" inputmode="numeric" autocomplete="off" placeholder="10-digit number for sample PDF"></div>
 </div>
 <div class="row" style="align-items:center">
- <div style="flex:0 0 auto"><button class="btn g" id="waTestBtn" type="button">Test OpenWA connection</button></div>
+ <div style="flex:0 0 auto"><button class="btn g" id="waTestBtn" type="button">Test OpenWA &amp; sample PDF</button></div>
  <div class="mu" id="waTestStatus" aria-live="polite" style="font-size:12px"></div>
 </div>
-<div class="mu">Saved locally on this device. Uses <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">POST /sessions/{sessionId}/messages/send-text</code> with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">X-API-Key</code>.</div>
+<div class="mu">Saved locally on this device. Uses <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">POST /sessions/{sessionId}/messages/send-document</code> with <code style="background:rgba(0,0,0,0.06);padding:2px 5px;border-radius:3px">X-API-Key</code>.</div>
 </details>
-<details style="margin-top:12px"><summary class="mu" style="cursor:pointer">Message &amp; reminder settings</summary>
-<div class="row" style="margin-top:10px"><div style="flex:1 1 100%"><label for="waMsg">Message ({name}, {shop}, {link} work)</label><textarea id="waMsg" rows="8" style="width:100%;font:inherit;color:var(--tx);background:var(--card);border:1px solid #8c8c8c;border-radius:8px;padding:10px 12px"></textarea></div></div>
+<details style="margin-top:12px"><summary class="mu" style="cursor:pointer">Greeting message &amp; reminder settings</summary>
+<div class="row" style="margin-top:10px"><div style="flex:1 1 100%"><label for="waMsg">Greeting caption ({name}, {shop}, {inv}, {total}, {points}, {link} work)</label><textarea id="waMsg" rows="7" style="width:100%;font:inherit;color:var(--tx);background:var(--card);border:1px solid #8c8c8c;border-radius:8px;padding:10px 12px"></textarea></div></div>
 <div class="row"><div><label for="waLink">Community link</label><input id="waLink" autocomplete="off"></div><div style="flex:0 1 140px"><label for="waGap">Delay (seconds)</label><input id="waGap" type="number" min="3" max="120"></div><div style="flex:0 1 140px"><label for="waHr">Remind me after (hour, 0-23)</label><input id="waHr" type="number" min="0" max="23"></div></div>
-<label style="display:flex;align-items:center;gap:10px;text-transform:none;font-size:13px;color:var(--tx);cursor:pointer;margin-top:4px;margin-bottom:8px"><input type="checkbox" id="waLinkPreview" style="width:20px;height:20px;min-height:0"><span>Attach WhatsApp link preview card for the community link</span></label>
-<div class="mu">Customers are marked as invited only after OpenWA confirms delivery, and are never invited again on later days unless you click Resend.</div>
+<div class="mu">Each bill with a customer mobile number is sent once with its Invoice PDF attached (you can also click Resend PDF anytime, or send from any bill's Receipt popup).</div>
 </details></div>
 <div class="card"><h2>App Permanence &amp; Offline Speed</h2>
 <div class="stat" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:14px">
@@ -1436,11 +1435,21 @@ function showReceipt(b){
   <div style="display:flex;justify-content:center;overflow:auto;padding:2px 0 10px">${thermalBody(b)}</div>
   <div class="row" style="margin-top:10px;gap:10px">
    <button class="btn big" id="mp" style="flex:1">Print Receipt</button>
-   <button class="btn g big" id="mc" style="flex:0 0 100px">Close</button>
+   <button class="btn g big" id="mwa" style="flex:1">${b.phone?'WhatsApp PDF':'WhatsApp PDF'}</button>
+   <button class="btn g big" id="mc" style="flex:0 0 90px">Close</button>
   </div>`;
  $('modal').classList.add('on');
  $('mc').onclick=()=>$('modal').classList.remove('on');
  $('mp').onclick=()=>printInvoice(b);
+ $('mwa').onclick=async()=>{
+  if(!b.phone)return toast('No mobile number on this bill');
+  if(typeof window.choppersWaSendBill!=='function')return toast('OpenWA module not ready');
+  const btn=$('mwa');btn.disabled=true;btn.classList.add('loading');
+  try{
+   const r=await window.choppersWaSendBill(b,true);
+   toast(r.ok?('Invoice PDF sent to '+(b.cust||b.phone)+' ✓'):('Not sent: '+r.error));
+  }finally{btn.disabled=false;btn.classList.remove('loading')}
+ };
 }
 $('modal').onclick=e=>{if(e.target.id==='modal')$('modal').classList.remove('on')};
 
@@ -1787,18 +1796,24 @@ arm();
 window.choppersSaver=start;
 })();</script>
 <script>(function(){
-var DEF='Hi {name}, thank you for choosing {shop}! \uD83D\uDECD\uFE0F\nJoin our WhatsApp community to get updates on new collections and fresh stock as soon as they arrive:\n{link}';
+var DEF='Hi {name}, thank you for shopping at {shop}! \uD83D\uDECD\uFE0F\nYour invoice {inv} for {total} is attached as a PDF.\n\nJoin our WhatsApp community for new arrivals & exclusive offers:\n{link}';
 var DEF_API='http://127.0.0.1:2785/api',DEF_SID='ab4faf10-dd97-47d5-8392-ea628ceeb237',DEF_KEY='owa_k1_39aa763882783d7221e783b2455b4886be6d48c3aa210b5d7a45c1f13b9b1b5f';
-var running=false,stopFlag=false,waitTimer=null,waitRes=null,tick=null,inFlight={};
-try{if((lsGet('cmw-wa-msg')||'').indexOf('member-only')>=0)lsSet('cmw-wa-msg','')}catch(e){}
+var running=false,stopFlag=false,waitTimer=null,waitRes=null,tick=null,inFlight={},lastSessionState='';
+
 function g(k,d){var v=lsGet(k);return v===''||v==null?d:v}
 function $$(i){return document.getElementById(i)}
-function sentMap(){try{return JSON.parse(lsGet('cmw-wa-sent')||'{}')||{}}catch(e){return{}}}
+function sentBillsMap(){try{return JSON.parse(lsGet('cmw-wa-sent-bills')||'{}')||{}}catch(e){return{}}}
 function num(p){var d=digitsOf(p);if(d.length===10)return'91'+d;if(d.length===12&&d.indexOf('91')===0)return d;return''}
-function todays(){var s=new Date();s.setHours(0,0,0,0);var t0=s.getTime(),m={},out=[];
- (S.bills||[]).forEach(function(b){if(b.deleted||!b.phone||b.ts<t0)return;var n=num(b.phone);if(!n||m[n])return;m[n]=1;out.push({num:n,name:String(b.cust||'')})});return out}
-function status(n,sent){if(sent[n]===today())return'today';if(sent[n])return'earlier';return''}
-function pending(){var s=sentMap();return todays().filter(function(x){return!status(x.num,s)})}
+function todaysBills(){
+ var d0=new Date();d0.setHours(0,0,0,0);var t0=d0.getTime(),out=[];
+ (S.bills||[]).forEach(function(b){
+  if(b.deleted||!b.phone||b.ts<t0)return;
+  var n=num(b.phone);if(!n)return;
+  out.push({inv:b.inv,num:n,name:String(b.cust||''),total:b.total||0,bill:b});
+ });
+ return out;
+}
+function pendingBills(){var m=sentBillsMap();return todaysBills().filter(function(x){return!m[x.inv]})}
 function link(){return g('cmw-wa-link',typeof WA_URL!=='undefined'?WA_URL:'')}
 function apiBase(){
  var u=g('cmw-wa-api-url',DEF_API).trim().replace(/\/+$/,'');
@@ -1808,17 +1823,170 @@ function apiBase(){
 }
 function apiCfg(){return{base:apiBase(),sessionId:g('cmw-wa-session-id',DEF_SID).trim(),apiKey:g('cmw-wa-api-key',DEF_KEY).trim()}}
 function isConfigured(){var c=apiCfg();return !!(c.base&&c.sessionId&&c.apiKey)}
-function buildMsg(name){
- var first=String(name||'').trim().split(/\s+/)[0]||'there';
- return g('cmw-wa-msg',DEF).replace(/\{name\}/g,first).replace(/\{shop\}/g,S.cfg.name||'our store').replace(/\{link\}/g,link());
+function buildGreeting(b){
+ var first=String((b&&b.cust)||'').trim().split(/\s+/)[0]||'there';
+ var tot=b&&typeof b.total==='number'?fm(b.total):'';
+ var pts=b&&b.earned>0?('+'+b.earned+' pts'):'';
+ var msg=g('cmw-wa-msg-v2',DEF)
+  .replace(/\{name\}/g,first)
+  .replace(/\{shop\}/g,S.cfg.name||'Choppers Mens Wear')
+  .replace(/\{inv\}/g,(b&&b.inv)||'')
+  .replace(/\{total\}/g,tot)
+  .replace(/\{points\}/g,pts)
+  .replace(/\{link\}/g,link());
+ return msg.slice(0,1024);
 }
 function errText(data,code){
  if(data&&data.message){return Array.isArray(data.message)?data.message.join('; '):String(data.message)}
  if(data&&data.error)return String(data.error);
  return'HTTP '+code;
 }
-var lastSessionState='';
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+
+/* ---- Zero-dependency Vector Invoice PDF Generator (PDF 1.4, returns raw base64) ---- */
+function pdfClean(s){
+ return String(s==null?'':s)
+  .replace(/₹/g,'Rs. ')
+  .replace(/[–—]/g,'-')
+  .replace(/[•·]/g,' - ')
+  .replace(/[^\x20-\x7e]/g,'')
+  .replace(/\\/g,'\\\\')
+  .replace(/\(/g,'\\(')
+  .replace(/\)/g,'\\)');
+}
+function pdfWrap(text,maxChars){
+ var words=String(text||'').trim().split(/\s+/).filter(Boolean),lines=[],cur='';
+ words.forEach(function(w){
+  if(!cur)cur=w;
+  else if((cur+' '+w).length<=maxChars)cur+=' '+w;
+  else{lines.push(cur);cur=w}
+ });
+ if(cur)lines.push(cur);
+ return lines.length?lines:[''];
+}
+function buildInvoicePdfBase64(b){
+ var m=billModel(b);
+ var W=360,M=24,y=0;
+ var cmds=[];
+ function txt(x,yy,size,font,str){
+  cmds.push('BT /'+font+' '+size+' Tf 1 0 0 1 '+x.toFixed(1)+' '+yy.toFixed(1)+' Tm ('+pdfClean(str)+') Tj ET');
+ }
+ function txtR(xRight,yy,size,font,str){
+  var s=String(str==null?'':str).replace(/₹/g,'Rs. ').replace(/[^\x20-\x7e]/g,'');
+  var estW=s.length*size*(font==='F2'?0.56:0.52);
+  txt(Math.max(M,xRight-estW),yy,size,font,s);
+ }
+ function txtC(yy,size,font,str){
+  var s=String(str==null?'':str).replace(/₹/g,'Rs. ').replace(/[^\x20-\x7e]/g,'');
+  var estW=s.length*size*(font==='F2'?0.56:0.52);
+  txt(Math.max(M,(W-estW)/2),yy,size,font,s);
+ }
+ function hline(yy,w,gray){
+  cmds.push((gray||0)+' G '+(w||0.6)+' w '+M+' '+yy.toFixed(1)+' m '+(W-M)+' '+yy.toFixed(1)+' l S 0 G');
+ }
+ // Compute dynamic page height so every item fits cleanly on one invoice page
+ var estLines=18+(m.addr.length)+(m.meta.length)+(m.items.length*2.3)+(m.totals.length)+(m.paid.length)+(m.loyalty.length?2:0)+(m.note?2:0);
+ var H=Math.max(460,Math.ceil(estLines*16+110));
+ y=H-34;
+
+ // Header
+ txtC(y,18,'F2',m.name||'CHOPPERS MENS WEAR');y-=16;
+ m.addr.forEach(function(line){
+  pdfWrap(line,52).forEach(function(wl){txtC(y,9,'F1',wl);y-=12});
+ });
+ y-=4;
+ hline(y,0.8,0);y-=14;
+ txtC(y,10,'F2','TAX INVOICE');y-=8;
+ hline(y,0.8,0);y-=16;
+
+ // Invoice metadata
+ m.meta.forEach(function(kv){
+  txt(M,y,9.5,'F2',kv[0]+':');
+  txtR(W-M,y,9.5,'F1',kv[1]);
+  y-=14;
+ });
+ y-=4;hline(y,0.5,0.6);y-=15;
+
+ // Table header
+ txt(M,y,9,'F2','ITEM');
+ txtR(W-M-82,y,9,'F2','QTY x RATE');
+ txtR(W-M,y,9,'F2','AMOUNT');
+ y-=6;hline(y,0.5,0.6);y-=14;
+
+ // Items
+ m.items.forEach(function(it){
+  var nameLines=pdfWrap(it.name,34);
+  nameLines.forEach(function(nl,idx){
+   txt(M,y,9.5,'F2',nl);
+   if(idx===0){
+    txtR(W-M-82,y,8.5,'F1',it.detail);
+    txtR(W-M,y,9.5,'F2','Rs. '+it.amt);
+   }
+   y-=13;
+  });
+  y-=3;
+ });
+ hline(y,0.5,0.6);y-=15;
+
+ // Totals
+ m.totals.forEach(function(kv){
+  txt(M,y,9.5,'F1',kv[0]);
+  txtR(W-M,y,9.5,'F1','Rs. '+kv[1]);
+  y-=14;
+ });
+ y-=2;hline(y,1.0,0);y-=18;
+ txt(M,y,14,'F2','TOTAL');
+ txtR(W-M,y,14,'F2','Rs. '+m.total);
+ y-=10;hline(y,0.5,0.6);y-=15;
+
+ // Payment
+ m.paid.forEach(function(kv){
+  txt(M,y,9.5,'F1',kv[0]);
+  txtR(W-M,y,9.5,'F2','Rs. '+kv[1]);
+  y-=14;
+ });
+
+ // Loyalty points highlight bar
+ if(m.loyalty.length){
+  y-=4;
+  cmds.push('0.1 g '+M+' '+(y-6).toFixed(1)+' '+(W-2*M)+' 20 re f 1 g');
+  var loyStr=m.loyalty.map(function(kv){return kv[0]+': '+kv[1]}).join('   |   ');
+  txtC(y,9.5,'F2',loyStr);
+  cmds.push('0 g');
+  y-=22;
+ }
+
+ // Footer
+ y-=8;
+ if(m.note){
+  pdfWrap(m.note,54).forEach(function(wl){txtC(y,8.5,'F1',wl);y-=12});
+ }
+ y-=4;
+ txtC(y,9.5,'F2','Thank you for shopping with us!');
+ y-=13;
+ if(link()){
+  txtC(y,8,'F1','Join our WhatsApp Community: '+link());
+ }
+
+ var stream=cmds.join('\n');
+ var objs=[
+  '1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n',
+  '2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n',
+  '3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >>\nendobj\n',
+  '4 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n',
+  '5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>\nendobj\n',
+  '6 0 obj\n<< /Length '+stream.length+' >>\nstream\n'+stream+'\nendstream\nendobj\n'
+ ];
+ var pdf='%PDF-1.4\n',offs=[0];
+ for(var i=0;i<objs.length;i++){offs.push(pdf.length);pdf+=objs[i]}
+ var xrefPos=pdf.length;
+ pdf+='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n';
+ for(var j=1;j<=objs.length;j++){pdf+=String(offs[j]).padStart(10,'0')+' 00000 n \n'}
+ pdf+='trailer\n<< /Size '+(objs.length+1)+' /Root 1 0 R >>\nstartxref\n'+xrefPos+'\n%%EOF';
+ return btoa(pdf);
+}
+
+/* ---- OpenWA Session Auto-Wake & Document Sender ---- */
 async function getSessionState(c){
  var res=await fetch(c.base+'/sessions/'+encodeURIComponent(c.sessionId),{headers:{'X-API-Key':c.apiKey}});
  var data=await res.json().catch(function(){return{}});
@@ -1848,14 +2016,21 @@ async function ensureSessionReady(c,silent){
  }
  throw new Error('OpenWA session is still starting ('+st+')');
 }
-async function sendViaOpenWA(n,name,opts){
+async function sendInvoicePdfViaOpenWA(n,bill,opts){
  var c=apiCfg();
  if(!c.base||!c.sessionId||!c.apiKey)throw new Error('OpenWA URL, Session ID, and API Key are required');
- var payload={chatId:n+'@c.us',text:buildMsg(name)};
- if(g('cmw-wa-link-preview','1')!=='0')payload.linkPreview=true;
+ var pdfBase64=buildInvoicePdfBase64(bill);
+ var safeInv=String((bill&&bill.inv)||'Invoice').replace(/[^\w-]/g,'_');
+ var payload={
+  chatId:n+'@c.us',
+  base64:pdfBase64,
+  mimetype:'application/pdf',
+  filename:'Invoice-'+safeInv+'.pdf',
+  caption:buildGreeting(bill)
+ };
  var headers={'Content-Type':'application/json','X-API-Key':c.apiKey};
  if(opts&&opts.idempotencyKey)headers['Idempotency-Key']=opts.idempotencyKey;
- var url=c.base+'/sessions/'+encodeURIComponent(c.sessionId)+'/messages/send-text';
+ var url=c.base+'/sessions/'+encodeURIComponent(c.sessionId)+'/messages/send-document';
  async function postOnce(){
   var res;
   try{
@@ -1884,23 +2059,26 @@ async function sendViaOpenWA(n,name,opts){
  lastSessionState='ready';
  return out.data;
 }
-async function sendOne(n,name,isResend){
- if(inFlight[n])return{ok:false,error:'Already sending to +'+n};
+async function sendBill(bill,isResend){
+ if(!bill||!bill.phone)return{ok:false,error:'No mobile number on this bill'};
+ var n=num(bill.phone);if(!n)return{ok:false,error:'Invalid 10-digit mobile number'};
+ var invKey=bill.inv||('bill-'+Date.now());
+ if(inFlight[invKey])return{ok:false,error:'Already sending '+invKey};
  if(!isConfigured()){
   var det=$$('waApiDetails');if(det)det.open=true;
   toast('Enter OpenWA URL, Session ID, and API Key in OpenWA API settings');
   return{ok:false,error:'OpenWA not configured',fatal:true};
  }
- inFlight[n]=true;render();
+ inFlight[invKey]=true;render();
  try{
-  var key=isResend?('cmw-resend-'+n+'-'+Date.now()):('cmw-invite-'+today()+'-'+n);
-  await sendViaOpenWA(n,name,{idempotencyKey:key});
-  var s=sentMap();s[n]=today();lsSet('cmw-wa-sent',JSON.stringify(s));
+  var key=isResend?('cmw-pdf-resend-'+invKey+'-'+Date.now()):('cmw-pdf-'+invKey);
+  await sendInvoicePdfViaOpenWA(n,bill,{idempotencyKey:key});
+  var m=sentBillsMap();m[invKey]=today();lsSet('cmw-wa-sent-bills',JSON.stringify(m));
   return{ok:true};
  }catch(e){
   return{ok:false,error:e.message||String(e),fatal:!!e.fatal};
  }finally{
-  delete inFlight[n];render();
+  delete inFlight[invKey];render();
  }
 }
 function render(){
@@ -1918,28 +2096,27 @@ function render(){
  }
  var det=$$('waApiDetails');
  if(det&&!det.dataset.init){det.dataset.init='1';if(!okCfg)det.open=true}
- var list=todays(),sent=sentMap(),pend=pending();
- var done=list.filter(function(x){return status(x.num,sent)==='today'}).length;
- $$('waSum').textContent=list.length?(list.length+' customer'+(list.length>1?'s':'')+' today \u00B7 '+done+' invited \u00B7 '+pend.length+' pending'):'No customers with a mobile number yet today.';
+ var list=todaysBills(),sent=sentBillsMap(),pend=pendingBills();
+ var done=list.length-pend.length;
+ $$('waSum').textContent=list.length?(list.length+' bill'+(list.length>1?'s':'')+' with mobile today \u00B7 '+done+' sent \u00B7 '+pend.length+' pending'):'No bills with a customer mobile number yet today.';
  var b=$$('waNext');b.disabled=!pend.length||running;
- b.textContent=running?'Sending via OpenWA\u2026':(pend.length?'Send today\'s invitations ('+pend.length+' left)':'All invitations sent');
+ b.textContent=running?'Sending Invoice PDFs via OpenWA\u2026':(pend.length?'Send today\'s invoices ('+pend.length+' left)':'All invoices sent');
  var row=function(x,label,cls,resend){
-  var busyNow=!!inFlight[x.num];
-  return '<div class="res" style="cursor:default"><div><b>'+esc(x.name||'Customer')+'</b><div class="mu">+'+x.num+'</div></div><button class="btn s '+cls+(busyNow?' loading':'')+'" type="button" data-n="'+x.num+'" data-name="'+esc(x.name||'')+'" data-r="'+(resend?'1':'0')+'"'+(busyNow?' disabled':'')+'>'+label+'</button></div>';
+  var busyNow=!!inFlight[x.inv];
+  return '<div class="res" style="cursor:default"><div><b>'+esc(x.name||'Customer')+' \u00B7 '+esc(x.inv)+'</b><div class="mu">+'+x.num+' \u00B7 '+fm(x.total)+'</div></div><button class="btn s '+cls+(busyNow?' loading':'')+'" type="button" data-inv="'+esc(x.inv)+'" data-r="'+(resend?'1':'0')+'"'+(busyNow?' disabled':'')+'>'+label+'</button></div>';
  };
- var inv=list.filter(function(x){return status(x.num,sent)});
- $$('waList').innerHTML=pend.map(function(x){return row(x,'Send','',false)}).join('')+(inv.length?'<details style="margin-top:8px"><summary class="mu" style="cursor:pointer">Already invited ('+inv.length+')</summary>'+inv.map(function(x){return row(x,status(x.num,sent)==='today'?'Sent today \u00B7 resend':'Invited before \u00B7 resend','g',true)}).join('')+'</details>':'');
+ var invDone=list.filter(function(x){return!!sent[x.inv]});
+ $$('waList').innerHTML=pend.map(function(x){return row(x,'Send PDF','',false)}).join('')+(invDone.length?'<details style="margin-top:8px"><summary class="mu" style="cursor:pointer">Sent today ('+invDone.length+')</summary>'+invDone.map(function(x){return row(x,'Resend PDF','g',true)}).join('')+'</details>':'');
  var f=function(id,v){var e=$$(id);if(e&&document.activeElement!==e)e.value=v};
  f('waApiUrl',g('cmw-wa-api-url',DEF_API));
  f('waSessionId',g('cmw-wa-session-id',DEF_SID));
  f('waApiKey',g('cmw-wa-api-key',DEF_KEY));
- f('waMsg',g('cmw-wa-msg',DEF));
+ f('waMsg',g('cmw-wa-msg-v2',DEF));
  f('waLink',link());
  f('waHr',g('cmw-wa-hr','20'));
  f('waGap',g('cmw-wa-gap','10'));
  if($$('waAutoCheckout'))$$('waAutoCheckout').checked=g('cmw-wa-auto-checkout','1')!=='0';
  if($$('waAuto'))$$('waAuto').checked=g('cmw-wa-auto','1')!=='0';
- if($$('waLinkPreview'))$$('waLinkPreview').checked=g('cmw-wa-link-preview','1')!=='0';
 }
 function clearWait(){clearTimeout(waitTimer);clearInterval(tick);waitTimer=null;tick=null;if(waitRes){var r=waitRes;waitRes=null;r()}}
 function waitGap(sec,prefix){
@@ -1967,7 +2144,7 @@ async function startAuto(){
   toast('Enter OpenWA URL, Session ID, and API Key first');
   return;
  }
- var queue=pending().slice();
+ var queue=pendingBills().slice();
  if(!queue.length)return;
  running=true;stopFlag=false;
  $$('waStop').style.display='';
@@ -1976,13 +2153,13 @@ async function startAuto(){
  for(var i=0;i<queue.length;i++){
   if(stopFlag)break;
   var x=queue[i];
-  $$('waAutoMsg').textContent='Sending '+(i+1)+'/'+queue.length+' to '+(x.name||'+'+x.num)+'\u2026';
-  var r=await sendOne(x.num,x.name,false);
+  $$('waAutoMsg').textContent='Sending '+(i+1)+'/'+queue.length+' ('+x.inv+' to '+(x.name||'+'+x.num)+')\u2026';
+  var r=await sendBill(x.bill,false);
   if(r.ok){sentOk++}
   else{
    failed++;
    if(r.fatal){stop('Stopped: '+r.error);toast('OpenWA error: '+r.error);return}
-   toast('Skipped '+(x.name||'+'+x.num)+': '+r.error);
+   toast('Skipped '+x.inv+': '+r.error);
   }
   if(stopFlag)break;
   if(i<queue.length-1){
@@ -1992,23 +2169,25 @@ async function startAuto(){
  }
  if(!stopFlag){
   stop('Done \u2713 '+sentOk+' sent'+(failed?' \u00B7 '+failed+' failed':''));
-  toast('WhatsApp invitations: '+sentOk+' sent'+(failed?', '+failed+' failed':''));
+  toast('WhatsApp Invoice PDFs: '+sentOk+' sent'+(failed?', '+failed+' failed':''));
  }
 }
 $$('waNext').addEventListener('click',async function(){
- var p=pending();if(!p.length)return;
+ var p=pendingBills();if(!p.length)return;
  if(g('cmw-wa-auto','1')!=='0'){startAuto();return}
- $$('waAutoMsg').textContent='Sending to '+(p[0].name||'+'+p[0].num)+'\u2026';
- var r=await sendOne(p[0].num,p[0].name,false);
- $$('waAutoMsg').textContent=r.ok?('Sent to '+(p[0].name||'+'+p[0].num)+' \u2713'):('Failed: '+r.error);
- toast(r.ok?'Invitation sent \u2713':'Not sent: '+r.error);
+ $$('waAutoMsg').textContent='Sending '+p[0].inv+' to '+(p[0].name||'+'+p[0].num)+'\u2026';
+ var r=await sendBill(p[0].bill,false);
+ $$('waAutoMsg').textContent=r.ok?('Sent '+p[0].inv+' \u2713'):('Failed: '+r.error);
+ toast(r.ok?'Invoice PDF sent \u2713':'Not sent: '+r.error);
 });
 $$('waStop').addEventListener('click',function(){stop('Stopped. Press the button to continue where you left off.')});
 $$('waList').addEventListener('click',async function(e){
- var b=e.target.closest('button[data-n]');if(!b)return;
- var n=b.dataset.n,nm=b.dataset.name||'',resend=b.dataset.r==='1';
- var r=await sendOne(n,nm,resend);
- toast(r.ok?('Invitation sent to '+(nm||'+'+n)+' \u2713'):('Not sent: '+r.error));
+ var b=e.target.closest('button[data-inv]');if(!b)return;
+ var inv=b.dataset.inv,resend=b.dataset.r==='1';
+ var hit=todaysBills().find(function(x){return x.inv===inv});
+ if(!hit)return;
+ var r=await sendBill(hit.bill,resend);
+ toast(r.ok?('Invoice PDF '+inv+' sent \u2713'):('Not sent: '+r.error));
 });
 if($$('waKeyToggle'))$$('waKeyToggle').addEventListener('click',function(){
  var inp=$$('waApiKey');if(!inp)return;
@@ -2017,13 +2196,14 @@ if($$('waKeyToggle'))$$('waKeyToggle').addEventListener('click',function(){
 if($$('waTestBtn'))$$('waTestBtn').addEventListener('click',async function(){
  var st=$$('waTestStatus'),btn=this;
  if(!isConfigured()){if(st)st.textContent='Enter API URL, Session ID, and API Key first.';return}
- btn.disabled=true;btn.classList.add('loading');if(st)st.textContent='Testing OpenWA\u2026';
+ btn.disabled=true;btn.classList.add('loading');if(st)st.textContent='Checking OpenWA\u2026';
  try{
   var tp=num(($$('waTestPhone')&&$$('waTestPhone').value)||'');
   if(tp){
-   await sendViaOpenWA(tp,'Customer',{idempotencyKey:'cmw-test-'+Date.now()});
-   if(st)st.innerHTML='<span style="color:var(--ok);font-weight:600">\u2713 Test invitation sent to +'+tp+'</span>';
-   toast('Test WhatsApp invitation sent \u2713');
+   var sampleBill={inv:'S00000-TEST',ts:Date.now(),cashier:S.cashier||'Cashier',cust:'Customer',phone:tp.slice(-10),mode:'UPI',sub:1499,disc:0,redeem:0,exchange:0,tax:71.38,ro:0,total:1499,paid:1499,due:0,earned:149,items:[{name:'Sample Mens Shirt',size:'L',qty:1,price:1499,disc:0,amt:1499}]};
+   await sendInvoicePdfViaOpenWA(tp,sampleBill,{idempotencyKey:'cmw-test-pdf-'+Date.now()});
+   if(st)st.innerHTML='<span style="color:var(--ok);font-weight:600">\u2713 Sample greeting + Invoice PDF sent to +'+tp+'</span>';
+   toast('Sample Invoice PDF sent \u2713');
   }else{
    var c=apiCfg();
    if(st)st.textContent='Checking & waking OpenWA session\u2026';
@@ -2038,24 +2218,24 @@ if($$('waTestBtn'))$$('waTestBtn').addEventListener('click',async function(){
 });
 if($$('waAutoCheckout'))$$('waAutoCheckout').addEventListener('change',function(){lsSet('cmw-wa-auto-checkout',this.checked?'1':'0')});
 if($$('waAuto'))$$('waAuto').addEventListener('change',function(){lsSet('cmw-wa-auto',this.checked?'1':'0')});
-if($$('waLinkPreview'))$$('waLinkPreview').addEventListener('change',function(){lsSet('cmw-wa-link-preview',this.checked?'1':'0')});
-[['waApiUrl','cmw-wa-api-url'],['waSessionId','cmw-wa-session-id'],['waApiKey','cmw-wa-api-key'],['waMsg','cmw-wa-msg'],['waLink','cmw-wa-link'],['waHr','cmw-wa-hr'],['waGap','cmw-wa-gap']].forEach(function(a){
+[['waApiUrl','cmw-wa-api-url'],['waSessionId','cmw-wa-session-id'],['waApiKey','cmw-wa-api-key'],['waMsg','cmw-wa-msg-v2'],['waLink','cmw-wa-link'],['waHr','cmw-wa-hr'],['waGap','cmw-wa-gap']].forEach(function(a){
  var el=$$(a[0]);if(el)el.addEventListener('input',function(){lsSet(a[1],this.value);if(a[0]==='waApiUrl'||a[0]==='waSessionId'||a[0]==='waApiKey')render()});
 });
 $$('nav').addEventListener('click',function(){setTimeout(render,60)});
 setInterval(function(){if(document.body.dataset.tab==='set'&&!running)render()},15000);
 setInterval(function(){try{var hr=+g('cmw-wa-hr','20'),now=new Date();if(now.getHours()<hr||lsGet('cmw-wa-nudge')===today())return;
- var p=pending();if(p.length){lsSet('cmw-wa-nudge',today());toast(p.length+' customers waiting for a WhatsApp invitation. Open Settings.')}}catch(e){}},60000);
+ var p=pendingBills();if(p.length){lsSet('cmw-wa-nudge',today());toast(p.length+' invoice PDFs waiting to send on WhatsApp. Open Settings.')}}catch(e){}},60000);
+window.choppersWaSendBill=sendBill;
 window.choppersWaOnSale=function(bill){
  try{
   if(!bill||bill.deleted||!bill.phone)return;
   if(g('cmw-wa-auto-checkout','1')==='0')return;
   if(!isConfigured())return;
   var n=num(bill.phone);if(!n)return;
-  var s=sentMap();if(s[n])return;
-  sendOne(n,bill.cust||'',false).then(function(r){
-   if(r.ok)toast('WhatsApp community invite sent to '+(bill.cust||'+'+n)+' \u2713');
-   else toast('WhatsApp invite queued in Settings: '+r.error);
+  var m=sentBillsMap();if(m[bill.inv])return;
+  sendBill(bill,false).then(function(r){
+   if(r.ok)toast('WhatsApp greeting + Invoice PDF sent to '+(bill.cust||'+'+n)+' \u2713');
+   else toast('WhatsApp PDF queued in Settings: '+r.error);
   });
  }catch(e){}
 };
