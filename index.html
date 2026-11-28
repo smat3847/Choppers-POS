@@ -1300,17 +1300,41 @@ function getSavedPrinterPort(role){
  const hit=connectedPrinters.find(x=>x.id===saved);
  return hit?hit.port:null;
 }
-async function writeBytesToPort(port,bytes){
+/* Paced, serialised write: cheap thermal printers have a tiny buffer, so a bill sent in one go overflows it and the printer
+   stops / restarts / prints garbled. We send small chunks with a short pause, one job at a time, and always release the port. */
+let printQueue=Promise.resolve();
+const writeState={sent:0};
+const sleepMs=ms=>new Promise(r=>setTimeout(r,ms));
+function writeBytesToPort(port,bytes){
+ const job=printQueue.then(()=>writeBytesNow(port,bytes));
+ printQueue=job.catch(()=>{});
+ return job;
+}
+async function writeBytesNow(port,bytes){
+ writeState.sent=0;
  if(!port)return false;
+ const baud=parseInt(lsGet('cmw-printer-baud'),10)||9600;
+ const CH=baud<=19200?64:128;                    // bytes per chunk
+ const pause=Math.max(25,Math.ceil(CH*10/baud*1000)); // ms: roughly the time the line needs to carry a chunk
+ let writer=null;
  try{
-  if(!port.writable)await port.open({baudRate:9600});
-  const writer=port.writable.getWriter();
-  await writer.write(bytes);
-  writer.releaseLock();
+  if(!port.writable)await port.open({baudRate:baud,bufferSize:4096});
+  writer=port.writable.getWriter();
+  for(let i=0;i<bytes.length;i+=CH){
+   await writer.ready;
+   await writer.write(bytes.subarray(i,i+CH));
+   writeState.sent=Math.min(bytes.length,i+CH);
+   await sleepMs(pause);
+  }
+  await sleepMs(300); // let the last bytes (feed + cut) leave before the next job
   return true;
  }catch(e){
   console.warn('Silent printer write error:',e);
+  // a broken stream leaves the port unusable: close it so the next print reopens it cleanly
+  try{if(writer){writer.releaseLock();writer=null}await port.close()}catch(_){}
   return false;
+ }finally{
+  try{if(writer)writer.releaseLock()}catch(_){}
  }
 }
 async function refreshConnectedPrinters(showToast){
@@ -1418,6 +1442,8 @@ async function printInvoice(b){
  if(rPort){
   const ok=await writeBytesToPort(rPort,escpos(b));
   if(ok){toast('Receipt printed silently ⚡');return}
+  // part of the bill already went out: do NOT print again, that is what caused duplicate / repeated bills
+  if(writeState.sent>0){toast('Printer stopped part-way. Check paper & cable, then press Print again.');return}
  }
  try{window.print()}catch(e){toast('Print error: '+(e.message||e))}
 }
@@ -1425,6 +1451,7 @@ async function printSilentLabels(items,sizeKey){
  const bPort=getSavedPrinterPort('barcode');
  if(!bPort||sizeKey==='a4')return false;
  const ok=await writeBytesToPort(bPort,tsplLabels(items,sizeKey));
+ if(!ok&&writeState.sent>0){toast('Label printer stopped part-way. Check it, then print again.');return true}
  if(ok)toast(`Printed ${items.length} barcode label${items.length>1?'s':''} silently ⚡`);
  return ok;
 }
